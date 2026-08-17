@@ -1,0 +1,20 @@
+{
+  "permissions": {
+    "allow": [
+      "Shell(ls -la /usr/local/lib/node_modules/command-code/dist/bundled/ 2>/dev/null | head -n 50; echo \"---\"; ls -la ~/.commandcode/skills/ 2>/dev/null | head -n 50; echo \"---\"; ls -la ~/.commandcode/agents/ 2>/dev/null | head -n 50; echo \"---\"; which uipro 2>/dev/null; which playwright-cli 2>/dev/null; echo \"---\"; cat ~/.commandcode/skills/*/SKILL.md 2>/dev/null | head -n 30)",
+      "Shell(echo \"=== .commandcode structure ===\"; find /Users/tondikiandika/Documents/projects/pos-demo/.commandcode -type f 2>/dev/null | head -20; echo \"=== global agents ===\"; find ~/.commandcode/agents -type f 2>/dev/null | head -20; ls ~/.commandcode/agents/ 2>/dev/null; echo \"=== global skills ===\"; ls ~/.commandcode/skills/ 2>/dev/null; ls /usr/local/lib/node_modules/command-code/dist/bundled/*/SKILL.md 2>/dev/null; echo \"=== uipro help ===\"; uipro --help 2>&1 | head -40; echo \"=== playwright-cli help ===\"; playwright-cli --help 2>&1 | head -40)",
+      "Shell(uipro:*)",
+      "Shell(playwright-cli:*)",
+      "Shell(cat:*)",
+      "Shell(cmd:*)",
+      "Shell(ls:*)",
+      "Shell(cmd skills list 2>&1; echo \"---\"; cmd skills list --debug 2>&1 | head -100)",
+      "Shell(mkdir:*)",
+      "Shell(cd /Users/tondikiandika/Documents/projects/pos-demo && playwright-cli install --skills 2>&1; echo \"EXIT:$?\"; ls -la .agents/skills/ 2>&1 | head -60; ls -la .commandcode/skills/ 2>&1 | head -60)",
+      "Shell(cmd skills list 2>&1; echo \"---debug---\"; cmd skills list --debug 2>&1 | head -100)",
+      "Shell(#:*)"
+    ],
+    "deny": [],
+    "defaultMode": "default"
+  }
+}
