@@ -1,0 +1,27 @@
+{
+  "name": "@larispos/backend",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "bun --watch src/index.ts",
+    "build": "tsc --noEmit",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint src --ext .ts 2>&1 | head -n 50; echo done",
+    "test": "vitest run",
+    "start": "bun src/index.ts"
+  },
+  "dependencies": {
+    "@larispos/db": "workspace:*",
+    "@larispos/shared": "workspace:*",
+    "@sinclair/typebox": "^0.34.33",
+    "drizzle-orm": "^0.38.4",
+    "elysia": "^1.2.25",
+    "postgres": "^3.4.5"
+  },
+  "devDependencies": {
+    "@types/bun": "^1.2.11",
+    "typescript": "^5.7.3",
+    "vitest": "^3.1.1"
+  }
+}

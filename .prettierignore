@@ -1,0 +1,9 @@
+node_modules
+dist
+.output
+.vercel
+build
+.turbo
+coverage
+pnpm-lock.yaml
+bun.lockb

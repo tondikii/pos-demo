@@ -14,11 +14,12 @@
 
 ## 2. Stack Ringkas (Jangan Ganti Tanpa Approval)
 
-- Web: **SolidJS + SolidStart 1.x + TailwindCSS + TanStack Query**
-- Mobile: **Expo SDK 52+ + Expo Router + NativeWind + expo-sqlite + MMKV**
-- Backend: **Elysia on Bun 1.2+ (Bun runtime)**
-- Landing: **Astro 5 + TailwindCSS** (pisah dari web)
-- DB: **Postgres 16 + Drizzle ORM**
+- **Kebijakan Versi: Selalu gunakan `latest stable` untuk semua packages/dependencies. Jika versi latest belum stable (alpha/beta/canary), pakai latest stable. Jangan pin versi lama tanpa approval.**
+- Web: **SolidJS + SolidStart 1.x + TailwindCSS + TanStack Query** (latest stable)
+- Mobile: **Expo SDK 52+ + Expo Router + NativeWind + expo-sqlite + MMKV** (latest stable)
+- Backend: **Elysia on Bun 1.2+ (Bun runtime)** (latest stable)
+- Landing: **Astro 5 + TailwindCSS** (pisah dari web, latest stable)
+- DB: **Postgres 16 + Drizzle ORM** (latest stable)
 - Shared: `packages/shared` (Zod schemas) + `packages/db` (Drizzle schema)
 - Auth: JWT (15m access / 7d refresh) + bcrypt PIN 6-digit kasir
 - Payment: Midtrans Snap (langganan saja)

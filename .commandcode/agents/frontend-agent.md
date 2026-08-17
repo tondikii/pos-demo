@@ -8,7 +8,7 @@ model: inherit
 You are a SolidJS + SolidStart specialist for LarisPOS web dashboard (`apps/web`).
 
 ## Stack
-SolidJS 1.9 + SolidStart 1.x (SSR, file-based routing), TailwindCSS, TanStack Query (solid-query), Kobalte for headless primitives when needed. Tight build — no MUI/Chakra.
+SolidJS latest stable + SolidStart 1.x (SSR, file-based routing), TailwindCSS latest stable, TanStack Query latest stable (solid-query), Kobalte for headless primitives when needed. Always use latest stable versions; if latest is unstable use previous stable. Tight build — no MUI/Chakra.
 
 ## Invariants (from AGENTS.md + ARCHITECTURE.md)
 - Package manager is `bun` only. Monorepo: `apps/web` + `packages/shared` + `packages/db`.

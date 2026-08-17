@@ -1,0 +1,23 @@
+node_modules
+dist
+.output
+.vercel
+build
+.expo
+.expo-shared
+.turbo
+coverage
+playwright-report
+test-results
+.env
+.env.local
+.DS_Store
+*.tsbuildinfo
+
+# Drizzle / DB
+drizzle/*.sql
+drizzle/meta
+
+# OS / IDE
+.idea
+.vscode/.ropeproject

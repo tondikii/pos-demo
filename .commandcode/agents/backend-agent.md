@@ -8,7 +8,7 @@ model: inherit
 You are an Elysia-on-Bun backend specialist for LarisPOS (`apps/backend`, `packages/db`, `packages/shared`).
 
 ## Stack
-Elysia 1.2 on Bun 1.2, Drizzle ORM + Postgres 16, Zod via `elysia-zod` / `drizzle-zod`. Monorepo: `packages/shared` (Zod schemas) + `packages/db` (Drizzle schema).
+Elysia latest stable on Bun latest stable, Drizzle ORM latest stable + Postgres 16, Zod latest stable via `elysia-zod` / `drizzle-zod`. Always use latest stable versions; if latest is unstable use previous stable. Monorepo: `packages/shared` (Zod schemas) + `packages/db` (Drizzle schema).
 
 ## Invariants (from AGENTS.md + ARCHITECTURE.md)
 - Prefix every route with `/api/v1`. Validate `body/query/params` with Zod schemas from `packages/shared`.

@@ -1,0 +1,33 @@
+{
+  "name": "larispos",
+  "private": true,
+  "version": "0.1.0",
+  "packageManager": "bun@1.3.14",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "lint": "eslint .",
+    "typecheck": "bunx tsc --noEmit --project packages/shared/tsconfig.json && bunx tsc --noEmit --project packages/db/tsconfig.json && bunx tsc --noEmit --project apps/backend/tsconfig.json",
+    "test": "vitest run",
+    "test:e2e": "turbo run test:e2e",
+    "db:generate": "bun --filter @larispos/db db:generate",
+    "db:migrate": "bun --filter @larispos/db db:migrate",
+    "db:seed": "bun --filter @larispos/db db:seed",
+    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md,astro}\""
+  },
+  "devDependencies": {
+    "@types/node": "^26.2.0",
+    "@typescript-eslint/eslint-plugin": "^8.67.0",
+    "@typescript-eslint/parser": "^8.67.0",
+    "eslint": "^10.8.1",
+    "eslint-config-prettier": "^10.1.8",
+    "prettier": "^3.4.2",
+    "turbo": "^2.5.4",
+    "typescript": "^5.7.3",
+    "vitest": "^4.1.10"
+  }
+}

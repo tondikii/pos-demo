@@ -1,0 +1,25 @@
+{
+  "name": "@larispos/mobile",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "expo start",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint app --ext .ts,.tsx 2>&1 | head -n 50; echo done",
+    "test": "vitest run",
+    "build": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@larispos/shared": "workspace:*",
+    "expo": "~52.0.0",
+    "expo-router": "~4.0.0",
+    "expo-secure-store": "~14.0.0",
+    "expo-sqlite": "~15.0.0",
+    "react": "18.3.1",
+    "react-native": "0.76.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.3",
+    "vitest": "^3.1.1"
+  }
+}

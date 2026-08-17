@@ -8,16 +8,16 @@
 
 > Scaffold monorepo, shared types/schema, DB schema & infra setup. Belum ada business logic maupun UI.
 
-- [ ] 1.1 Inisialisasi monorepo: `package.json` (Bun workspaces), `turbo.json` (pipeline build/lint/typecheck/test), `.env.example`, `.gitignore`. Struktur `apps/web, apps/mobile, apps/backend, apps/landing` + `packages/shared, packages/db`.
-- [ ] 1.2 Setup `packages/shared`: Zod schemas awal (`auth`, `outlet`, `product`+`product_variant`, `payment_method`, `transaction`, `shift`, `subscription`), TS types, `constants` (plans, roles, subscription statuses), `eden treaty` client helper.
-- [ ] 1.3 Setup `packages/db`: Drizzle `schema.ts` (users, outlets, staff, products, product_variants, payment_methods, shifts, transactions, transaction_items, subscriptions, subscription_history), `drizzle.config.ts`, relasi + indexes (`idx_variant_product`, `idx_tx_outlet_created`, `idx_tx_offline`), `seed.ts` (owner demo + 1 outlet + sample products).
-- [ ] 1.4 Migrasi awal: `bun run db:generate` + `bun run db:migrate` lokal, verifikasi schema Postgres (Neon/Supabase atau local Docker).
-- [ ] 1.5 Scaffold `apps/backend` (Elysia on Bun): `src/index.ts` (CORS, helmet, pino, prefix `/api/v1`), plugin `error` (`{ error: { code, message } }`), health check `GET /health`.
-- [ ] 1.6 Scaffold `apps/web` (SolidStart 1.x + Tailwind + TanStack Query): routing skeleton `(auth)/login|register`, `(app)/dashboard` placeholder, env `VITE_API_URL`, auth middleware stub.
-- [ ] 1.7 Scaffold `apps/mobile` (Expo SDK 52 + Expo Router + NativeWind): `(auth)/login` PIN placeholder, `(app)/pos` placeholder, `expo-sqlite` + `expo-secure-store` + `react-native-ble-plx` deps terpasang, `NetInfo` listener stub.
-- [ ] 1.8 Scaffold `apps/landing` (Astro 5 + Tailwind): `Layout.astro` (SEO: title/meta/OG), `index.astro` skeleton (Hero/Fitur/Harga/FAQ sections kosong), `astro-sitemap` + `astro-robots-txt` config.
-- [ ] 1.9 Tooling & CI: ESLint + Prettier per workspace, `tsconfig` strict, `vitest` config per workspace, GitHub Actions (install bun, `turbo run build`, `turbo run typecheck`, `drizzle migrate` dry-run).
-- [ ] 1.10 Verifikasi Fase 1: `bun install` bersih, `turbo run build` + `turbo run typecheck` hijau, `bun run test` pass (smoke), `drizzle-kit` generate tanpa diff, masing-masing `dev` command jalan (web, mobile, backend, landing).
+- [x] 1.1 Inisialisasi monorepo: `package.json` (Bun workspaces), `turbo.json` (pipeline build/lint/typecheck/test), `.env.example`, `.gitignore`. Struktur `apps/web, apps/mobile, apps/backend, apps/landing` + `packages/shared, packages/db`.
+- [x] 1.2 Setup `packages/shared`: Zod schemas awal (`auth`, `outlet`, `product`+`product_variant`, `payment_method`, `transaction`, `shift`, `subscription`), TS types, `constants` (plans, roles, subscription statuses), `eden treaty` client helper.
+- [x] 1.3 Setup `packages/db`: Drizzle `schema.ts` (users, outlets, staff, products, product_variants, payment_methods, shifts, transactions, transaction_items, subscriptions, subscription_history), `drizzle.config.ts`, relasi + indexes (`idx_variant_product`, `idx_tx_outlet_created`, `idx_tx_offline`), `seed.ts` (owner demo + 1 outlet + sample products).
+- [x] 1.4 Migrasi awal: `bun run db:generate` + `bun run db:migrate` lokal, verifikasi schema Postgres (Neon/Supabase atau local Docker).
+- [x] 1.5 Scaffold `apps/backend` (Elysia on Bun): `src/index.ts` (CORS, helmet, pino, prefix `/api/v1`), plugin `error` (`{ error: { code, message } }`), health check `GET /health`.
+- [x] 1.6 Scaffold `apps/web` (SolidStart 1.x + Tailwind + TanStack Query): routing skeleton `(auth)/login|register`, `(app)/dashboard` placeholder, env `VITE_API_URL`, auth middleware stub.
+- [x] 1.7 Scaffold `apps/mobile` (Expo SDK 52 + Expo Router + NativeWind): `(auth)/login` PIN placeholder, `(app)/pos` placeholder, `expo-sqlite` + `expo-secure-store` + `react-native-ble-plx` deps terpasang, `NetInfo` listener stub.
+- [x] 1.8 Scaffold `apps/landing` (Astro 5 + Tailwind): `Layout.astro` (SEO: title/meta/OG), `index.astro` skeleton (Hero/Fitur/Harga/FAQ sections kosong), `astro-sitemap` + `astro-robots-txt` config.
+- [x] 1.9 Tooling & CI: ESLint + Prettier per workspace, `tsconfig` strict, `vitest` config per workspace, GitHub Actions (install bun, `turbo run build`, `turbo run typecheck`, `drizzle migrate` dry-run).
+- [x] 1.10 Verifikasi Fase 1: `bun install` bersih, `turbo run build` + `turbo run typecheck` hijau, `bun run test` pass (smoke), `drizzle-kit` generate tanpa diff, masing-masing `dev` command jalan (web, mobile, backend, landing).
 
 > **STOP — Review Checkpoint Fase 1**
 > Jangan lanjut sebelum: monorepo scaffold review, shared schemas + DB schema disetujui, tiap app bisa `dev` tanpa error, CI hijau. Demo: `GET /health` backend, skeleton pages web/landing/mobile.
