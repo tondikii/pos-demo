@@ -22,3 +22,4 @@ drizzle/meta
 .idea
 .vscode/.ropeproject
 apps/landing/.astro/
+.playwright-cli/
