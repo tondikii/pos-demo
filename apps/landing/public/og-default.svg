@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#fffdfd"/>
+      <stop offset="1" stop-color="#fff0f2"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.5" cy="0" r="0.9">
+      <stop offset="0" stop-color="#e11d48" stop-opacity="0.14"/>
+      <stop offset="1" stop-color="#e11d48" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <rect width="1200" height="630" fill="url(#glow)"/>
+  <rect x="0" y="0" width="1200" height="12" fill="#e11d48"/>
+
+  <!-- Logo mark + wordmark -->
+  <rect x="88" y="92" width="88" height="88" rx="22" fill="#e11d48"/>
+  <text x="132" y="154" font-family="Helvetica, Arial, sans-serif" font-size="54" font-weight="bold" fill="#ffffff" text-anchor="middle">L</text>
+  <text x="206" y="154" font-family="Helvetica, Arial, sans-serif" font-size="54" font-weight="800" fill="#0f172a">Laris<tspan fill="#e11d48">POS</tspan></text>
+
+  <!-- Badge -->
+  <g>
+    <rect x="88" y="238" width="430" height="56" rx="28" fill="#ffffff" stroke="#fde8ec" stroke-width="2"/>
+    <text x="118" y="274" font-family="Helvetica, Arial, sans-serif" font-size="26" font-weight="bold" fill="#be123c">★ Mulai Rp 39rb/bulan</text>
+    <text x="378" y="274" font-family="Helvetica, Arial, sans-serif" font-size="24" fill="#64748b">· Coba gratis 14 hari</text>
+  </g>
+
+  <!-- Headline -->
+  <text x="88" y="366" font-family="Helvetica, Arial, sans-serif" font-size="64" font-weight="800" fill="#0f172a">POS F&amp;B yang Bikin <tspan fill="#e11d48">Laris</tspan>,</text>
+  <text x="88" y="444" font-family="Helvetica, Arial, sans-serif" font-size="64" font-weight="800" fill="#0f172a">Harga Warung.</text>
+
+  <!-- Sub-line -->
+  <text x="88" y="508" font-family="Helvetica, Arial, sans-serif" font-size="28" fill="#475569">Kasir cepat &lt;15 detik &nbsp;·&nbsp; Offline-first &nbsp;·&nbsp; Laporan laba otomatis</text>
+
+  <!-- Bottom bar -->
+  <rect x="0" y="576" width="1200" height="54" fill="#0f172a"/>
+  <text x="88" y="610" font-family="Helvetica, Arial, sans-serif" font-size="24" font-weight="bold" fill="#ffffff">larispos.id</text>
+  <text x="988" y="610" font-family="Helvetica, Arial, sans-serif" font-size="22" fill="#cbd5e1" text-anchor="end">POS untuk UMKM F&amp;B Indonesia</text>
+</svg>

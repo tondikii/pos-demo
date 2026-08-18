@@ -1,0 +1,324 @@
+- generic [ref=e483]:
+  - status [ref=e810]:
+    - generic [ref=e811]: ✓
+    - generic [ref=e812]: Ringkasan laporan disalin ke clipboard.
+    - button "Tutup notifikasi" [ref=e813]: ✕
+  - banner [ref=e484]:
+    - generic [ref=e485]:
+      - generic [ref=e486]:
+        - link "Ke dashboard" [ref=e487] [cursor=pointer]:
+          - /url: /dashboard
+          - text: L
+        - navigation "Navigasi utama" [ref=e488]:
+          - link "Dashboard" [ref=e489] [cursor=pointer]:
+            - /url: /dashboard
+          - link "Produk" [ref=e490] [cursor=pointer]:
+            - /url: /products
+          - link "Laporan" [ref=e491] [cursor=pointer]:
+            - /url: /reports
+          - link "Outlet" [ref=e492] [cursor=pointer]:
+            - /url: /outlets
+          - link "Staff" [ref=e493] [cursor=pointer]:
+            - /url: /staff
+          - link "Pembayaran" [ref=e494] [cursor=pointer]:
+            - /url: /payment-methods
+      - generic [ref=e495]:
+        - generic [ref=e496]: Warung Uji Laporan
+        - button "Keluar" [ref=e497] [cursor=pointer]
+  - main [ref=e498]:
+    - generic [ref=e499]:
+      - generic [ref=e500]:
+        - generic [ref=e501]:
+          - heading "Laporan" [level=1] [ref=e502]
+          - paragraph [ref=e503]: Gerai Uji — Jakarta · 2026-08-13 s/d 2026-08-19
+        - generic [ref=e504]:
+          - button "Copy ringkasan" [active] [ref=e505] [cursor=pointer]
+          - button "Export PDF" [ref=e506] [cursor=pointer]
+      - generic [ref=e508]:
+        - generic [ref=e509]: Pilih outlet
+        - combobox "Pilih outlet" [ref=e510] [cursor=pointer]:
+          - option "Gerai Uji — Jakarta" [selected]
+          - option "Gerai Geprek Sari — Pasar Baru"
+          - option "Gerai Geprek Sari — Senayan"
+          - option "Gerai Geprek Sari — Kelapa Gading"
+        - group "Rentang tanggal" [ref=e511]:
+          - button "Hari ini" [ref=e512]
+          - button "7 hari" [pressed] [ref=e513]
+      - region "Ringkasan laporan" [ref=e514]:
+        - generic [ref=e517]:
+          - paragraph [ref=e518]: Omzet
+          - paragraph [ref=e519]: Rp 11.123.400
+          - paragraph [ref=e520]: 7 hari tercatat
+        - generic [ref=e523]:
+          - paragraph [ref=e524]: HPP
+          - paragraph [ref=e525]: Rp 6.943.910
+          - paragraph [ref=e526]: 62.4% dari omzet
+        - generic [ref=e529]:
+          - paragraph [ref=e530]: Laba bersih
+          - paragraph [ref=e531]: Rp 4.179.490
+          - paragraph [ref=e532]: Margin 37.6%
+        - generic [ref=e535]:
+          - paragraph [ref=e536]: Transaksi
+          - paragraph [ref=e537]: 220 trx
+          - paragraph [ref=e538]: Rata-rata 51 rb/trx
+      - generic [ref=e539]:
+        - generic [ref=e541]:
+          - generic [ref=e542]:
+            - heading "Best sellers" [level=2] [ref=e543]
+            - generic [ref=e544]: Top 10 · urut qty
+          - paragraph [ref=e545]: Produk terlaris pada rentang terpilih
+          - table [ref=e547]:
+            - caption [ref=e548]: Top 10 produk terlaris
+            - rowgroup [ref=e549]:
+              - row [ref=e550]:
+                - columnheader "#" [ref=e551]
+                - columnheader "Produk" [ref=e552]
+                - columnheader "Qty" [ref=e553]
+                - columnheader "Omzet" [ref=e554]
+            - rowgroup [ref=e555]:
+              - row [ref=e556]:
+                - cell "1" [ref=e557]
+                - cell [ref=e559]:
+                  - paragraph [ref=e561]: Es Teh Manis — Jumbo
+                - cell "30" [ref=e564]
+                - cell "180 rb" [ref=e565]
+              - row [ref=e566]:
+                - cell "2" [ref=e567]
+                - cell [ref=e569]:
+                  - paragraph [ref=e571]: Ayam Geprek Original — L
+                - cell "29" [ref=e574]
+                - cell "580 rb" [ref=e575]
+              - row [ref=e576]:
+                - cell "3" [ref=e577]
+                - cell [ref=e579]:
+                  - paragraph [ref=e581]: Ayam Geprek Original — S
+                - cell "29" [ref=e584]
+                - cell "464 rb" [ref=e585]
+              - row [ref=e586]:
+                - cell "4" [ref=e587]
+                - cell [ref=e589]:
+                  - paragraph [ref=e591]: Ayam Geprek Original — M
+                - cell "24" [ref=e594]
+                - cell "432 rb" [ref=e595]
+              - row [ref=e596]:
+                - cell "5" [ref=e597]
+                - cell [ref=e599]:
+                  - paragraph [ref=e601]: Es Teh Manis — Reguler
+                - cell "23" [ref=e604]
+                - cell "92 rb" [ref=e605]
+              - row [ref=e606]:
+                - cell "6" [ref=e607]
+                - cell [ref=e609]:
+                  - paragraph [ref=e611]: Nasi Putih — Porsi
+                - cell "21" [ref=e614]
+                - cell "105 rb" [ref=e615]
+              - row [ref=e616]:
+                - cell "7" [ref=e617]
+                - cell [ref=e619]:
+                  - paragraph [ref=e621]: Ayam Geprek Keju — M
+                - cell "19" [ref=e624]
+                - cell "437 rb" [ref=e625]
+              - row [ref=e626]:
+                - cell "8" [ref=e627]
+                - cell [ref=e629]:
+                  - paragraph [ref=e631]: Ayam Geprek Keju — L
+                - cell "18" [ref=e634]
+                - cell "450 rb" [ref=e635]
+              - row [ref=e636]:
+                - cell "9" [ref=e637]
+                - cell [ref=e639]:
+                  - paragraph [ref=e641]: Tahu Crispy — 10 pcs
+                - cell "16" [ref=e644]
+                - cell "240 rb" [ref=e645]
+              - row [ref=e646]:
+                - cell "10" [ref=e647]
+                - cell [ref=e649]:
+                  - paragraph [ref=e651]: Es Jeruk Peras — Jumbo
+                - cell "16" [ref=e654]
+                - cell "176 rb" [ref=e655]
+          - generic [ref=e656]:
+            - paragraph [ref=e657]: Perlu perhatian — produk sepi
+            - list [ref=e658]:
+              - listitem [ref=e659]:
+                - generic [ref=e660]: Air Mineral — Botol 600ml
+                - generic [ref=e661]: 6 terjual · 30 rb
+              - listitem [ref=e662]:
+                - generic [ref=e663]: Paket Nasi Ayam + Es Jeruk — Reguler
+                - generic [ref=e664]: 6 terjual · 150 rb
+              - listitem [ref=e665]:
+                - generic [ref=e666]: Lele Goreng Sambal — 2 ekor
+                - generic [ref=e667]: 6 terjual · 162 rb
+        - generic [ref=e668]:
+          - generic [ref=e670]:
+            - generic [ref=e671]:
+              - heading "Jam ramai" [level=2] [ref=e672]
+              - generic [ref=e673]: Puncak 12:00 — 39 transaksi
+            - paragraph [ref=e674]: Transaksi per jam · 6.00–22.00
+            - generic [ref=e675]:
+              - generic [ref=e676]:
+                - tooltip "2 transaksi 6.00–6.59":
+                  - paragraph: 2 transaksi
+                  - paragraph: 6.00–6.59
+                - generic [ref=e677]: "6.00: 2 transaksi"
+              - generic [ref=e679]:
+                - tooltip "5 transaksi 7.00–7.59":
+                  - paragraph: 5 transaksi
+                  - paragraph: 7.00–7.59
+                - generic [ref=e680]: "7.00: 5 transaksi"
+              - generic [ref=e682]:
+                - tooltip "1 transaksi 8.00–8.59":
+                  - paragraph: 1 transaksi
+                  - paragraph: 8.00–8.59
+                - generic [ref=e683]: "8.00: 1 transaksi"
+              - generic [ref=e685]:
+                - tooltip "2 transaksi 9.00–9.59":
+                  - paragraph: 2 transaksi
+                  - paragraph: 9.00–9.59
+                - generic [ref=e686]: "9.00: 2 transaksi"
+              - generic [ref=e688]:
+                - tooltip "12 transaksi 10.00–10.59":
+                  - paragraph: 12 transaksi
+                  - paragraph: 10.00–10.59
+                - generic [ref=e689]: "10.00: 12 transaksi"
+              - generic [ref=e691]:
+                - tooltip "28 transaksi 11.00–11.59":
+                  - paragraph: 28 transaksi
+                  - paragraph: 11.00–11.59
+                - generic [ref=e692]: "11.00: 28 transaksi"
+              - generic [ref=e694]:
+                - tooltip "39 transaksi 12.00–12.59":
+                  - paragraph: 39 transaksi
+                  - paragraph: 12.00–12.59
+                - generic [ref=e695]: "12.00: 39 transaksi (puncak)"
+              - generic [ref=e697]:
+                - tooltip "24 transaksi 13.00–13.59":
+                  - paragraph: 24 transaksi
+                  - paragraph: 13.00–13.59
+                - generic [ref=e698]: "13.00: 24 transaksi"
+              - generic [ref=e700]:
+                - tooltip "14 transaksi 14.00–14.59":
+                  - paragraph: 14 transaksi
+                  - paragraph: 14.00–14.59
+                - generic [ref=e701]: "14.00: 14 transaksi"
+              - generic [ref=e703]:
+                - tooltip "6 transaksi 15.00–15.59":
+                  - paragraph: 6 transaksi
+                  - paragraph: 15.00–15.59
+                - generic [ref=e704]: "15.00: 6 transaksi"
+              - generic [ref=e706]:
+                - tooltip "14 transaksi 16.00–16.59":
+                  - paragraph: 14 transaksi
+                  - paragraph: 16.00–16.59
+                - generic [ref=e707]: "16.00: 14 transaksi"
+              - generic [ref=e709]:
+                - tooltip "28 transaksi 17.00–17.59":
+                  - paragraph: 28 transaksi
+                  - paragraph: 17.00–17.59
+                - generic [ref=e710]: "17.00: 28 transaksi"
+              - generic [ref=e712]:
+                - tooltip "36 transaksi 18.00–18.59":
+                  - paragraph: 36 transaksi
+                  - paragraph: 18.00–18.59
+                - generic [ref=e713]: "18.00: 36 transaksi"
+              - generic [ref=e715]:
+                - tooltip "27 transaksi 19.00–19.59":
+                  - paragraph: 27 transaksi
+                  - paragraph: 19.00–19.59
+                - generic [ref=e716]: "19.00: 27 transaksi"
+              - generic [ref=e718]:
+                - tooltip "17 transaksi 20.00–20.59":
+                  - paragraph: 17 transaksi
+                  - paragraph: 20.00–20.59
+                - generic [ref=e719]: "20.00: 17 transaksi"
+              - generic [ref=e721]:
+                - tooltip "1 transaksi 21.00–21.59":
+                  - paragraph: 1 transaksi
+                  - paragraph: 21.00–21.59
+                - generic [ref=e722]: "21.00: 1 transaksi"
+              - generic [ref=e724]:
+                - tooltip "5 transaksi 22.00–22.59":
+                  - paragraph: 5 transaksi
+                  - paragraph: 22.00–22.59
+                - generic [ref=e725]: "22.00: 5 transaksi"
+            - generic [ref=e727]:
+              - generic [ref=e728]: "6"
+              - generic [ref=e729]: "7"
+              - generic [ref=e730]: "8"
+              - generic [ref=e731]: "9"
+              - generic [ref=e732]: "10"
+              - generic [ref=e733]: "11"
+              - generic [ref=e734]: "12"
+              - generic [ref=e735]: "13"
+              - generic [ref=e736]: "14"
+              - generic [ref=e737]: "15"
+              - generic [ref=e738]: "16"
+              - generic [ref=e739]: "17"
+              - generic [ref=e740]: "18"
+              - generic [ref=e741]: "19"
+              - generic [ref=e742]: "20"
+              - generic [ref=e743]: "21"
+              - generic [ref=e744]: "22"
+            - paragraph [ref=e745]: jam (06 – 22)
+          - generic [ref=e747]:
+            - generic [ref=e748]:
+              - heading "Metode pembayaran" [level=2] [ref=e749]
+              - generic [ref=e750]: Rentang terpilih
+            - paragraph [ref=e751]: Rekap transaksi per metode bayar
+            - list [ref=e752]:
+              - listitem [ref=e753]:
+                - generic [ref=e754]:
+                  - generic [ref=e755]:
+                    - generic [ref=e756]: 💵
+                    - paragraph [ref=e757]:
+                      - text: Cash
+                      - generic [ref=e758]: 138 trx
+                  - paragraph [ref=e759]: Rp 4.403.020
+                - generic [ref=e760]: 49%
+                - paragraph [ref=e761]: 48.9%
+              - listitem [ref=e762]:
+                - generic [ref=e763]:
+                  - generic [ref=e764]:
+                    - generic [ref=e765]: 📱
+                    - paragraph [ref=e766]:
+                      - text: QRIS
+                      - generic [ref=e767]: 96 trx
+                  - paragraph [ref=e768]: Rp 3.081.000
+                - generic [ref=e769]: 34%
+                - paragraph [ref=e770]: 34.2%
+              - listitem [ref=e771]:
+                - generic [ref=e772]:
+                  - generic [ref=e773]:
+                    - generic [ref=e774]: 🏦
+                    - paragraph [ref=e775]:
+                      - text: Transfer Bank
+                      - generic [ref=e776]: 47 trx
+                  - paragraph [ref=e777]: Rp 1.519.000
+                - generic [ref=e778]: 17%
+                - paragraph [ref=e779]: 16.9%
+      - region "Stok menipis" [ref=e780]:
+        - generic [ref=e781]:
+          - generic [ref=e782]:
+            - heading "Stok menipis" [level=2] [ref=e783]
+            - paragraph [ref=e784]: Gerai Uji — Jakarta · stok ≤ batas per varian
+          - list [ref=e785]:
+            - listitem [ref=e786]:
+              - generic [ref=e787]:
+                - paragraph [ref=e788]:
+                  - text: Air Mineral
+                  - generic [ref=e789]: — Botol 600ml
+                - paragraph [ref=e790]: Minuman · sisa 5 dari batas 5
+              - generic [ref=e791]: Menipis
+            - listitem [ref=e792]:
+              - generic [ref=e793]:
+                - paragraph [ref=e794]:
+                  - text: Es Jeruk Peras
+                  - generic [ref=e795]: — Jumbo
+                - paragraph [ref=e796]: Minuman · sisa 5 dari batas 5
+              - generic [ref=e797]: Menipis
+            - listitem [ref=e798]:
+              - generic [ref=e799]:
+                - paragraph [ref=e800]:
+                  - text: Nasi Putih
+                  - generic [ref=e801]: — Porsi
+                - paragraph [ref=e802]: Makanan · sisa 5 dari batas 5
+              - generic [ref=e803]: Menipis

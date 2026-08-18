@@ -1,0 +1,26 @@
+- generic [ref=e253]:
+  - banner [ref=e254]:
+    - generic [ref=e255]:
+      - generic [ref=e256]:
+        - generic [ref=e257]: L
+        - generic [ref=e258]:
+          - paragraph [ref=e259]: LarisPOS
+          - paragraph [ref=e260]: Dashboard
+      - generic [ref=e261]:
+        - generic [ref=e262]: Warung Geprek Uji
+        - button "Keluar" [ref=e263] [cursor=pointer]
+  - main [ref=e264]:
+    - generic [ref=e266]:
+      - generic [ref=e267]:
+        - heading "Halo, Warung Geprek Uji" [level=1] [ref=e268]
+        - paragraph [ref=e269]: Ringkasan usaha Anda — 7 hari terakhir
+      - generic [ref=e270]:
+        - generic [ref=e271]: Pilih outlet
+        - combobox "Pilih outlet" [ref=e272] [cursor=pointer]:
+          - option "Gerai Uji — Pasar Senen" [selected]
+          - option "Gerai Geprek Sari — Pasar Baru"
+          - option "Gerai Geprek Sari — Senayan"
+          - option "Gerai Geprek Sari — Kelapa Gading"
+        - group "Rentang tanggal" [ref=e273]:
+          - button "Hari ini" [ref=e274]
+          - button "7 hari" [pressed] [ref=e275]

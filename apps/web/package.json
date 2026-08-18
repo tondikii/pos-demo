@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@larispos/shared": "workspace:*",
+    "@motionone/solid": "^10.16.4",
     "@tanstack/solid-query": "^5.66.1",
     "solid-js": "^1.9.5"
   },

@@ -1,0 +1,43 @@
+- generic [ref=f1e193]:
+  - banner [ref=f1e194]:
+    - generic [ref=f1e195]:
+      - generic [ref=f1e196]:
+        - link "Ke dashboard" [ref=f1e197] [cursor=pointer]:
+          - /url: /dashboard
+          - text: L
+        - navigation "Navigasi utama" [ref=f1e198]:
+          - link "Dashboard" [ref=f1e199] [cursor=pointer]:
+            - /url: /dashboard
+          - link "Produk" [ref=f1e200] [cursor=pointer]:
+            - /url: /products
+          - link "Laporan" [ref=f1e201] [cursor=pointer]:
+            - /url: /reports
+          - link "Shifts" [ref=f1e202] [cursor=pointer]:
+            - /url: /shifts
+          - link "Outlet" [ref=f1e203] [cursor=pointer]:
+            - /url: /outlets
+          - link "Staff" [ref=f1e204] [cursor=pointer]:
+            - /url: /staff
+          - link "Pembayaran" [ref=f1e205] [cursor=pointer]:
+            - /url: /payment-methods
+          - link "Langganan" [ref=f1e206] [cursor=pointer]:
+            - /url: /subscription
+      - generic [ref=f1e207]:
+        - button "Simulasi error" [ref=f1e208]
+        - generic [ref=f1e210]: Warung Uji Polis
+        - button "Keluar" [ref=f1e211] [cursor=pointer]
+  - main [ref=f1e212]:
+    - generic [ref=f1e214]:
+      - generic [ref=f1e215]:
+        - heading "Halo, Warung Uji Polis" [level=1] [ref=f1e216]
+        - paragraph [ref=f1e217]: Ringkasan usaha Anda — 7 hari terakhir
+      - generic [ref=f1e218]:
+        - generic [ref=f1e219]: Pilih outlet
+        - combobox "Pilih outlet" [ref=f1e220] [cursor=pointer]:
+          - option "Gerai Uji Polis" [selected]
+          - option "Gerai Geprek Sari — Pasar Baru"
+          - option "Gerai Geprek Sari — Senayan"
+          - option "Gerai Geprek Sari — Kelapa Gading"
+        - group "Rentang tanggal" [ref=f1e221]:
+          - button "Hari ini" [ref=f1e222]
+          - button "7 hari" [pressed] [ref=f1e223]

@@ -1,0 +1,57 @@
+- generic [ref=f1e3]:
+  - complementary [ref=f1e4]:
+    - generic [ref=f1e6]:
+      - generic [ref=f1e7]: L
+      - generic [ref=f1e8]: LarisPOS
+    - generic [ref=f1e9]:
+      - generic [ref=f1e10]:
+        - generic [ref=f1e11]: Trial gratis 14 hari — tanpa kartu
+        - heading "POS F&B yang bikin laris. Harga warung." [level=1] [ref=f1e13]
+        - paragraph [ref=f1e14]: Kasir cepat, offline tetap jalan, laporan laba-rugi yang benar-benar membantu keputusan usaha — mulai dari Rp 39.000/bulan.
+      - list [ref=f1e15]:
+        - listitem [ref=f1e16]:
+          - generic [ref=f1e20]: Kasir cepat <15 detik per transaksi, cetak struk Bluetooth
+        - listitem [ref=f1e21]:
+          - generic [ref=f1e25]: Transaksi tetap jalan saat internet putus, sync otomatis
+        - listitem [ref=f1e26]:
+          - generic [ref=f1e30]: Laporan laba, produk terlaris & jam ramai tiap hari
+      - generic [ref=f1e31]:
+        - generic [ref=f1e32]:
+          - paragraph [ref=f1e33]: Starter
+          - paragraph [ref=f1e34]: Rp 39.000/bln
+          - paragraph [ref=f1e35]: 1 outlet
+        - generic [ref=f1e36]:
+          - paragraph [ref=f1e37]: Tumbuh
+          - paragraph [ref=f1e38]: Rp 89.000/bln
+          - paragraph [ref=f1e39]: s/d 3 outlet
+    - paragraph [ref=f1e40]: © 2026 LarisPOS — POS murah untuk UMKM F&B Indonesia
+  - main [ref=f1e41]:
+    - generic [ref=f1e43]:
+      - generic [ref=f1e45]:
+        - generic [ref=f1e46]:
+          - heading "Coba gratis 14 hari" [level=1] [ref=f1e47]
+          - paragraph [ref=f1e48]:
+            - text: Tanpa kartu. Sudah punya akun?
+            - link "Masuk" [ref=f1e49] [cursor=pointer]:
+              - /url: /login
+        - generic [ref=f1e50]:
+          - generic [ref=f1e51]:
+            - generic [ref=f1e52]: Nama usaha*
+            - textbox "Nama usaha" [ref=f1e55]:
+              - /placeholder: mis. Warung Ayam Geprek Sari
+          - generic [ref=f1e56]:
+            - generic [ref=f1e57]: Email*
+            - textbox "Email" [ref=f1e60]:
+              - /placeholder: nama@usaha.id
+          - generic [ref=f1e61]:
+            - generic [ref=f1e62]: Nomor WhatsApp*
+            - textbox "Nomor WhatsApp" [ref=f1e65]:
+              - /placeholder: 0812 3456 7890
+            - paragraph [ref=f1e66]: "Format Indonesia: 08xx / +62 8xx"
+          - generic [ref=f1e67]:
+            - generic [ref=f1e68]: Password*
+            - textbox "Password" [ref=f1e71]:
+              - /placeholder: ••••••••
+            - paragraph [ref=f1e72]: Minimal 8 karakter
+          - button "Daftar & mulai trial" [ref=f1e73] [cursor=pointer]
+      - paragraph [ref=f1e74]: Dengan mendaftar Anda menyetujui Syarat & Ketentuan dan Kebijakan Privasi LarisPOS.

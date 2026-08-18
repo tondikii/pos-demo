@@ -21,3 +21,4 @@ drizzle/meta
 # OS / IDE
 .idea
 .vscode/.ropeproject
+apps/landing/.astro/

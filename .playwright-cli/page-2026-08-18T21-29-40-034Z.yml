@@ -1,0 +1,44 @@
+- generic [ref=f1e75]:
+  - complementary [ref=f1e76]:
+    - generic [ref=f1e78]:
+      - generic [ref=f1e79]: L
+      - generic [ref=f1e80]: LarisPOS
+    - generic [ref=f1e81]:
+      - generic [ref=f1e82]:
+        - generic [ref=f1e83]: Trial gratis 14 hari — tanpa kartu
+        - heading "POS F&B yang bikin laris. Harga warung." [level=1] [ref=f1e85]
+        - paragraph [ref=f1e86]: Kasir cepat, offline tetap jalan, laporan laba-rugi yang benar-benar membantu keputusan usaha — mulai dari Rp 39.000/bulan.
+      - list [ref=f1e87]:
+        - listitem [ref=f1e88]:
+          - generic [ref=f1e92]: Kasir cepat <15 detik per transaksi, cetak struk Bluetooth
+        - listitem [ref=f1e93]:
+          - generic [ref=f1e97]: Transaksi tetap jalan saat internet putus, sync otomatis
+        - listitem [ref=f1e98]:
+          - generic [ref=f1e102]: Laporan laba, produk terlaris & jam ramai tiap hari
+      - generic [ref=f1e103]:
+        - generic [ref=f1e104]:
+          - paragraph [ref=f1e105]: Starter
+          - paragraph [ref=f1e106]: Rp 39.000/bln
+          - paragraph [ref=f1e107]: 1 outlet
+        - generic [ref=f1e108]:
+          - paragraph [ref=f1e109]: Tumbuh
+          - paragraph [ref=f1e110]: Rp 89.000/bln
+          - paragraph [ref=f1e111]: s/d 3 outlet
+    - paragraph [ref=f1e112]: © 2026 LarisPOS — POS murah untuk UMKM F&B Indonesia
+  - main [ref=f1e113]:
+    - generic [ref=f1e115]:
+      - list "Langkah onboarding" [ref=f1e116]:
+        - listitem [ref=f1e117]:
+          - generic [ref=f1e118]: "1"
+          - generic [ref=f1e119]: Akun
+        - listitem [ref=f1e121]:
+          - generic [ref=f1e122]: "2"
+          - generic [ref=f1e123]: Outlet
+        - listitem [ref=f1e125]:
+          - generic [ref=f1e126]: "3"
+          - generic [ref=f1e127]: Selesai
+      - generic [ref=f1e188]:
+        - generic [ref=f1e189]: ✅
+        - heading "Outlet berhasil dibuat!" [level=1] [ref=f1e190]
+        - paragraph [ref=f1e191]: "Gerai Uji Polis siap dipakai. Berikutnya: tambahkan produk, metode bayar, dan undang kasir."
+        - button "Masuk ke dashboard →" [ref=f1e192] [cursor=pointer]

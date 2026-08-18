@@ -12,12 +12,11 @@
     "declaration": true,
     "declarationMap": true,
     "sourceMap": true,
-    "baseUrl": ".",
     "paths": {
-      "@larispos/shared": ["packages/shared/src"],
-      "@larispos/shared/*": ["packages/shared/src/*"],
-      "@larispos/db": ["packages/db/src"],
-      "@larispos/db/*": ["packages/db/src/*"]
+      "@larispos/shared": ["./packages/shared/src"],
+      "@larispos/shared/*": ["./packages/shared/src/*"],
+      "@larispos/db": ["./packages/db/src"],
+      "@larispos/db/*": ["./packages/db/src/*"]
     }
   }
 }

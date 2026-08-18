@@ -1,0 +1,78 @@
+- generic [ref=f1e75]:
+  - complementary [ref=f1e76]:
+    - generic [ref=f1e78]:
+      - generic [ref=f1e79]: L
+      - generic [ref=f1e80]: LarisPOS
+    - generic [ref=f1e81]:
+      - generic [ref=f1e82]:
+        - generic [ref=f1e83]: Trial gratis 14 hari — tanpa kartu
+        - heading "POS F&B yang bikin laris. Harga warung." [level=1] [ref=f1e85]
+        - paragraph [ref=f1e86]: Kasir cepat, offline tetap jalan, laporan laba-rugi yang benar-benar membantu keputusan usaha — mulai dari Rp 39.000/bulan.
+      - list [ref=f1e87]:
+        - listitem [ref=f1e88]:
+          - generic [ref=f1e92]: Kasir cepat <15 detik per transaksi, cetak struk Bluetooth
+        - listitem [ref=f1e93]:
+          - generic [ref=f1e97]: Transaksi tetap jalan saat internet putus, sync otomatis
+        - listitem [ref=f1e98]:
+          - generic [ref=f1e102]: Laporan laba, produk terlaris & jam ramai tiap hari
+      - generic [ref=f1e103]:
+        - generic [ref=f1e104]:
+          - paragraph [ref=f1e105]: Starter
+          - paragraph [ref=f1e106]: Rp 39.000/bln
+          - paragraph [ref=f1e107]: 1 outlet
+        - generic [ref=f1e108]:
+          - paragraph [ref=f1e109]: Tumbuh
+          - paragraph [ref=f1e110]: Rp 89.000/bln
+          - paragraph [ref=f1e111]: s/d 3 outlet
+    - paragraph [ref=f1e112]: © 2026 LarisPOS — POS murah untuk UMKM F&B Indonesia
+  - main [ref=f1e113]:
+    - generic [ref=f1e115]:
+      - list "Langkah onboarding" [ref=f1e116]:
+        - listitem [ref=f1e117]:
+          - generic [ref=f1e118]: "1"
+          - generic [ref=f1e119]: Akun
+        - listitem [ref=f1e121]:
+          - generic [ref=f1e122]: "2"
+          - generic [ref=f1e123]: Outlet
+        - listitem [ref=f1e125]:
+          - generic [ref=f1e126]: "3"
+          - generic [ref=f1e127]: Selesai
+      - generic [ref=f1e139]:
+        - generic [ref=f1e140]:
+          - heading "Buat outlet pertama" [level=1] [ref=f1e141]
+          - paragraph [ref=f1e142]: Informasi ini muncul di struk & laporan. Bisa diubah nanti.
+        - generic [ref=f1e143]:
+          - generic [ref=f1e144]:
+            - generic [ref=f1e145]: Nama outlet*
+            - textbox "Nama outlet" [ref=f1e148]:
+              - /placeholder: mis. Gerai Geprek Sari — Pasar Baru
+          - generic [ref=f1e149]:
+            - generic [ref=f1e150]: Alamat*
+            - textbox "Alamat" [ref=f1e153]:
+              - /placeholder: Jalan, kelurahan, kota
+          - generic [ref=f1e154]:
+            - generic [ref=f1e155]: Nomor telepon outlet (opsional)
+            - textbox "Nomor telepon outlet (opsional)" [ref=f1e158]:
+              - /placeholder: 021-… atau 08xx
+          - generic [ref=f1e159]:
+            - generic [ref=f1e160]:
+              - generic [ref=f1e161]: Pajak % (opsional)
+              - spinbutton "Pajak % (opsional)" [ref=f1e164]: "0"
+              - paragraph [ref=f1e165]: 0–11%
+            - generic [ref=f1e166]:
+              - generic [ref=f1e167]: Biaya layanan % (opsional)
+              - spinbutton "Biaya layanan % (opsional)" [ref=f1e170]: "0"
+              - paragraph [ref=f1e171]: 0–11%
+          - generic [ref=f1e172]:
+            - generic [ref=f1e173]: Header struk (opsional)
+            - textbox "Header struk (opsional)" [ref=f1e176]:
+              - /placeholder: Pesan singkat di atas struk
+            - paragraph [ref=f1e177]: mis. 'Terima kasih sudah belanja di sini!'
+          - generic [ref=f1e178]:
+            - generic [ref=f1e179]: Footer struk (opsional)
+            - textbox "Footer struk (opsional)" [ref=f1e182]:
+              - /placeholder: Pesan singkat di bawah struk
+            - paragraph [ref=f1e183]: mis. alamat IG / nomor yang bisa dihubungi
+          - generic [ref=f1e184]:
+            - button "Kembali" [ref=f1e185] [cursor=pointer]
+            - button "Simpan outlet" [ref=f1e186] [cursor=pointer]

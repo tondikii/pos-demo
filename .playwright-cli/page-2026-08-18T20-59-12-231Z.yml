@@ -1,0 +1,42 @@
+- generic [ref=e483]:
+  - banner [ref=e484]:
+    - generic [ref=e485]:
+      - generic [ref=e486]:
+        - link "Ke dashboard" [ref=e487] [cursor=pointer]:
+          - /url: /dashboard
+          - text: L
+        - navigation "Navigasi utama" [ref=e488]:
+          - link "Dashboard" [ref=e489] [cursor=pointer]:
+            - /url: /dashboard
+          - link "Produk" [ref=e490] [cursor=pointer]:
+            - /url: /products
+          - link "Laporan" [ref=e491] [cursor=pointer]:
+            - /url: /reports
+          - link "Outlet" [ref=e492] [cursor=pointer]:
+            - /url: /outlets
+          - link "Staff" [ref=e493] [cursor=pointer]:
+            - /url: /staff
+          - link "Pembayaran" [ref=e494] [cursor=pointer]:
+            - /url: /payment-methods
+      - generic [ref=e495]:
+        - generic [ref=e496]: Warung Uji Laporan
+        - button "Keluar" [ref=e497] [cursor=pointer]
+  - main [ref=e498]:
+    - generic [ref=e499]:
+      - generic [ref=e500]:
+        - generic [ref=e501]:
+          - heading "Laporan" [level=1] [ref=e502]
+          - paragraph [ref=e503]: Gerai Geprek Sari — Pasar Baru · 2026-08-13 s/d 2026-08-19
+        - generic [ref=e504]:
+          - button "Copy ringkasan" [active] [ref=e505] [cursor=pointer]
+          - button "Export PDF" [ref=e506] [cursor=pointer]
+      - generic [ref=e508]:
+        - generic [ref=e509]: Pilih outlet
+        - combobox "Pilih outlet" [ref=e510] [cursor=pointer]:
+          - option "Gerai Uji — Jakarta"
+          - option "Gerai Geprek Sari — Pasar Baru" [selected]
+          - option "Gerai Geprek Sari — Senayan"
+          - option "Gerai Geprek Sari — Kelapa Gading"
+        - group "Rentang tanggal" [ref=e511]:
+          - button "Hari ini" [ref=e512]
+          - button "7 hari" [pressed] [ref=e513]

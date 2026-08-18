@@ -1,18 +1,120 @@
 ---
-interface Props { title?: string; description?: string }
-const { title = 'LarisPOS — POS F&B Harga Warung', description = 'POS untuk UMKM F&B Indonesia. Mulai Rp 39rb/bulan.' } = Astro.props
+import type { FAQ } from '../lib/seo'
+
+interface Props {
+  title?: string
+  description?: string
+  ogImage?: string
+  /** JSON-LD tambahan (selain Organization bawaan), dirender via set:html. */
+  jsonLd?: Record<string, unknown>[]
+  /** FAQ section — dipakai untuk JSON-LD FAQPage agar sinkron dengan konten. */
+  faqs?: FAQ[]
+}
+
+const {
+  title = 'LarisPOS — POS F&B yang Bikin Laris, Harga Warung',
+  description = 'POS untuk UMKM F&B Indonesia: kasir cepat <15 detik, laporan laba otomatis, dan tetap jalan saat offline. Mulai Rp 39rb/bulan. Coba gratis 14 hari.',
+  ogImage = '/og-default.png',
+  jsonLd = [],
+  faqs = [],
+} = Astro.props
+
+const siteUrl = 'https://larispos.id'
+const pageUrl = `${siteUrl}/`
+
+// Organization + WebSite schema agar mesin pencari memahami identitas situs (Google Knowledge Graph).
+const organizationJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: 'LarisPOS',
+  url: siteUrl,
+  logo: `${siteUrl}/og-default.png`,
+  description: 'POS untuk UMKM F&B Indonesia: kasir cepat, offline-first, laporan laba otomatis.',
+}
+
+// FAQPage JSON-LD dibangun dari section FAQ index.astro — satu sumber kebenaran.
+const faqJsonLd = faqs.length > 0
+  ? {
+      '@context': 'https://schema.org',
+      '@type': 'FAQPage',
+      mainEntity: faqs.map((f) => ({
+        '@type': 'Question',
+        name: f.q,
+        acceptedAnswer: { '@type': 'Answer', text: f.a },
+      })),
+    }
+  : null
 ---
+
 <!doctype html>
 <html lang="id">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="generator" content={Astro.generator} />
+
+    <!-- Robots & sitemap -->
+    <meta name="robots" content="index, follow" />
+    <link rel="canonical" href={pageUrl} />
+    <link rel="sitemap" type="application/xml" href={`${siteUrl}/sitemap-index.xml`} />
+
     <title>{title}</title>
     <meta name="description" content={description} />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="LarisPOS" />
+    <meta property="og:locale" content="id_ID" />
+    <meta property="og:url" content={pageUrl} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
+    <meta property="og:image" content={`${siteUrl}${ogImage}`} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="LarisPOS — POS F&B yang Bikin Laris, Harga Warung. Mulai Rp 39rb/bulan." />
+    <meta property="og:image:type" content="image/png" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={`${siteUrl}${ogImage}`} />
+
+    <!-- Favicon (inline SVG, tanpa file tambahan) -->
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23e11d48'/%3E%3Ctext x='16' y='22' font-size='17' font-weight='bold' text-anchor='middle' fill='white' font-family='Arial'%3EL%3C/text%3E%3C/svg%3E"
+    />
+
+    <link rel="stylesheet" href="/styles/global.css" />
+
+    <!-- JSON-LD: Organization + FAQPage + JSON-LD tambahan (Product dari index.astro) -->
+    <script type="application/ld+json" set:html={JSON.stringify(organizationJsonLd)} />
+    {faqJsonLd && <script type="application/ld+json" set:html={JSON.stringify(faqJsonLd)} />}
+    {jsonLd.map((data) => <script type="application/ld+json" set:html={JSON.stringify(data)} />)}
   </head>
   <body>
+    <header class="site-header">
+      <div class="container nav">
+        <a class="nav-logo" href="/" aria-label="LarisPOS — beranda">
+          Laris<em>POS</em>
+        </a>
+        <nav class="nav-links" aria-label="Navigasi utama">
+          <a href="#fitur">Fitur</a>
+          <a href="#harga">Harga</a>
+          <a href="#faq">FAQ</a>
+        </nav>
+        <a class="nav-login" href="https://app.larispos.id/login">Login</a>
+      </div>
+    </header>
+
     <slot />
+
+    <footer class="site-footer">
+      <div class="container footer-inner">
+        <p class="footer-brand">Laris<em>POS</em></p>
+        <p class="footer-note">© {new Date().getFullYear()} LarisPOS. POS F&B harga warung untuk UMKM Indonesia.</p>
+      </div>
+    </footer>
   </body>
 </html>

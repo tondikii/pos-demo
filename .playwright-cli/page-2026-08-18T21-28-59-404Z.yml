@@ -1,0 +1,47 @@
+- generic [ref=e3]:
+  - complementary [ref=e4]:
+    - generic [ref=e6]:
+      - generic [ref=e7]: L
+      - generic [ref=e8]: LarisPOS
+    - generic [ref=e9]:
+      - generic [ref=e10]:
+        - generic [ref=e11]: Trial gratis 14 hari — tanpa kartu
+        - heading "POS F&B yang bikin laris. Harga warung." [level=1] [ref=e13]
+        - paragraph [ref=e14]: Kasir cepat, offline tetap jalan, laporan laba-rugi yang benar-benar membantu keputusan usaha — mulai dari Rp 39.000/bulan.
+      - list [ref=e15]:
+        - listitem [ref=e16]:
+          - generic [ref=e20]: Kasir cepat <15 detik per transaksi, cetak struk Bluetooth
+        - listitem [ref=e21]:
+          - generic [ref=e25]: Transaksi tetap jalan saat internet putus, sync otomatis
+        - listitem [ref=e26]:
+          - generic [ref=e30]: Laporan laba, produk terlaris & jam ramai tiap hari
+      - generic [ref=e31]:
+        - generic [ref=e32]:
+          - paragraph [ref=e33]: Starter
+          - paragraph [ref=e34]: Rp 39.000/bln
+          - paragraph [ref=e35]: 1 outlet
+        - generic [ref=e36]:
+          - paragraph [ref=e37]: Tumbuh
+          - paragraph [ref=e38]: Rp 89.000/bln
+          - paragraph [ref=e39]: s/d 3 outlet
+    - paragraph [ref=e40]: © 2026 LarisPOS — POS murah untuk UMKM F&B Indonesia
+  - main [ref=e41]:
+    - generic [ref=e43]:
+      - generic [ref=e45]:
+        - generic [ref=e46]:
+          - heading "Masuk ke dashboard" [level=1] [ref=e47]
+          - paragraph [ref=e48]:
+            - text: Belum punya akun?
+            - link "Daftar gratis 14 hari" [ref=e49] [cursor=pointer]:
+              - /url: /register
+        - generic [ref=e50]:
+          - generic [ref=e51]:
+            - generic [ref=e52]: Email*
+            - textbox "Email" [ref=e55]:
+              - /placeholder: nama@usaha.id
+          - generic [ref=e56]:
+            - generic [ref=e57]: Password*
+            - textbox "Password" [ref=e60]:
+              - /placeholder: Minimal 8 karakter
+          - button "Masuk" [ref=e61] [cursor=pointer]
+      - paragraph [ref=e62]: Fase 2 — mode demo. Data tersimpan lokal di browser Anda.

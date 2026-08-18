@@ -1,6 +1,10 @@
-import { Text, View } from 'react-native'
+import { Redirect } from 'expo-router'
+
+import { useSession } from '../src/auth/session'
+
 export default function Index() {
-  return (
-    <View><Text>LarisPOS Kasir — Fase 1 skeleton</Text></View>
-  )
+  const { session, isLoading } = useSession()
+
+  if (isLoading) return null
+  return <Redirect href={session ? '/(app)/pos' : '/(auth)/login'} />
 }

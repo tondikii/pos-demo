@@ -1,0 +1,33 @@
+- generic [ref=f2e3]:
+  - banner [ref=f2e4]:
+    - generic [ref=f2e5]:
+      - generic [ref=f2e6]:
+        - link "Ke dashboard" [ref=f2e7] [cursor=pointer]:
+          - /url: /dashboard
+          - text: L
+        - navigation "Navigasi utama" [ref=f2e8]:
+          - link "Dashboard" [ref=f2e9] [cursor=pointer]:
+            - /url: /dashboard
+          - link "Produk" [ref=f2e10] [cursor=pointer]:
+            - /url: /products
+          - link "Laporan" [ref=f2e11] [cursor=pointer]:
+            - /url: /reports
+          - link "Shifts" [ref=f2e12] [cursor=pointer]:
+            - /url: /shifts
+          - link "Outlet" [ref=f2e13] [cursor=pointer]:
+            - /url: /outlets
+          - link "Staff" [ref=f2e14] [cursor=pointer]:
+            - /url: /staff
+          - link "Pembayaran" [ref=f2e15] [cursor=pointer]:
+            - /url: /payment-methods
+          - link "Langganan" [ref=f2e16] [cursor=pointer]:
+            - /url: /subscription
+      - generic [ref=f2e17]:
+        - generic [ref=f2e18]: Gerai Geprek Sari
+        - button "Keluar" [ref=f2e19] [cursor=pointer]
+  - main [ref=f2e20]:
+    - generic [ref=f2e22]:
+      - generic [ref=f2e23]:
+        - heading "Langganan" [level=1] [ref=f2e24]
+        - paragraph [ref=f2e25]: Gerai Geprek Sari · Gerai Geprek Sari — Pasar Baru
+      - button "Mulai ulang trial (demo)" [ref=f2e26] [cursor=pointer]

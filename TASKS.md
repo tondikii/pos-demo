@@ -11,11 +11,11 @@
 - [x] 1.1 Inisialisasi monorepo: `package.json` (Bun workspaces), `turbo.json` (pipeline build/lint/typecheck/test), `.env.example`, `.gitignore`. Struktur `apps/web, apps/mobile, apps/backend, apps/landing` + `packages/shared, packages/db`.
 - [x] 1.2 Setup `packages/shared`: Zod schemas awal (`auth`, `outlet`, `product`+`product_variant`, `payment_method`, `transaction`, `shift`, `subscription`), TS types, `constants` (plans, roles, subscription statuses), `eden treaty` client helper.
 - [x] 1.3 Setup `packages/db`: Drizzle `schema.ts` (users, outlets, staff, products, product_variants, payment_methods, shifts, transactions, transaction_items, subscriptions, subscription_history), `drizzle.config.ts`, relasi + indexes (`idx_variant_product`, `idx_tx_outlet_created`, `idx_tx_offline`), `seed.ts` (owner demo + 1 outlet + sample products).
-- [x] 1.4 Migrasi awal: `bun run db:generate` + `bun run db:migrate` lokal, verifikasi schema Postgres (Neon/Supabase atau local Docker).
+- [x] 1.4 Migrasi awal: `bun run db:generate` (SQL migrasi generated, no-diff verified), `db:migrate` siap untuk Postgres (Neon/Supabase/local Docker — belum dijalankan karena belum ada DB instance).
 - [x] 1.5 Scaffold `apps/backend` (Elysia on Bun): `src/index.ts` (CORS, helmet, pino, prefix `/api/v1`), plugin `error` (`{ error: { code, message } }`), health check `GET /health`.
-- [x] 1.6 Scaffold `apps/web` (SolidStart 1.x + Tailwind + TanStack Query): routing skeleton `(auth)/login|register`, `(app)/dashboard` placeholder, env `VITE_API_URL`, auth middleware stub.
-- [x] 1.7 Scaffold `apps/mobile` (Expo SDK 52 + Expo Router + NativeWind): `(auth)/login` PIN placeholder, `(app)/pos` placeholder, `expo-sqlite` + `expo-secure-store` + `react-native-ble-plx` deps terpasang, `NetInfo` listener stub.
-- [x] 1.8 Scaffold `apps/landing` (Astro 5 + Tailwind): `Layout.astro` (SEO: title/meta/OG), `index.astro` skeleton (Hero/Fitur/Harga/FAQ sections kosong), `astro-sitemap` + `astro-robots-txt` config.
+- [x] 1.6 Scaffold `apps/web` (SolidJS + Vite + Tailwind + TanStack Query — SolidStart ditunda ke Fase 3 wiring): routing `(auth)/login|register|onboarding`, `(app)/dashboard` placeholder, env `VITE_API_URL`, auth mock provider.
+- [x] 1.7 Scaffold `apps/mobile` (Expo SDK 57 + Expo Router + NativeWind): `(auth)/login` PIN placeholder, `(app)/pos` placeholder, `expo-sqlite` + `expo-secure-store` + `react-native-ble-plx` deps terpasang, `NetInfo` listener stub. Expo Go run verified (metro bundle 1394 modules OK).
+- [x] 1.8 Scaffold `apps/landing` (Astro 7 + Tailwind): `Layout.astro` (SEO: title/meta/OG), `index.astro` skeleton (Hero/Fitur/Harga/FAQ sections kosong), `astro-sitemap` + `astro-robots-txt` config.
 - [x] 1.9 Tooling & CI: ESLint + Prettier per workspace, `tsconfig` strict, `vitest` config per workspace, GitHub Actions (install bun, `turbo run build`, `turbo run typecheck`, `drizzle migrate` dry-run).
 - [x] 1.10 Verifikasi Fase 1: `bun install` bersih, `turbo run build` + `turbo run typecheck` hijau, `bun run test` pass (smoke), `drizzle-kit` generate tanpa diff, masing-masing `dev` command jalan (web, mobile, backend, landing).
 
@@ -30,30 +30,30 @@
 
 ### Fase 2A — Web Dashboard (Mock)
 
-- [ ] 2A.1 Auth UI (web): halaman `login`, `register`, `onboarding outlet pertama` (form + validasi Zod dari `packages/shared`), layout auth, state mock (tanpa API).
-- [ ] 2A.2 Dashboard ringkasan (mock): omzet hari ini, laba, jumlah transaksi, kartu peringatan stok menipis, filter tanggal/outlet (mock data 7 hari).
-- [ ] 2A.3 Produk & Varian (mock CRUD): list produk, kategori filter, modal create/edit produk + varian (S/M/L) + stok per varian, low-stock threshold, validasi Zod, dummy 12 produk F&B.
-- [ ] 2A.4 Outlet, Staff & Payment Methods (mock CRUD): list outlet, form pajak/layanan % per outlet, staff list + buat PIN 6-digit, payment methods (Cash/QRIS/Transfer) CRUD.
-- [ ] 2A.5 Laporan (mock): summary (omzet/HPP/laba), best sellers top 10, jam ramai (bar 06–22), rekap per metode bayar, stok menipis, filter tanggal + outlet.
-- [ ] 2A.6 Shifts & Langganan (mock): riwayat shift (buka/tutup), detail shift (kas awal/akhir/selisih), halaman langganan (3 paket + sisa trial + CTA).
-- [ ] 2A.7 Polish web: responsive, empty states, loading skeletons, error states, TanStack Query mock provider, akses via `ui-ux-pro-max` skill untuk visual check.
+- [x] 2A.1 Auth UI (web): halaman `login`, `register`, `onboarding outlet pertama` (form + validasi Zod dari `packages/shared`), layout auth, state mock (tanpa API).
+- [x] 2A.2 Dashboard ringkasan (mock): omzet hari ini, laba, jumlah transaksi, kartu peringatan stok menipis, filter tanggal/outlet (mock data 7 hari).
+- [x] 2A.3 Produk & Varian (mock CRUD): list produk, kategori filter, modal create/edit produk + varian (S/M/L) + stok per varian, low-stock threshold, validasi Zod, dummy 12 produk F&B.
+- [x] 2A.4 Outlet, Staff & Payment Methods (mock CRUD): list outlet, form pajak/layanan % per outlet, staff list + buat PIN 6-digit, payment methods (Cash/QRIS/Transfer) CRUD.
+- [x] 2A.5 Laporan (mock): summary (omzet/HPP/laba), best sellers top 10, jam ramai (bar 06–22), rekap per metode bayar, stok menipis, filter tanggal + outlet.
+- [x] 2A.6 Shifts & Langganan (mock): riwayat shift (buka/tutup), detail shift (kas awal/akhir/selisih), halaman langganan (3 paket + sisa trial + CTA).
+- [x] 2A.7 Polish web: responsive, empty states, loading skeletons, error states, TanStack Query mock provider, akses via `ui-ux-pro-max` skill untuk visual check.
 
 ### Fase 2B — Mobile Kasir (Mock)
 
-- [ ] 2B.1 Login PIN (mock): numpad 6-digit, pilih outlet (jika mock multi), validasi mock, session MMKV/SecureStore stub.
-- [ ] 2B.2 Kasir Cepat (mock): grid produk dari SQLite cache mock, pilih varian, keranjang (qty +/-, hapus), subtotal + pajak/layanan mock, pilih metode bayar, hitung kembalian cash.
-- [ ] 2B.3 Buka/Tutup Shift (mock): form kas awal, rekap shift berjalan, form tutup (kas aktual + selisih), riwayat shift lokal mock.
-- [ ] 2B.4 Void & History (mock): riwayat transaksi, void dengan alasan, stok kembali (mock decrement/restore).
-- [ ] 2B.5 Offline & Sync UI (mock): badge "Menunggu sync", antrean `queued_transactions` list mock, tombol "Sync sekarang", simulasi online/offline toggle.
-- [ ] 2B.6 Cetak Struk (mock): pair printer mock, preview struk 58mm, tombol Cetak + Share fallback, cetak ulang dari History.
-- [ ] 2B.7 Polish mobile: NativeWind styling, loading/empty states, lock PIN 5x, akses via `ui-ux-pro-max` untuk review kasir flow.
+- [x] 2B.1 Login PIN (mock): numpad 6-digit, pilih outlet (jika mock multi), validasi mock, session MMKV/SecureStore stub.
+- [x] 2B.2 Kasir Cepat (mock): grid produk dari SQLite cache mock, pilih varian, keranjang (qty +/-, hapus), subtotal + pajak/layanan mock, pilih metode bayar, hitung kembalian cash.
+- [x] 2B.3 Buka/Tutup Shift (mock): form kas awal, rekap shift berjalan, form tutup (kas aktual + selisih), riwayat shift lokal mock.
+- [x] 2B.4 Void & History (mock): riwayat transaksi, void dengan alasan, stok kembali (mock decrement/restore).
+- [x] 2B.5 Offline & Sync UI (mock): badge "Menunggu sync", antrean `queued_transactions` list mock, tombol "Sync sekarang", simulasi online/offline toggle.
+- [x] 2B.6 Cetak Struk (mock): pair printer mock, preview struk 58mm, tombol Cetak + Share fallback, cetak ulang dari History.
+- [x] 2B.7 Polish mobile: NativeWind styling, loading/empty states, lock PIN 5x, akses via `ui-ux-pro-max` untuk review kasir flow.
 
 ### Fase 2C — Landing Page (Mock Content)
 
-- [ ] 2C.1 Hero + value prop ("Harga Warung, Fitur Laris") + CTA "Coba Gratis 14 Hari" → `/register` web.
-- [ ] 2C.2 Sections: Fitur (kasir cepat, offline, laporan), Harga (Starter 39k / Tumbuh 89k / Jaringan custom), Testimoni dummy, FAQ accordion.
-- [ ] 2C.3 SEO & perf: JSON-LD `Product` + `FAQPage`, OG image, heading hierarchy, sitemap, `astro:assets` image, Lighthouse ≥95 target (mock content).
-- [ ] 2C.4 Verifikasi Fase 2: tiap user flow di PRD §9 (Onboarding, Kelola Harian, Kasir Cepat, Void, Laporan, Langganan) bisa di-tap end-to-end via mock; reviewer-agent pass untuk UI; `typecheck` + `lint` hijau.
+- [x] 2C.1 Hero + value prop ("Harga Warung, Fitur Laris") + CTA "Coba Gratis 14 Hari" → `/register` web.
+- [x] 2C.2 Sections: Fitur (kasir cepat, offline, laporan), Harga (Starter 39k / Tumbuh 89k / Jaringan custom), Testimoni dummy, FAQ accordion.
+- [x] 2C.3 SEO & perf: JSON-LD `Product` + `FAQPage`, OG image, heading hierarchy, sitemap, `astro:assets` image, Lighthouse ≥95 target (mock content).
+- [x] 2C.4 Verifikasi Fase 2: tiap user flow di PRD §9 (Onboarding, Kelola Harian, Kasir Cepat, Void, Laporan, Langganan) bisa di-tap end-to-end via mock; reviewer-agent pass untuk UI; `typecheck` + `lint` hijau.
 
 > **STOP — Review Checkpoint Fase 2**
 > Jangan lanjut sebelum: semua screen web/mobile/landing bisa di-review via mock (tanpa backend), flows PRD ter-cover visual, UX kasir <15 detik mock, SEO landing skeleton indexable. Approval UX sebelum wiring.

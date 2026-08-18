@@ -1,0 +1,50 @@
+- generic [ref=e135]:
+  - complementary [ref=e136]:
+    - generic [ref=e138]:
+      - generic [ref=e139]: L
+      - generic [ref=e140]: LarisPOS
+    - generic [ref=e141]:
+      - generic [ref=e142]:
+        - generic [ref=e143]: Trial gratis 14 hari — tanpa kartu
+        - heading "POS F&B yang bikin laris. Harga warung." [level=1] [ref=e145]
+        - paragraph [ref=e146]: Kasir cepat, offline tetap jalan, laporan laba-rugi yang benar-benar membantu keputusan usaha — mulai dari Rp 39.000/bulan.
+      - list [ref=e147]:
+        - listitem [ref=e148]:
+          - generic [ref=e152]: Kasir cepat <15 detik per transaksi, cetak struk Bluetooth
+        - listitem [ref=e153]:
+          - generic [ref=e157]: Transaksi tetap jalan saat internet putus, sync otomatis
+        - listitem [ref=e158]:
+          - generic [ref=e162]: Laporan laba, produk terlaris & jam ramai tiap hari
+      - generic [ref=e163]:
+        - generic [ref=e164]:
+          - paragraph [ref=e165]: Starter
+          - paragraph [ref=e166]: Rp 39.000/bln
+          - paragraph [ref=e167]: 1 outlet
+        - generic [ref=e168]:
+          - paragraph [ref=e169]: Tumbuh
+          - paragraph [ref=e170]: Rp 89.000/bln
+          - paragraph [ref=e171]: s/d 3 outlet
+    - paragraph [ref=e172]: © 2026 LarisPOS — POS murah untuk UMKM F&B Indonesia
+  - main [ref=e173]:
+    - generic [ref=e175]:
+      - list "Langkah onboarding" [ref=e176]:
+        - listitem [ref=e177]:
+          - generic [ref=e178]: "1"
+          - generic [ref=e179]: Akun
+        - listitem [ref=e181]:
+          - generic [ref=e182]: "2"
+          - generic [ref=e183]: Outlet
+        - listitem [ref=e185]:
+          - generic [ref=e186]: "3"
+          - generic [ref=e187]: Selesai
+      - generic [ref=e190]:
+        - heading "Halo, Warung Uji Laporan 👋" [level=1] [ref=e191]
+        - paragraph [ref=e192]:
+          - text: Akun Anda siap. Trial gratis
+          - generic [ref=e193]: 14 hari
+          - text: aktif otomatis (paket Starter,
+          - generic [ref=e194]: 1 outlet
+          - text: ) hingga 2 September 2026. Sekarang buat outlet pertama Anda.
+        - generic [ref=e195]:
+          - button "Keluar" [ref=e196] [cursor=pointer]
+          - button "Lanjut — buat outlet" [ref=e197] [cursor=pointer]

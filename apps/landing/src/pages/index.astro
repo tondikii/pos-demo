@@ -1,9 +1,246 @@
 ---
 import Layout from '../layouts/Layout.astro'
+import { PLANS } from '../lib/pricing'
+import { FAQS, productJsonLd } from '../lib/seo'
+
+/** Format angka ke rupiah penuh: 39000 → "Rp 39.000" */
+const formatIDR = (n: number) => 'Rp ' + n.toLocaleString('id-ID')
+
+/** Format angka ke ribuan: 39000 → "Rp 39rb", 32500 → "Rp 32,5rb" */
+const ribuan = (n: number) =>
+  'Rp ' + (n / 1000).toLocaleString('id-ID', { maximumFractionDigits: 1 }) + 'rb'
+
+const features = [
+  {
+    icon: '⚡',
+    title: 'Kasir Cepat',
+    desc: 'Satu transaksi selesai di bawah 15 detik — tap produk, bayar, struk keluar. Pelanggan tidak antre lama di jam ramai.',
+  },
+  {
+    icon: '📴',
+    title: 'Offline-First',
+    desc: 'Internet mati? Tetap jualan. Transaksi tersimpan di perangkat dan otomatis tersinkron ke cloud begitu internet kembali.',
+  },
+  {
+    icon: '📈',
+    title: 'Laporan Laba Otomatis',
+    desc: 'Omzet dikurangi HPP dihitung otomatis setiap hari. Tahu untung-rugi usaha tanpa buka-buka Excel.',
+  },
+  {
+    icon: '📦',
+    title: 'Stok per Varian',
+    desc: 'Pantau stok per ukuran, level, dan varian topping. Dapat peringatan otomatis saat stok mau habis.',
+  },
+  {
+    icon: '🏪',
+    title: 'Multi-Outlet',
+    desc: 'Kelola hingga 3 cabang (paket Tumbuh) dalam satu akun — laporan per cabang maupun gabungan dalam satu tampilan.',
+  },
+  {
+    icon: '🖨️',
+    title: 'Cetak Struk Bluetooth',
+    desc: 'Cetak struk thermal 58/80mm lewat printer Bluetooth atau USB. Tanpa ribet kabel dan instalasi driver.',
+  },
+]
+
+const plans = [
+  {
+    ...PLANS.starter,
+    tagline: 'Untuk warung & usaha 1 outlet',
+    features: [
+      '1 outlet',
+      '2 kasir aktif',
+      'Kasir cepat <15 detik',
+      'Offline-first',
+      'Laporan laba otomatis',
+      'Stok per varian',
+      'Cetak struk Bluetooth',
+    ],
+    featured: false,
+  },
+  {
+    ...PLANS.tumbuh,
+    tagline: 'Untuk usaha yang mulai buka cabang',
+    features: [
+      '3 outlet',
+      '5 kasir per outlet',
+      'Laporan gabungan semua cabang',
+      'Semua fitur Starter',
+      'Prioritas dukungan',
+    ],
+    featured: true,
+  },
+  {
+    ...PLANS.jaringan,
+    tagline: 'Untuk jaringan & franchise',
+    features: [
+      'Hingga 99 outlet',
+      'Outlet tambahan Rp 25rb/outlet',
+      'Laporan konsolidasi',
+      'Onboarding & training khusus',
+      'Penyesuaian harga (custom)',
+    ],
+    featured: false,
+  },
+]
+
+const faqs = FAQS
+
+const testimonials = [
+  {
+    quote:
+      'Dulu kasir sering antre dan stok sering telat dicatat. Sekarang satu transaksi nggak sampai 15 detik, laporan laba tinggal lihat di HP.',
+    name: 'Sari Wulandari',
+    role: 'Pemilik Warung Sari — Cilacap',
+  },
+  {
+    quote:
+      'Internet sempat mati pas jam ramai, tetap bisa jualan. Pas internet balik, datanya langsung nyambung semua. Ini penyelamat.',
+    name: 'Andi Pratama',
+    role: 'Owner Kedai Kopi Senja — Bandung',
+  },
+  {
+    quote:
+      'Dari gerobak, modal kecil, jadi nggak mau bayar mahal. Rp 39rb sebulan dapat fitur yang dulu cuma ada di POS mahal.',
+    name: 'Budi Santoso',
+    role: 'Gerobak Seblak Gacor — Jakarta',
+  },
+]
 ---
-<Layout>
+
+<Layout jsonLd={[productJsonLd()]} faqs={faqs}>
   <main>
-    <h1>LarisPOS — Fase 1 skeleton</h1>
-    <p>POS F&B harga warung. Segera hadir.</p>
+    <!-- ============ HERO (2C.1) — static-first, CSS only ============ -->
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="container hero-inner">
+        <p class="hero-badge">Mulai Rp {(PLANS.starter.monthly / 1000).toLocaleString('id-ID')}rb/bulan</p>
+        <h1 id="hero-title" class="hero-title">
+          POS F&B yang Bikin <span class="accent">Laris</span>, Harga Warung
+        </h1>
+        <p class="hero-sub">
+          Kasir cepat di bawah 15 detik, laporan laba otomatis, dan tetap jalan saat
+          internet offline. Cukup buka aplikasi, langsung jualan.
+        </p>
+        <div class="hero-ctas">
+          <!-- Wiring ke web app (app.larispos.id) dilakukan saat domain web tersedia -->
+          <a class="btn btn-primary" href="/register">Coba Gratis 14 Hari</a>
+          <a class="btn btn-secondary" href="#fitur">Lihat Fitur</a>
+        </div>
+        <ul class="hero-bullets">
+          <li>Kasir cepat &lt;15 detik</li>
+          <li>Laporan laba otomatis</li>
+          <li>Tetap jalan saat offline</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ============ FITUR (2C.2) ============ -->
+    <section id="fitur" class="section" aria-labelledby="fitur-title">
+      <div class="container">
+        <div class="section-head">
+          <h2 id="fitur-title">Fitur yang Bikin Jualan Makin Gampang</h2>
+          <p class="section-lead">
+            Enam fitur inti untuk UMKM F&B — dari kasir sampai laporan, semua dalam satu aplikasi.
+          </p>
+        </div>
+        <div class="feature-grid">
+          {features.map((f) => (
+            <article class="feature-card">
+              <span class="feature-icon" aria-hidden="true">{f.icon}</span>
+              <h3>{f.title}</h3>
+              <p>{f.desc}</p>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ HARGA (2C.2) ============ -->
+    <section id="harga" class="section" aria-labelledby="harga-title">
+      <div class="container">
+        <div class="section-head">
+          <h2 id="harga-title">Harga yang Ramah di Kantong</h2>
+          <p class="section-lead">
+            Mulai Rp 39rb/bulan, bayar tahunan hemat 17%. Semua paket bisa dicoba gratis 14 hari — tanpa kartu kredit.
+          </p>
+        </div>
+        <div class="pricing-grid">
+          {plans.map((p) => (
+            <article class={`pricing-card${p.featured ? ' featured' : ''}`}>
+              {p.featured && <span class="pricing-badge">PALING LARIS</span>}
+              <h3 class="pricing-name">{p.label}</h3>
+              <p class="pricing-tagline">{p.tagline}</p>
+              <p class="pricing-price">
+                {ribuan(p.monthly)}<small>/bulan</small>
+              </p>
+              <p class="pricing-yearly">
+                {p.yearly
+                  ? `Bayar tahunan ${ribuan(p.yearly)} (≈ ${ribuan(p.yearly / 12)}/bln) — hemat ${Math.round((1 - p.yearly / 12 / p.monthly) * 100)}%`
+                  : 'Penagihan custom — konsultasi gratis'}
+              </p>
+              <ul class="pricing-features">
+                {p.features.map((f) => <li>{f}</li>)}
+              </ul>
+              <a class="btn btn-primary" href="/register">Coba Gratis 14 Hari</a>
+            </article>
+          ))}
+        </div>
+        <p class="section-note">
+          Harga belum termasuk pajak. Upgrade, downgrade, atau berhenti kapan saja — tanpa kontrak.
+        </p>
+      </div>
+    </section>
+
+    <!-- ============ TESTIMONI (2C.2, dummy) ============ -->
+    <section id="testimoni" class="section" aria-labelledby="testimoni-title">
+      <div class="container">
+        <div class="section-head">
+          <h2 id="testimoni-title">Kata Mereka yang Sudah Jualan</h2>
+          <p class="section-lead">Cerita dari warung, kedai kopi, dan gerobak yang pindah ke LarisPOS.</p>
+        </div>
+        <div class="testimonial-grid">
+          {testimonials.map((t) => (
+            <figure class="testimonial-card">
+              <blockquote class="testimonial-quote">{t.quote}</blockquote>
+              <figcaption>
+                <h3 class="testimonial-name">{t.name}</h3>
+                <p class="testimonial-role">{t.role}</p>
+              </figcaption>
+            </figure>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ FAQ (2C.2) — accordion native HTML, tanpa JS ============ -->
+    <section id="faq" class="section" aria-labelledby="faq-title">
+      <div class="container">
+        <div class="section-head">
+          <h2 id="faq-title">Pertanyaan yang Sering Ditanya</h2>
+          <p class="section-lead">Masih ragu? Ini jawaban untuk pertanyaan yang paling sering kami terima.</p>
+        </div>
+        <div class="faq-list">
+          {faqs.map((f) => (
+            <details class="faq-item" name="faq">
+              <summary>{f.q}</summary>
+              <p class="faq-answer">{f.a}</p>
+            </details>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ CTA BANNER (2C.2) ============ -->
+    <section class="section" aria-labelledby="cta-title">
+      <div class="container">
+        <div class="cta-banner">
+          <h2 id="cta-title">Mulai Jualan Hari Ini</h2>
+          <p class="cta-sub">
+            Gratis 14 hari, tanpa kartu kredit, tanpa kontrak. Siap berjualan dalam 15 menit.
+          </p>
+          <a class="btn btn-primary" href="/register">Coba Gratis 14 Hari</a>
+        </div>
+      </div>
+    </section>
   </main>
 </Layout>

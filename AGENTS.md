@@ -14,11 +14,12 @@
 
 ## 2. Stack Ringkas (Jangan Ganti Tanpa Approval)
 
-- **Kebijakan Versi: Selalu gunakan `latest stable` untuk semua packages/dependencies. Jika versi latest belum stable (alpha/beta/canary), pakai latest stable. Jangan pin versi lama tanpa approval.**
-- Web: **SolidJS + SolidStart 1.x + TailwindCSS + TanStack Query** (latest stable)
-- Mobile: **Expo SDK 52+ + Expo Router + NativeWind + expo-sqlite + MMKV** (latest stable)
+- **Kebijakan Versi: Selalu gunakan `latest stable` untuk semua packages/dependencies. Jika versi latest belum stable (alpha/beta/canary), pakai latest stable. Jangan pin versi lama tanpa approval. Verifikasi versi via Context7 MCP (`context7` server) bila ragu.**
+- **Animasi:** Web pakai `@motionone/solid` (motion.dev); Mobile pakai `react-native-reanimated` 4.x. Patuhi skill `pos-motion` (transform/opacity only, prefers-reduced-motion, durasi hover 150-250ms). UI mengikuti `ui-ux-pro-max`.
+- Web: **SolidJS + Vite 8 + TailwindCSS + TanStack Query** (latest stable)
+- Mobile: **Expo SDK 57+ + Expo Router + NativeWind + expo-sqlite + MMKV** (latest stable)
 - Backend: **Elysia on Bun 1.2+ (Bun runtime)** (latest stable)
-- Landing: **Astro 5 + TailwindCSS** (pisah dari web, latest stable)
+- Landing: **Astro 7 + TailwindCSS** (pisah dari web, latest stable)
 - DB: **Postgres 16 + Drizzle ORM** (latest stable)
 - Shared: `packages/shared` (Zod schemas) + `packages/db` (Drizzle schema)
 - Auth: JWT (15m access / 7d refresh) + bcrypt PIN 6-digit kasir

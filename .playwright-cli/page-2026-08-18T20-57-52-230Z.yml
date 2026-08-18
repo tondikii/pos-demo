@@ -1,0 +1,36 @@
+- generic [ref=e253]:
+  - banner [ref=e254]:
+    - generic [ref=e255]:
+      - generic [ref=e256]:
+        - generic [ref=e257]: L
+        - navigation "Navigasi utama" [ref=e258]:
+          - link "Dashboard" [ref=e259] [cursor=pointer]:
+            - /url: /dashboard
+          - link "Produk" [ref=e260] [cursor=pointer]:
+            - /url: /products
+          - link "Laporan" [ref=e261] [cursor=pointer]:
+            - /url: /reports
+          - link "Outlet" [ref=e262] [cursor=pointer]:
+            - /url: /outlets
+          - link "Staff" [ref=e263] [cursor=pointer]:
+            - /url: /staff
+          - link "Pembayaran" [ref=e264] [cursor=pointer]:
+            - /url: /payment-methods
+      - generic [ref=e265]:
+        - generic [ref=e266]: Warung Uji Laporan
+        - button "Keluar" [ref=e267] [cursor=pointer]
+  - main [ref=e268]:
+    - generic [ref=e270]:
+      - generic [ref=e271]:
+        - heading "Halo, Warung Uji Laporan" [level=1] [ref=e272]
+        - paragraph [ref=e273]: Ringkasan usaha Anda — 7 hari terakhir
+      - generic [ref=e274]:
+        - generic [ref=e275]: Pilih outlet
+        - combobox "Pilih outlet" [ref=e276] [cursor=pointer]:
+          - option "Gerai Uji — Jakarta" [selected]
+          - option "Gerai Geprek Sari — Pasar Baru"
+          - option "Gerai Geprek Sari — Senayan"
+          - option "Gerai Geprek Sari — Kelapa Gading"
+        - group "Rentang tanggal" [ref=e277]:
+          - button "Hari ini" [ref=e278]
+          - button "7 hari" [pressed] [ref=e279]

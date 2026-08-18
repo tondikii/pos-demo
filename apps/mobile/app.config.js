@@ -5,5 +5,6 @@ export default {
     scheme: 'larispos',
     platforms: ['android'],
     android: { package: 'id.larispos.kasir' },
+    plugins: ['expo-router', 'expo-secure-store', 'expo-sqlite'],
   },
 }
