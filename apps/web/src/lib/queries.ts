@@ -545,3 +545,42 @@ export type {
 export function todayKey(): string {
   return toDateKey(new Date())
 }
+
+/* ------------------------------------------------------------------ */
+/* Kategori produk (adjustable)                                        */
+/* ------------------------------------------------------------------ */
+
+import { categoriesApi } from './settings-mocks'
+
+export function useCategories(outletId: () => string | null) {
+  return createQuery(() => ({
+    queryKey: ['categories', outletId() ?? 'all'],
+    queryFn: () => categoriesApi.list(outletId()),
+  }))
+}
+
+export function useCreateCategory() {
+  const qc = useQueryClient()
+  return createMutation(() => ({
+    mutationFn: ({ name, outletId }: { name: string; outletId: string }) =>
+      categoriesApi.create(name, outletId),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['categories'] }),
+  }))
+}
+
+export function useUpdateCategory() {
+  const qc = useQueryClient()
+  return createMutation(() => ({
+    mutationFn: ({ id, name }: { id: string; name: string }) =>
+      categoriesApi.update(id, name),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['categories'] }),
+  }))
+}
+
+export function useDeleteCategory() {
+  const qc = useQueryClient()
+  return createMutation(() => ({
+    mutationFn: (id: string) => categoriesApi.remove(id),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['categories'] }),
+  }))
+}

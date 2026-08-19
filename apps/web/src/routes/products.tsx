@@ -1,7 +1,6 @@
 import { createMemo, createSignal, For, Show } from 'solid-js'
 import { Navigate } from '@solidjs/router'
 import { Motion } from '@motionone/solid'
-import { PRODUCT_CATEGORIES } from '@larispos/shared'
 import type { CreateProductInput } from '@larispos/shared'
 import { SidebarLayout } from '../components/app/SidebarLayout'
 import { Button } from '../components/ui/button'
@@ -17,6 +16,7 @@ import { DEFAULT_OUTLET_ID, MOCK_OUTLETS, variantStockStatus } from '../lib/mock
 import type { MockProduct, MockProductVariant } from '../lib/mocks'
 import {
   useProducts,
+  useCategories,
   useCreateProduct,
   useUpdateProduct,
   useDeleteProduct,
@@ -115,6 +115,7 @@ export default function ProductsPage() {
     category() !== 'Semua' || search().trim() !== ''
 
   const productsQuery = useProducts(activeFilter)
+  const categoriesQuery = useCategories(() => outletId())
   const createMutation = useCreateProduct()
   const updateMutation = useUpdateProduct()
   const deleteMutation = useDeleteProduct()
@@ -267,7 +268,7 @@ export default function ProductsPage() {
                 >
                   Semua
                 </button>
-                <For each={PRODUCT_CATEGORIES}>
+                <For each={categoriesQuery.data ?? []}>
                   {(c) => (
                     <button
                       type="button"

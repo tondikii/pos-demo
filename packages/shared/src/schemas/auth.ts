@@ -4,7 +4,8 @@ export const idPhoneRegex = /^(\+62|62|0)8[1-9][0-9]{6,11}$/
 
 export const registerSchema = z.object({
   email: z.string().email(),
-  phone: z.string().regex(idPhoneRegex, 'Format WA Indonesia tidak valid'),
+  /** WA opsional (PRD Flow 1 — daftar 1 form ringkas, WA bisa dilengkapi nanti). */
+  phone: z.string().regex(idPhoneRegex, 'Format WA Indonesia tidak valid').optional(),
   password: z.string().min(8),
   businessName: z.string().min(2).max(100),
 })

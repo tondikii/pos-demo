@@ -12,6 +12,7 @@ import PaymentMethodsPage from './routes/payment-methods'
 import ReportsPage from './routes/reports'
 import ShiftsPage from './routes/shifts'
 import SubscriptionPage from './routes/subscription'
+import CategoriesPage from './routes/categories'
 
 export default function App() {
   return (
@@ -30,6 +31,7 @@ export default function App() {
         <Route path="/reports" component={ReportsPage} />
         <Route path="/shifts" component={ShiftsPage} />
         <Route path="/subscription" component={SubscriptionPage} />
+        <Route path="/categories" component={CategoriesPage} />
         <Route path="*" component={LoginPage} />
       </Router>
     </MockProviders>

@@ -1,10 +1,11 @@
 import { createEffect, createMemo, createSignal, For, Show } from 'solid-js'
-import { PRODUCT_CATEGORIES, DEFAULT_LOW_STOCK_THRESHOLD, createProductSchema } from '@larispos/shared'
+import { DEFAULT_LOW_STOCK_THRESHOLD, createProductSchema } from '@larispos/shared'
 import type { CreateProductInput } from '@larispos/shared'
 import { Button } from '../components/ui/button'
 import { Input } from '../components/ui/input'
 import { CurrencyInput } from '../components/ui/currency-input'
 import { Field } from '../components/ui/field'
+import { useCategories } from '../lib/queries'
 import { parseWithZod, type FieldErrors } from '../lib/validation'
 import type { MockProduct } from '../lib/mocks'
 
@@ -95,6 +96,14 @@ export function ProductFormModal(props: ProductFormModalProps) {
   const [values, setValues] = createSignal<ProductFormValues>(emptyFormValues())
   const [errors, setErrors] = createSignal<FieldErrors>({})
   const [touched, setTouched] = createSignal<Record<string, boolean>>({})
+
+  // Kategori dari state adjustable (bukan constant) — fallback ke default.
+  const categoriesQuery = useCategories(() => props.outletId)
+  const categoryOptions = createMemo(() => {
+    const list = categoriesQuery.data ?? []
+    const current = values().category
+    return current && !list.includes(current) ? [...list, current] : list
+  })
 
   // Reset form setiap kali modal dibuka (create ataupun edit).
   createEffect(() => {
@@ -231,7 +240,7 @@ export function ProductFormModal(props: ProductFormModalProps) {
                   'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/30',
                 ].join(' ')}
               >
-                <For each={PRODUCT_CATEGORIES}>
+                <For each={categoryOptions()}>
                   {(c) => <option value={c}>{c}</option>}
                 </For>
               </select>

@@ -8,6 +8,7 @@ export const createOutletSchema = z.object({
   servicePercent: z.number().min(0).max(11).default(0),
   receiptHeader: z.string().max(200).optional(),
   receiptFooter: z.string().max(300).optional(),
+  isActive: z.boolean().default(true),
 })
 
 export const updateOutletSchema = createOutletSchema.partial()

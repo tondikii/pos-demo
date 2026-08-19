@@ -1,6 +1,7 @@
 import { MOCK_OUTLETS, MOCK_OUTLET_IDS } from './mocks'
 import {
   PLANS,
+  PRODUCT_CATEGORIES,
   createOutletSchema,
   createStaffSchema,
   resetStaffPinSchema,
@@ -697,5 +698,104 @@ export const settingsMockApi = {
   async resetSettings(): Promise<void> {
     await sleep(250)
     resetMockSettings()
+  },
+}
+
+/* ------------------------------------------------------------------ */
+/* Kategori produk (adjustable per outlet) — PRD: owner bisa kelola      */
+/* ------------------------------------------------------------------ */
+
+const CATEGORIES_STORAGE_KEY = 'larispos_mock_categories_v1'
+
+export interface MockCategory {
+  id: string
+  outletId: string
+  name: string
+  createdAt: string
+}
+
+function defaultCategories(outletId: string): MockCategory[] {
+  return PRODUCT_CATEGORIES.map((name, i) => ({
+    id: `cat-${i + 1}`,
+    outletId,
+    name,
+    createdAt: new Date().toISOString(),
+  }))
+}
+
+function loadCategories(): MockCategory[] {
+  try {
+    const raw = localStorage.getItem(CATEGORIES_STORAGE_KEY)
+    if (raw) return JSON.parse(raw) as MockCategory[]
+  } catch {
+    /* ignore corrupt */
+  }
+  const seed = defaultCategories(MOCK_OUTLET_IDS[0] ?? 'out-demo')
+  localStorage.setItem(CATEGORIES_STORAGE_KEY, JSON.stringify(seed))
+  return seed
+}
+
+function persistCategories(list: MockCategory[]) {
+  localStorage.setItem(CATEGORIES_STORAGE_KEY, JSON.stringify(list))
+}
+
+/** Daftar kategori unik (nama) untuk outlet — dipakai filter & form produk. */
+export function listCategoryNames(outletId: string | null): string[] {
+  const list = loadCategories().filter((c) => !outletId || c.outletId === outletId)
+  const names = list.map((c) => c.name)
+  return names.length ? names : [...PRODUCT_CATEGORIES]
+}
+
+export function createMockCategory(name: string, outletId: string): MockCategory {
+  const list = loadCategories()
+  const trimmed = name.trim()
+  if (list.some((c) => c.name.toLowerCase() === trimmed.toLowerCase())) {
+    throw new Error('Kategori sudah ada.')
+  }
+  const row: MockCategory = {
+    id: `cat-${Date.now().toString(36)}`,
+    outletId,
+    name: trimmed,
+    createdAt: new Date().toISOString(),
+  }
+  persistCategories([...list, row])
+  return row
+}
+
+export function updateMockCategory(id: string, name: string): MockCategory {
+  const list = loadCategories()
+  const idx = list.findIndex((c) => c.id === id)
+  if (idx < 0) throw new Error('Kategori tidak ditemukan.')
+  const trimmed = name.trim()
+  if (list.some((c, i) => i !== idx && c.name.toLowerCase() === trimmed.toLowerCase())) {
+    throw new Error('Kategori sudah ada.')
+  }
+  list[idx] = { ...list[idx], name: trimmed }
+  persistCategories(list)
+  return list[idx]
+}
+
+export function deleteMockCategory(id: string): void {
+  const list = loadCategories()
+  persistCategories(list.filter((c) => c.id !== id))
+}
+
+/** Kelola kategori — API mock konsisten dgn settings lain. */
+export const categoriesApi = {
+  async list(outletId: string | null): Promise<string[]> {
+    await sleep(250)
+    return listCategoryNames(outletId)
+  },
+  async create(name: string, outletId: string): Promise<MockCategory> {
+    await sleep(300)
+    return createMockCategory(name, outletId)
+  },
+  async update(id: string, name: string): Promise<MockCategory> {
+    await sleep(300)
+    return updateMockCategory(id, name)
+  },
+  async remove(id: string): Promise<void> {
+    await sleep(250)
+    deleteMockCategory(id)
   },
 }

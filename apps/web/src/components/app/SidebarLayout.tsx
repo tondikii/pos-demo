@@ -34,6 +34,7 @@ const SETTINGS_NAV: NavItem[] = [
   { href: '/outlets', label: 'Outlet', icon: 'store' },
   { href: '/staff', label: 'Staf', icon: 'users' },
   { href: '/payment-methods', label: 'Metode Bayar', icon: 'wallet' },
+  { href: '/categories', label: 'Kategori', icon: 'tag' },
   { href: '/subscription', label: 'Langganan', icon: 'bolt' },
 ]
 
