@@ -14,6 +14,37 @@
   --shadow: 0 14px 40px -18px rgb(225 29 72 / 0.35);
 }
 
+/* ============ Motion (skill pos-motion + @motionone/dom) ============
+ * Animasikan via JS (animate/inView/stagger) — hanya transform/opacity.
+ * Fallback tanpa JS: konten tetap tampil (class .js hanya ada saat JS jalan).
+ * Reduced motion: JS men-skip animasi; CSS di bawah juga memastikan final state.
+ */
+
+html.js .motion-hidden {
+  opacity: 0;
+}
+html.js .motion-hidden[data-motion="stagger"] > * {
+  opacity: 0;
+  transform: translateY(16px);
+}
+/* Elemen yang di-animate per-item via JS diberi class ini (state awal) */
+html.js [data-motion-item] {
+  opacity: 0;
+  transform: translateY(16px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  html.js .motion-hidden,
+  html.js .motion-hidden[data-motion="stagger"] > *,
+  html.js [data-motion-item] {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}
+
 * {
   box-sizing: border-box;
 }

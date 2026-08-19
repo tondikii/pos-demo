@@ -135,7 +135,7 @@ const testimonials = [
     </section>
 
     <!-- ============ FITUR (2C.2) ============ -->
-    <section id="fitur" class="section" aria-labelledby="fitur-title">
+    <section id="fitur" class="section" aria-labelledby="fitur-title" data-reveal>
       <div class="container">
         <div class="section-head">
           <h2 id="fitur-title">Fitur yang Bikin Jualan Makin Gampang</h2>
@@ -143,9 +143,9 @@ const testimonials = [
             Enam fitur inti untuk UMKM F&B — dari kasir sampai laporan, semua dalam satu aplikasi.
           </p>
         </div>
-        <div class="feature-grid">
+        <div class="feature-grid" data-reveal="stagger">
           {features.map((f) => (
-            <article class="feature-card">
+            <article class="feature-card" data-hover>
               <span class="feature-icon" aria-hidden="true">
                 <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   {f.icon === 'bolt' && <path d="M13 2L4 14h6l-1 8 9-12h-6l1-8z" />}
@@ -165,7 +165,7 @@ const testimonials = [
     </section>
 
     <!-- ============ HARGA (2C.2) ============ -->
-    <section id="harga" class="section" aria-labelledby="harga-title">
+    <section id="harga" class="section" aria-labelledby="harga-title" data-reveal>
       <div class="container">
         <div class="section-head">
           <h2 id="harga-title">Harga yang Ramah di Kantong</h2>
@@ -173,9 +173,9 @@ const testimonials = [
             Mulai Rp 39rb/bulan, bayar tahunan hemat 17%. Semua paket bisa dicoba gratis 14 hari — tanpa kartu kredit.
           </p>
         </div>
-        <div class="pricing-grid">
+        <div class="pricing-grid" data-reveal="stagger">
           {plans.map((p) => (
-            <article class={`pricing-card${p.featured ? ' featured' : ''}`}>
+            <article class={`pricing-card${p.featured ? ' featured' : ''}`} data-hover>
               {p.featured && <span class="pricing-badge">PALING LARIS</span>}
               <h3 class="pricing-name">{p.label}</h3>
               <p class="pricing-tagline">{p.tagline}</p>
@@ -201,15 +201,15 @@ const testimonials = [
     </section>
 
     <!-- ============ TESTIMONI (2C.2, dummy) ============ -->
-    <section id="testimoni" class="section" aria-labelledby="testimoni-title">
+    <section id="testimoni" class="section" aria-labelledby="testimoni-title" data-reveal>
       <div class="container">
         <div class="section-head">
           <h2 id="testimoni-title">Kata Mereka yang Sudah Jualan</h2>
           <p class="section-lead">Cerita dari warung, kedai kopi, dan gerobak yang pindah ke LarisPOS.</p>
         </div>
-        <div class="testimonial-grid">
+        <div class="testimonial-grid" data-reveal="stagger">
           {testimonials.map((t) => (
-            <figure class="testimonial-card">
+            <figure class="testimonial-card" data-hover>
               <blockquote class="testimonial-quote">{t.quote}</blockquote>
               <figcaption>
                 <h3 class="testimonial-name">{t.name}</h3>
@@ -222,13 +222,13 @@ const testimonials = [
     </section>
 
     <!-- ============ FAQ (2C.2) — accordion native HTML, tanpa JS ============ -->
-    <section id="faq" class="section" aria-labelledby="faq-title">
+    <section id="faq" class="section" aria-labelledby="faq-title" data-reveal>
       <div class="container">
         <div class="section-head">
           <h2 id="faq-title">Pertanyaan yang Sering Ditanya</h2>
           <p class="section-lead">Masih ragu? Ini jawaban untuk pertanyaan yang paling sering kami terima.</p>
         </div>
-        <div class="faq-list">
+        <div class="faq-list" data-reveal="stagger">
           {faqs.map((f) => (
             <details class="faq-item" name="faq">
               <summary>{f.q}</summary>
@@ -240,9 +240,9 @@ const testimonials = [
     </section>
 
     <!-- ============ CTA BANNER (2C.2) ============ -->
-    <section class="section" aria-labelledby="cta-title">
+    <section class="section" aria-labelledby="cta-title" data-reveal>
       <div class="container">
-        <div class="cta-banner">
+        <div class="cta-banner" data-hover>
           <h2 id="cta-title">Mulai Jualan Hari Ini</h2>
           <p class="cta-sub">
             Gratis 14 hari, tanpa kartu kredit, tanpa kontrak. Siap berjualan dalam 15 menit.
