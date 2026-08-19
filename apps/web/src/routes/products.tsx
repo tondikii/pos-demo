@@ -59,8 +59,8 @@ function EmptyProducts(props: {
       title={props.hasFilters ? 'Tidak ada produk yang cocok' : 'Belum ada produk'}
       description={
         props.hasFilters
-          ? 'Coba ubah kata kunci pencarian atau pilih kategori lain.'
-          : 'Tambahkan produk pertama Anda — lengkap dengan varian (S/M/L) dan stok per varian.'
+          ? 'Coba ubah kata kunci atau pilih kategori lain.'
+          : 'Mulai dari produk pertama — lengkap dengan varian & stok.'
       }
       action={
         <Button

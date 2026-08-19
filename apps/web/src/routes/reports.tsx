@@ -32,7 +32,7 @@ import {
   todayKey,
 } from '../lib/queries'
 import type { BestSellersData } from '../lib/queries'
-import { formatIDR, formatCompact } from '../lib/format'
+import { formatIDR, formatCompact, formatDateRange } from '../lib/format'
 
 /* ------------------------------------------------------------------ */
 /* Skeleton & state helpers                                            */
@@ -83,7 +83,7 @@ function ReportEmptyState() {
     <EmptyState
       icon="chart"
       title="Belum ada data pada rentang ini"
-      description="Tidak ada transaksi pada rentang tanggal yang dipilih. Coba rentang lain atau outlet lain."
+      description="Tidak ada transaksi di rentang ini. Coba rentang atau outlet lain."
       class="mt-6"
     />
   )
@@ -423,7 +423,7 @@ export default function ReportsPage() {
 
   const rangeLabel = createMemo(() => {
     const f = filters()
-    return f.from === f.to ? f.from : `${f.from} s/d ${f.to}`
+    return formatDateRange(f.from, f.to)
   })
 
   /** Baris ringkasan dalam rentang filter (mock 7 hari penuh, difilter lokal). */

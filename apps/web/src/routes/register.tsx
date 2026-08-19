@@ -69,11 +69,21 @@ export default function RegisterPage() {
 
   function handleSubmit(e: SubmitEvent) {
     e.preventDefault()
+    // Baca langsung dari DOM (FormData) — autofill browser tidak trigger onInput,
+    // jadi state bisa stale; FormData selalu fresh.
+    const fd = new FormData(e.currentTarget as HTMLFormElement)
+    const raw = {
+      businessName: String(fd.get('businessName') ?? ''),
+      email: String(fd.get('email') ?? ''),
+      password: String(fd.get('password') ?? ''),
+      phone: String(fd.get('phone') ?? ''),
+    }
+    setValues(raw)
     // phone kosong → undefined; email dinormalisasi (trim + lowercase)
     const input = {
-      ...values(),
-      email: values().email.trim().toLowerCase(),
-      phone: values().phone?.trim() ? values().phone : undefined,
+      ...raw,
+      email: raw.email.trim().toLowerCase(),
+      phone: raw.phone?.trim() ? raw.phone : undefined,
     }
     const res = parseWithZod(registerSchema, input)
     if (!res.ok) {

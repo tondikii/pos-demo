@@ -50,3 +50,19 @@ function dayShift(dateKey: string, delta: number): string {
   const day = String(d.getDate()).padStart(2, '0')
   return `${d.getFullYear()}-${m}-${day}`
 }
+
+/** Format rentang tanggal id-ID: "14 Agu – 20 Agu 2026" (bukan ISO mentah). */
+export function formatDateRange(fromKey: string, toKey: string): string {
+  const from = new Date(`${fromKey}T00:00:00`)
+  const to = new Date(`${toKey}T00:00:00`)
+  if (Number.isNaN(from.getTime()) || Number.isNaN(to.getTime())) return `${fromKey} – ${toKey}`
+  const fmt = (d: Date, withYear: boolean) =>
+    d.toLocaleDateString('id-ID', {
+      day: 'numeric',
+      month: 'short',
+      ...(withYear ? { year: 'numeric' } : {}),
+    })
+  if (fromKey === toKey) return fmt(from, true)
+  const sameYear = from.getFullYear() === to.getFullYear()
+  return sameYear ? `${fmt(from, false)} – ${fmt(to, true)}` : `${fmt(from, true)} – ${fmt(to, true)}`
+}

@@ -56,7 +56,14 @@ export default function LoginPage() {
 
   function handleSubmit(e: SubmitEvent) {
     e.preventDefault()
-    const input = { ...values(), email: values().email.trim().toLowerCase() }
+    // Baca langsung dari DOM (FormData) — autofill tidak trigger onInput.
+    const fd = new FormData(e.currentTarget as HTMLFormElement)
+    const raw = {
+      email: String(fd.get('email') ?? ''),
+      password: String(fd.get('password') ?? ''),
+    }
+    setValues(raw)
+    const input = { ...raw, email: raw.email.trim().toLowerCase() }
     const res = parseWithZod(loginSchema, input)
     if (!res.ok) {
       setErrors(res.errors ?? {})
