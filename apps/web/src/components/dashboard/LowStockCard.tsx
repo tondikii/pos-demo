@@ -1,6 +1,7 @@
 import { Motion } from '@motionone/solid'
 import { For, Show } from 'solid-js'
 import type { MockLowStockVariant } from '../../lib/mocks'
+import { Icon } from '../ui/icon'
 
 export interface LowStockCardProps {
   variants: MockLowStockVariant[]
@@ -35,7 +36,7 @@ export function LowStockCard(props: LowStockCardProps) {
           fallback={
             <div class="flex flex-col items-center px-5 py-6 text-center">
               <span aria-hidden="true" class="flex size-10 items-center justify-center rounded-full bg-muted text-lg">
-                ✅
+                <Icon name="check" class="size-4 text-emerald-500" />
               </span>
               <p class="mt-3 text-sm font-semibold text-foreground">Stok aman</p>
               <p class="mt-0.5 text-xs leading-relaxed text-muted-foreground">

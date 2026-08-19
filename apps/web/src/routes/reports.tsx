@@ -81,7 +81,7 @@ function ReportErrorState(props: { message: string; onRetry: () => void }) {
 function ReportEmptyState() {
   return (
     <EmptyState
-      icon="📈"
+      icon="chart"
       title="Belum ada data pada rentang ini"
       description="Tidak ada transaksi pada rentang tanggal yang dipilih. Coba rentang lain atau outlet lain."
       class="mt-6"

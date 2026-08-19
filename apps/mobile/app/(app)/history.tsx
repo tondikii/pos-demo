@@ -24,6 +24,7 @@ import Animated, {
 } from 'react-native-reanimated'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
+import Icon from '../../src/components/Icon'
 import { useSession } from '../../src/auth/session'
 import { getQueuedTransactions, type QueuedTxRow, type QueuedTransactionPayload } from '../../src/db/queue'
 import { getVoidMeta, voidTransaction } from '../../src/db/void'
@@ -340,7 +341,7 @@ function DetailModal({
                 accessibilityLabel="Cetak ulang struk"
                 accessibilityState={{ disabled: printing }}
               >
-                <Text style={styles.printBtnText}>{printing ? 'Mencetak…' : '🖨 Cetak Ulang'}</Text>
+                <Text style={styles.printBtnText}>{printing ? 'Mencetak…' : 'Cetak Ulang'}</Text>
               </Pressable>
               <Pressable
                 onPress={() => void handleShare()}
@@ -348,7 +349,7 @@ function DetailModal({
                 accessibilityRole="button"
                 accessibilityLabel="Share struk"
               >
-                <Text style={styles.shareBtnText}>↗ Share</Text>
+                <Text style={styles.shareBtnText}>Share</Text>
               </Pressable>
             </View>
 
@@ -425,7 +426,7 @@ function DetailModal({
               </View>
             ) : row.status === 'voided' ? (
               <View style={styles.voidedTagRow}>
-                <Text style={styles.voidedTag}>✓ Sudah di-void · {formatNumber(itemCount)} item</Text>
+                <Text style={styles.voidedTag}>Sudah di-void · {formatNumber(itemCount)} item</Text>
               </View>
             ) : null}
           </ScrollView>
@@ -439,7 +440,7 @@ function DetailModal({
             style={styles.toast}
             pointerEvents="none"
           >
-            <Text style={styles.toastIcon}>✓</Text>
+            <Icon name="check" size={16} color="#16A34A" />
             <View style={styles.toastBody}>
               <Text style={styles.toastTitle}>Transaksi di-void</Text>
               <Text style={styles.toastText}>Stok {formatNumber(itemCount)} item dikembalikan.</Text>
@@ -455,7 +456,7 @@ function DetailModal({
             style={[styles.toast, !printDone.ok && styles.toastError, shakeStyle]}
             pointerEvents="none"
           >
-            <Text style={styles.toastIcon}>{printDone.ok ? '✓' : '⚠'}</Text>
+            <Icon name={printDone.ok ? 'check' : 'warning'} size={16} color={printDone.ok ? '#16A34A' : '#DC2626'} />
             <View style={styles.toastBody}>
               <Text style={styles.toastTitle}>{printDone.ok ? 'Berhasil' : 'Gagal cetak'}</Text>
               <Text style={styles.toastText}>{printDone.text}</Text>
@@ -557,7 +558,7 @@ export default function HistoryScreen() {
           <Text style={styles.emptyHint}>Memuat riwayat…</Text>
         ) : filtered.length === 0 ? (
           <EmptyState
-            icon="🧾"
+            icon="receipt"
             title="Belum ada transaksi"
             text={
               filter === 'all'

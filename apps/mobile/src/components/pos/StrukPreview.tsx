@@ -12,6 +12,7 @@ import Animated, {
 } from 'react-native-reanimated'
 
 import { buildPrintableText } from '../../print/print-service'
+import Icon from '../Icon'
 import { usePrinter } from '../../print/use-printer'
 import { formatIDR } from '../../lib/format'
 import type { QueuedTransactionPayload } from '../../db/queue'
@@ -144,7 +145,7 @@ export default function StrukPreview({
                 exiting={FadeOut.duration(150)}
                 style={[styles.feedbackBox, styles.feedbackSuccess]}
               >
-                <Text style={styles.feedbackIcon}>✓</Text>
+                <Icon name="check" size={18} color="#16A34A" />
                 <Text style={styles.feedbackSuccessText}>Struk terkirim ke printer</Text>
               </Animated.View>
             ) : null}
@@ -155,7 +156,7 @@ export default function StrukPreview({
                 exiting={FadeOut.duration(150)}
                 style={[styles.feedbackBox, styles.feedbackError, shakeStyle]}
               >
-                <Text style={styles.feedbackIcon}>⚠</Text>
+                <Icon name="warning" size={18} color="#DC2626" />
                 <Text style={styles.feedbackErrorText}>{printError}</Text>
               </Animated.View>
             ) : null}

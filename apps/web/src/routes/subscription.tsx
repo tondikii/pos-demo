@@ -5,6 +5,7 @@ import { GRACE_DAYS, PLANS, TRIAL_DAYS } from '@larispos/shared'
 import type { PlanId } from '@larispos/shared'
 import { AppHeader } from '../components/app/AppHeader'
 import { Button } from '../components/ui/button'
+import { Icon } from '../components/ui/icon'
 import { Card } from '../components/ui/card'
 import { Badge } from '../components/ui/badge'
 import { Modal } from '../components/ui/modal'
@@ -191,7 +192,7 @@ function ActiveStatusCard(props: { sub: MockSubscription }) {
       </div>
 
       <div class="mt-5 rounded-xl border border-emerald-500/30 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">
-        ✓ Semua fitur aktif — transaksi, laporan, dan outlet dalam batas paket Anda.
+        <Icon name="check" class="size-4 text-emerald-500" /> Semua fitur aktif — transaksi, laporan, dan outlet dalam batas paket Anda.
       </div>
     </Card>
   )
@@ -413,7 +414,7 @@ function HistoryList(props: { entries: MockSubscriptionHistoryEntry[] }) {
         fallback={
           <EmptyState
             compact
-            icon="🧾"
+            icon="receipt"
             title="Belum ada riwayat langganan"
             description="Tagihan, upgrade, dan aktivasi trial akan muncul di sini."
           />

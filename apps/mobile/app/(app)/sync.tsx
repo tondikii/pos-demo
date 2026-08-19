@@ -362,7 +362,7 @@ export default function SyncScreen() {
             <Text style={styles.emptyHint}>Memuat antrean…</Text>
           ) : views.length === 0 ? (
             <EmptyState
-              icon="📡"
+              icon="signal"
               title="Antrean kosong"
               text="Semua transaksi sudah tersinkron. Transaksi baru yang dibuat saat offline akan muncul di sini."
             />

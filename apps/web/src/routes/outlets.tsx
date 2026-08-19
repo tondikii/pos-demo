@@ -192,7 +192,7 @@ export default function OutletsPage() {
                 fallback={
                   <div class="mt-6">
                     <EmptyState
-                      icon="🏪"
+                      icon="store"
                       title="Belum ada outlet"
                       description="Tambahkan outlet pertama Anda — pajak, biaya layanan, dan teks struk diatur per outlet."
                       action={

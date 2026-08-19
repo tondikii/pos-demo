@@ -156,7 +156,7 @@ export default function CartPanel({
         </ScrollView>
       ) : (
         <EmptyState
-          icon="🛒"
+          icon="cart"
           title="Keranjang kosong"
           text="Ketuk produk untuk mulai."
         />

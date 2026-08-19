@@ -5,6 +5,7 @@ import { createOutletSchema, PLANS, TRIAL_DAYS } from '@larispos/shared'
 import type { CreateOutletInput } from '@larispos/shared'
 import AuthLayout from '../layouts/AuthLayout'
 import { Button } from '../components/ui/button'
+import { Icon } from '../components/ui/icon'
 import { Input } from '../components/ui/input'
 import { Field, FormAlert } from '../components/ui/field'
 import { Card, CardContent } from '../components/ui/card'
@@ -192,7 +193,7 @@ export default function OnboardingPage() {
             <Card>
               <CardContent class="p-6 sm:p-8">
                 <h1 class="text-2xl font-extrabold tracking-tight text-foreground">
-                  Halo, {user()?.businessName ?? 'sahabat usaha'} 👋
+                  Halo, {user()?.businessName ?? 'sahabat usaha'}
                 </h1>
                 <p class="mt-1.5 text-sm leading-relaxed text-muted-foreground">
                   Akun Anda siap. Trial gratis{' '}
@@ -380,7 +381,7 @@ export default function OnboardingPage() {
                   aria-hidden="true"
                   class="mx-auto flex size-14 items-center justify-center rounded-full bg-emerald-500/15 text-2xl"
                 >
-                  ✅
+                  <Icon name="check" class="size-4 text-emerald-500" />
                 </div>
                 <h1 class="mt-4 text-2xl font-extrabold tracking-tight text-foreground">
                   Outlet berhasil dibuat!
@@ -390,7 +391,7 @@ export default function OnboardingPage() {
                   Berikutnya: tambahkan produk, metode bayar, dan undang kasir.
                 </p>
                 <Button class="mt-6" size="lg" onClick={() => navigate('/dashboard', { replace: true })}>
-                  Masuk ke dashboard →
+                  Masuk ke dashboard
                 </Button>
               </CardContent>
             </Card>

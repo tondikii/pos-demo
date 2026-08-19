@@ -54,7 +54,7 @@ function EmptyProducts(props: {
 }) {
   return (
     <EmptyState
-      icon="🍽️"
+      icon="food"
       title={props.hasFilters ? 'Tidak ada produk yang cocok' : 'Belum ada produk'}
       description={
         props.hasFilters

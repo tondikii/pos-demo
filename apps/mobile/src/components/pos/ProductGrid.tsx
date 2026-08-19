@@ -182,7 +182,7 @@ export default function ProductGrid({
         )}
         ListEmptyComponent={
           <EmptyState
-            icon="🍽️"
+            icon="food"
             title="Produk tidak ditemukan"
             text="Coba kata kunci atau kategori lain."
           />

@@ -51,7 +51,7 @@ function ShiftsErrorState(props: { message: string; onRetry: () => void }) {
 function ShiftsEmptyState() {
   return (
     <EmptyState
-      icon="🕐"
+      icon="clock"
       title="Belum ada shift pada rentang ini"
       description="Tidak ada shift buka/tutup pada rentang tanggal yang dipilih. Coba rentang lain atau outlet lain."
       class="mt-6"

@@ -4,6 +4,7 @@ import { Pressable, StyleSheet, Text, View } from 'react-native'
 import Animated, { FadeIn, FadeOut, ZoomIn, useReducedMotion } from 'react-native-reanimated'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
+import Icon from '../../src/components/Icon'
 import { useSession } from '../../src/auth/session'
 import PrinterStatus from '../../src/components/print/PrinterStatus'
 import SyncBadge from '../../src/components/pos/SyncBadge'
@@ -125,7 +126,7 @@ function SuccessOverlay({ visible }: { visible: boolean }) {
       pointerEvents="none"
     >
       <View style={styles.successCircle}>
-        <Text style={styles.successCheck}>✓</Text>
+        <Icon name="check" size={40} color="#16A34A" />
       </View>
       <Text style={styles.successTitle}>Pembayaran Berhasil</Text>
     </Animated.View>

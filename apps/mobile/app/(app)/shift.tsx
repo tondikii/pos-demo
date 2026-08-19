@@ -301,7 +301,7 @@ function HistoryList({ onSelect }: { onSelect: (id: string) => void }) {
         <Text style={styles.emptyHint}>Memuat riwayat…</Text>
       ) : history.length === 0 ? (
         <EmptyState
-          icon="🕐"
+          icon="clock"
           title="Belum ada shift"
           text="Buka shift pertama untuk mulai bertransaksi."
         />

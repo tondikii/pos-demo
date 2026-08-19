@@ -187,7 +187,7 @@ export default function DashboardPage() {
                 fallback={
                   <div class="mt-6">
                     <EmptyState
-                      icon="📊"
+                      icon="chart"
                       title="Belum ada data pada rentang ini"
                       description="Tidak ada transaksi pada rentang tanggal yang dipilih. Coba rentang lain atau outlet lain."
                       action={

@@ -1,6 +1,7 @@
 import { For, Show } from 'solid-js'
 import type { JSX, ParentProps } from 'solid-js'
 import { Button } from './button'
+import { Icon } from './icon'
 import { Card } from './card'
 
 /* ------------------------------------------------------------------ */
@@ -35,7 +36,7 @@ export function EmptyState(props: EmptyStateProps) {
           props.compact ? 'size-10 text-lg' : 'size-12 text-xl',
         ].join(' ')}
       >
-        {props.icon ?? '📭'}
+        <Icon name={props.icon ?? 'inbox'} class="size-6" />
       </div>
       <p class="mt-4 text-sm font-semibold text-foreground">{props.title}</p>
       <p class="mx-auto mt-1 max-w-sm text-sm leading-relaxed text-muted-foreground">
@@ -72,9 +73,9 @@ export function ErrorState(props: ErrorStateProps) {
     >
       <div
         aria-hidden="true"
-        class="mx-auto flex size-11 items-center justify-center rounded-full bg-destructive/10 text-xl"
+        class="mx-auto flex size-11 items-center justify-center rounded-full bg-destructive/10"
       >
-        ⚠️
+        <Icon name="warning" class="size-5 text-destructive" />
       </div>
       <p class="mt-3 text-sm font-semibold text-destructive">{props.title}</p>
       <Show when={props.message}>
