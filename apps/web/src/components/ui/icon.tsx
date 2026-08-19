@@ -31,6 +31,14 @@ export function Icon(props: {
     phone: <><path d="M22 16.9v3a2 2 0 01-2.2 2 19.8 19.8 0 01-8.6-3 19.5 19.5 0 01-6-6 19.8 19.8 0 01-3-8.6A2 2 0 014.1 2h3a2 2 0 012 1.7c.1 1 .4 2 .7 2.8a2 2 0 01-.5 2.1L8 10a16 16 0 006 6l1.4-1.3a2 2 0 012.1-.5c.9.3 1.9.6 2.9.7a2 2 0 011.6 2z" /></>,
     food: <><path d="M4 3v7a2 2 0 004 0V3" /><path d="M6 3v18" /><path d="M14 3v7a2 2 0 004 0V3" /><path d="M16 3v18" /></>,
     warning: <><path d="M12 3L1 21h22L12 3z" /><path d="M12 10v5" /><path d="M12 18h.01" /></>,
+    grid: <><rect x="3" y="3" width="7" height="7" rx="1.5" /><rect x="14" y="3" width="7" height="7" rx="1.5" /><rect x="3" y="14" width="7" height="7" rx="1.5" /><rect x="14" y="14" width="7" height="7" rx="1.5" /></>,
+    cashier: <><rect x="3" y="4" width="18" height="7" rx="1.5" /><path d="M3 11v7a2 2 0 002 2h14a2 2 0 002-2v-7" /><path d="M8 8h.01M12 8h.01M16 8h.01" /><path d="M8 17h8" /></>,
+    menu: <><path d="M4 6h16" /><path d="M4 12h16" /><path d="M4 18h16" /></>,
+    chevron: <><path d="M6 9l6 6 6-6" /></>,
+    sliders: <><path d="M4 6h16" /><path d="M4 12h16" /><path d="M4 18h16" /><circle cx="9" cy="6" r="2" /><circle cx="15" cy="12" r="2" /><circle cx="7" cy="18" r="2" /></>,
+    users: <><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" /><circle cx="9" cy="7" r="4" /><path d="M23 21v-2a4 4 0 00-3-3.87" /><path d="M16 3.13a4 4 0 010 7.75" /></>,
+    wallet: <><path d="M3 7a2 2 0 012-2h14a2 2 0 012 2v10a2 2 0 01-2 2H5a2 2 0 01-2-2V7z" /><path d="M16 13h4" /><path d="M16 11h.01" /></>,
+    logout: <><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4" /><path d="M16 17l5-5-5-5" /><path d="M21 12H9" /></>,
   }
   return (
     <svg

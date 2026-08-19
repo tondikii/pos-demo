@@ -37,7 +37,7 @@
 - [x] 2A.5 Laporan (mock): summary (omzet/HPP/laba), best sellers top 10, jam ramai (bar 06–22), rekap per metode bayar, stok menipis, filter tanggal + outlet.
 - [x] 2A.6 Shifts & Langganan (mock): riwayat shift (buka/tutup), detail shift (kas awal/akhir/selisih), halaman langganan (3 paket + sisa trial + CTA).
 - [x] 2A.7 Polish web: responsive, empty states, loading skeletons, error states, TanStack Query mock provider, akses via `ui-ux-pro-max` skill untuk visual check.
-- [ ] 2A.8 UX overhaul web: SIDEBAR kiri (desktop) + drawer (mobile) ganti top navbar; auth ringkas 1 form (nama bisnis+email+password, WA opsional, outlet otomatis); design token konsisten (MASTER.md); copywriting pos-copywriting; alur tanpa redundancy.
+- [x] 2A.8 UX overhaul web: SIDEBAR kiri (desktop) + drawer (mobile) ganti top navbar; auth ringkas 1 form (nama bisnis+email+password, WA opsional, outlet otomatis); design token konsisten (MASTER.md); copywriting pos-copywriting; alur tanpa redundancy.
 
 ### Fase 2B — Mobile Kasir (Mock)
 
@@ -48,7 +48,7 @@
 - [x] 2B.5 Offline & Sync UI (mock): badge "Menunggu sync", antrean `queued_transactions` list mock, tombol "Sync sekarang", simulasi online/offline toggle.
 - [x] 2B.6 Cetak Struk (mock): pair printer mock, preview struk 58mm, tombol Cetak + Share fallback, cetak ulang dari History.
 - [x] 2B.7 Polish mobile: NativeWind styling, loading/empty states, lock PIN 5x, akses via `ui-ux-pro-max` untuk review kasir flow.
-- [ ] 2B.8 UX overhaul mobile: BOTTOM NAVIGATION (Kasir/Riwayat/Shift/Sync) ganti header nav; alur kasir dipersingkat (buka shift jadi prompt sekali, tambah item 2 tap); design token konsisten (MASTER.md); copywriting pos-copywriting.
+- [x] 2B.8 UX overhaul mobile: BOTTOM NAVIGATION (Kasir/Riwayat/Shift/Sync) ganti header nav; alur kasir dipersingkat (buka shift jadi prompt sekali, tambah item 2 tap); design token konsisten (MASTER.md); copywriting pos-copywriting.
 
 ### Fase 2C — Landing Page (Mock Content)
 

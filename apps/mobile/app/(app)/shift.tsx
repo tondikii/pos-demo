@@ -1,4 +1,3 @@
-import { useRouter } from 'expo-router'
 import React, { useCallback, useState } from 'react'
 import {
   Pressable,
@@ -317,7 +316,6 @@ function HistoryList({ onSelect }: { onSelect: (id: string) => void }) {
 }
 
 export default function ShiftScreen() {
-  const router = useRouter()
   const insets = useSafeAreaInsets()
   const { session } = useSession()
 
@@ -328,16 +326,11 @@ export default function ShiftScreen() {
 
   const activeShift = active?.shift ?? null
 
-  const goBackToPos = useCallback(() => {
-    router.back()
-  }, [router])
-
   return (
     <View style={[styles.screen, { paddingTop: insets.top, paddingBottom: insets.bottom }]}>
       <HeaderBar
         title="Shift"
         subtitle={session?.outletName ?? 'Outlet'}
-        onBack={goBackToPos}
         right={<Text style={styles.footerNote}>Fase 2B.3 · Mock lokal</Text>}
       />
 

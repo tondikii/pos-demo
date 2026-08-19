@@ -3,7 +3,7 @@ import { Navigate } from '@solidjs/router'
 import { Motion } from '@motionone/solid'
 import { GRACE_DAYS, PLANS, TRIAL_DAYS } from '@larispos/shared'
 import type { PlanId } from '@larispos/shared'
-import { AppHeader } from '../components/app/AppHeader'
+import { SidebarLayout } from '../components/app/SidebarLayout'
 import { Button } from '../components/ui/button'
 import { Icon } from '../components/ui/icon'
 import { Card } from '../components/ui/card'
@@ -525,12 +525,14 @@ export default function SubscriptionPage() {
   }
 
   return (
-    <div class="min-h-dvh bg-background">
+    <SidebarLayout
+      userLabel={user()?.businessName}
+      outletName={outlet()?.name}
+      onLogout={() => logout()}
+    >
       {toastProvider.view}
 
-      <AppHeader userLabel={user()?.businessName} onLogout={() => logout()} />
-
-      <main class="mx-auto max-w-6xl px-4 py-8 sm:px-6">
+      <main class="mx-auto w-full max-w-6xl px-4 py-8 sm:px-6">
         <Motion tag="div"
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
@@ -712,6 +714,6 @@ export default function SubscriptionPage() {
           />
         )}
       </Show>
-    </div>
+    </SidebarLayout>
   )
 }

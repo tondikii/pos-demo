@@ -1,7 +1,7 @@
 import { createMemo, createSignal, For, Show } from 'solid-js'
 import { Navigate } from '@solidjs/router'
 import { Motion } from '@motionone/solid'
-import { AppHeader } from '../components/app/AppHeader'
+import { SidebarLayout } from '../components/app/SidebarLayout'
 import { Button } from '../components/ui/button'
 import { Card } from '../components/ui/card'
 import { Badge } from '../components/ui/badge'
@@ -298,12 +298,14 @@ export default function ShiftsPage() {
   }
 
   return (
-    <div class="min-h-dvh bg-background">
+    <SidebarLayout
+      userLabel={user()?.businessName}
+      outletName={activeOutlet().name}
+      onLogout={() => logout()}
+    >
       {toastProvider.view}
 
-      <AppHeader userLabel={user()?.businessName} onLogout={() => logout()} />
-
-      <main class="mx-auto max-w-6xl px-4 py-8 sm:px-6">
+      <main class="mx-auto w-full max-w-6xl px-4 py-8 sm:px-6">
         <Motion tag="div"
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
@@ -312,9 +314,9 @@ export default function ShiftsPage() {
           {/* Judul + aksi */}
           <div class="flex flex-wrap items-end justify-between gap-4">
             <div>
-              <h1 class="text-2xl font-extrabold tracking-tight text-foreground">Shifts</h1>
+              <h1 class="text-2xl font-extrabold tracking-tight text-foreground">Kasir — Shift</h1>
               <p class="mt-1 text-sm text-muted-foreground">
-                Riwayat buka/tutup shift kasir · {activeOutlet().name} · {rangeLabel()}
+                Riwayat buka/tutup shift · {activeOutlet().name} · {rangeLabel()}
               </p>
             </div>
             <Button variant="secondary" size="sm" onClick={() => notifyShiftOpen()}>
@@ -584,6 +586,6 @@ export default function ShiftsPage() {
 
       {/* Detail shift */}
       <ShiftDetailModal shift={selectedShift()} onClose={() => setSelectedShift(null)} />
-    </div>
+    </SidebarLayout>
   )
 }

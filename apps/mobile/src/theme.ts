@@ -61,6 +61,10 @@ export const COLORS = {
   grayBadgeText: '#475569',
   offlineDot: '#F59E0B',
 
+  // --- teks di atas warna solid (MASTER.md: On Primary/Success = #FFFFFF) ---
+  onPrimary: '#FFFFFF',
+  onSuccess: '#FFFFFF',
+
   // --- overlay & aksen ---
   overlay: 'rgba(15, 23, 42, 0.55)',
   successOverlay: 'rgba(16, 185, 129, 0.94)',

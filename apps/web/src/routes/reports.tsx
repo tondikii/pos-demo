@@ -2,7 +2,7 @@ import { createMemo, createSignal, For, Show } from 'solid-js'
 import { Navigate } from '@solidjs/router'
 import { Motion } from '@motionone/solid'
 import { DASHBOARD_DAYS } from '@larispos/shared'
-import { AppHeader } from '../components/app/AppHeader'
+import { SidebarLayout } from '../components/app/SidebarLayout'
 import { Button } from '../components/ui/button'
 import { Card } from '../components/ui/card'
 import { Badge } from '../components/ui/badge'
@@ -504,12 +504,14 @@ export default function ReportsPage() {
   }
 
   return (
-    <div class="min-h-dvh bg-background print:bg-white">
+    <SidebarLayout
+      userLabel={user()?.businessName}
+      outletName={activeOutlet().name}
+      onLogout={() => logout()}
+    >
       {toastProvider.view}
 
-      <AppHeader userLabel={user()?.businessName} onLogout={() => logout()} />
-
-      <main class="mx-auto max-w-6xl px-4 py-8 sm:px-6">
+      <main class="mx-auto w-full max-w-6xl px-4 py-8 sm:px-6">
         <Motion tag="div"
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
@@ -659,6 +661,6 @@ export default function ReportsPage() {
           </Show>
         </Motion>
       </main>
-    </div>
+    </SidebarLayout>
   )
 }

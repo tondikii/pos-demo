@@ -23,96 +23,7 @@ import ProductGrid from '../../src/components/pos/ProductGrid'
 import CartPanel from '../../src/components/pos/CartPanel'
 import PayBar from '../../src/components/pos/PayBar'
 import StrukPreview from '../../src/components/pos/StrukPreview'
-
-/** Header: outlet + kasir + status offline + tombol shift + keluar. */
-function PosHeader({
-  onLogout,
-  onOpenShift,
-  onOpenHistory,
-  hasOpenShift,
-}: {
-  onLogout: () => void
-  onOpenShift: () => void
-  onOpenHistory: () => void
-  hasOpenShift: boolean
-}) {
-  const { session } = useSession()
-  return (
-    <View style={styles.header}>
-      <View style={styles.headerLeft}>
-        <View style={styles.outletDot} />
-        <View>
-          <Text style={styles.outletName} numberOfLines={1}>
-            {session?.outletName ?? MOCK_OUTLET_CONFIG.name}
-          </Text>
-          <Text style={styles.cashierName}>{session?.name ?? 'Kasir'} · Kasir</Text>
-        </View>
-      </View>
-      <View style={styles.headerRight}>
-        <SyncBadge />
-        <PrinterStatus />
-        <Pressable
-          onPress={onOpenHistory}
-          hitSlop={6}
-          style={({ pressed }) => [styles.historyBtn, pressed && styles.historyBtnPressed]}
-          accessibilityRole="button"
-          accessibilityLabel="Buka riwayat transaksi"
-        >
-          <Text style={styles.historyBtnText}>Riwayat</Text>
-        </Pressable>
-        <Pressable
-          onPress={onOpenShift}
-          hitSlop={6}
-          style={({ pressed }) => [
-            styles.shiftBtn,
-            hasOpenShift && styles.shiftBtnActive,
-            pressed && styles.shiftBtnPressed,
-          ]}
-          accessibilityRole="button"
-          accessibilityLabel={hasOpenShift ? 'Buka halaman shift berjalan' : 'Buka shift belum dibuka'}
-        >
-          <Text style={[styles.shiftBtnText, hasOpenShift && styles.shiftBtnTextActive]}>
-            Shift {hasOpenShift ? '●' : '○'}
-          </Text>
-        </Pressable>
-        <Pressable
-          onPress={onLogout}
-          hitSlop={6}
-          style={({ pressed }) => [styles.logoutBtn, pressed && styles.logoutBtnPressed]}
-          accessibilityRole="button"
-          accessibilityLabel="Keluar dari akun kasir"
-        >
-          <Text style={styles.logoutText}>Keluar</Text>
-        </Pressable>
-      </View>
-    </View>
-  )
-}
-
-/** Banner "Buka Shift dulu" — muncul saat belum ada shift open (FadeIn). */
-function ShiftBanner({ onPress }: { onPress: () => void }) {
-  const reducedMotion = useReducedMotion()
-  return (
-    <Animated.View
-      entering={reducedMotion ? FadeIn.duration(150) : FadeIn.duration(250)}
-      exiting={FadeOut.duration(150)}
-      style={styles.shiftBanner}
-    >
-      <View style={styles.shiftBannerTextWrap}>
-        <Text style={styles.shiftBannerTitle}>Shift belum dibuka</Text>
-        <Text style={styles.shiftBannerSub}>Buka shift dulu agar transaksi tercatat.</Text>
-      </View>
-      <Pressable
-        onPress={onPress}
-        style={({ pressed }: { pressed: boolean }) => [styles.shiftBannerBtn, pressed && styles.shiftBannerBtnPressed]}
-        accessibilityRole="button"
-        accessibilityLabel="Buka halaman shift"
-      >
-        <Text style={styles.shiftBannerBtnText}>Buka Shift</Text>
-      </Pressable>
-    </Animated.View>
-  )
-}
+import ShiftPrompt from '../../src/components/pos/ShiftPrompt'
 
 /** Overlay sukses singkat (ZoomIn check) sebelum struk preview — a11y reduced-motion aware. */
 function SuccessOverlay({ visible }: { visible: boolean }) {
@@ -126,7 +37,7 @@ function SuccessOverlay({ visible }: { visible: boolean }) {
       pointerEvents="none"
     >
       <View style={styles.successCircle}>
-        <Icon name="check" size={40} color="#16A34A" />
+        <Icon name="check" size={40} color={COLORS.success} />
       </View>
       <Text style={styles.successTitle}>Pembayaran Berhasil</Text>
     </Animated.View>
@@ -134,13 +45,7 @@ function SuccessOverlay({ visible }: { visible: boolean }) {
 }
 
 /** Isi layar kasir — butuh CartProvider (cart state). */
-function PosContent({
-  hasOpenShift,
-  onShiftStatusChange,
-}: {
-  hasOpenShift: boolean
-  onShiftStatusChange?: (v: boolean) => void
-}) {
+function PosContent() {
   const {
     items,
     paymentMethodId,
@@ -152,18 +57,17 @@ function PosContent({
   } = useCart()
 
   const { session } = useSession()
-  const router = useRouter()
-  const { active } = useActiveShift(session?.outletId ?? '', session?.id ?? '')
+  const { active, loading: shiftLoading, reload: reloadShift } = useActiveShift(
+    session?.outletId ?? '',
+    session?.id ?? '',
+  )
+
+  const hasOpenShift = active?.shift.status === 'open'
 
   const [lastTx, setLastTx] = useState<QueuedTransactionPayload | null>(null)
   const [showReceipt, setShowReceipt] = useState(false)
   const [showSuccess, setShowSuccess] = useState(false)
   const [isSaving, setIsSaving] = useState(false)
-
-  // sinkronkan status shift ke header (PosScreen)
-  React.useEffect(() => {
-    onShiftStatusChange?.(active?.shift?.status === 'open')
-  }, [active?.shift?.status, onShiftStatusChange])
 
   const cashMethod = MOCK_PAYMENT_METHODS.find((m) => m.type === 'cash')
   const isCash = paymentMethodId !== null && paymentMethodId === cashMethod?.id
@@ -246,14 +150,11 @@ function PosContent({
 
   const closeReceipt = useCallback(() => setShowReceipt(false), [])
 
-  const goToShift = useCallback(() => {
-    router.push('/(app)/shift')
-  }, [router])
-
   return (
     <View style={styles.container}>
-      {!hasOpenShift ? (
-        <ShiftBanner onPress={goToShift} />
+      {/* Prompt buka shift: card besar + form inline (PRD Flow 3.1). */}
+      {!shiftLoading && !hasOpenShift ? (
+        <ShiftPrompt onOpened={() => void reloadShift()} />
       ) : null}
 
       <View style={styles.body}>
@@ -267,7 +168,11 @@ function PosContent({
 
         <View style={styles.rightPane}>
           <CartPanel paymentMethods={MOCK_PAYMENT_METHODS} />
-          <PayBar disabled={!canCheckout} onPress={handleCheckout} />
+          <PayBar
+            disabled={!canCheckout}
+            onPress={handleCheckout}
+            disabledHint={hasOpenShift ? undefined : 'Buka shift dulu'}
+          />
         </View>
       </View>
 
@@ -286,30 +191,41 @@ export default function PosScreen() {
   const router = useRouter()
   const insets = useSafeAreaInsets()
   const { signOut } = useSession()
-  const [hasOpenShift, setHasOpenShift] = useState(false)
 
   const handleLogout = useCallback(() => {
     void signOut().then(() => router.replace('/(auth)/login'))
   }, [router, signOut])
 
-  const handleOpenShift = useCallback(() => {
-    router.push('/shift')
-  }, [router])
-
-  const handleOpenHistory = useCallback(() => {
-    router.push('/history')
-  }, [router])
-
   return (
     <CartProvider taxPercent={MOCK_OUTLET_CONFIG.taxPercent} servicePercent={MOCK_OUTLET_CONFIG.servicePercent}>
-      <View style={[styles.screen, { paddingTop: insets.top, paddingBottom: insets.bottom }]}>
-        <PosHeader
-          onLogout={handleLogout}
-          onOpenShift={handleOpenShift}
-          onOpenHistory={handleOpenHistory}
-          hasOpenShift={hasOpenShift}
-        />
-        <PosContent hasOpenShift={hasOpenShift} onShiftStatusChange={setHasOpenShift} />
+      <View style={[styles.screen, { paddingTop: insets.top }]}>
+        {/* Header POS: judul outlet + status (bukan navigasi — bottom nav yang navigasi). */}
+        <View style={styles.header}>
+          <View style={styles.headerLeft}>
+            <View style={styles.outletDot} />
+            <View>
+              <Text style={styles.outletName} numberOfLines={1}>
+                {MOCK_OUTLET_CONFIG.name}
+              </Text>
+              <Text style={styles.cashierName}>Kasir</Text>
+            </View>
+          </View>
+          <View style={styles.headerRight}>
+            <SyncBadge />
+            <PrinterStatus />
+            <Pressable
+              onPress={handleLogout}
+              hitSlop={6}
+              style={({ pressed }) => [styles.logoutBtn, pressed && styles.logoutBtnPressed]}
+              accessibilityRole="button"
+              accessibilityLabel="Keluar dari akun kasir"
+            >
+              <Text style={styles.logoutText}>Keluar</Text>
+            </Pressable>
+          </View>
+        </View>
+
+        <PosContent />
       </View>
     </CartProvider>
   )
@@ -326,7 +242,7 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     borderBottomWidth: 1,
     borderBottomColor: COLORS.border,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: COLORS.surface,
   },
   headerLeft: { flexDirection: 'row', alignItems: 'center', gap: 10, flex: 1 },
   outletDot: { width: 10, height: 10, borderRadius: 5, backgroundColor: COLORS.primary },
@@ -341,18 +257,8 @@ const styles = StyleSheet.create({
     borderColor: COLORS.dangerBorder,
     backgroundColor: COLORS.dangerSoft,
   },
-  logoutBtnPressed: { backgroundColor: '#FEE2E2' },
+  logoutBtnPressed: { backgroundColor: COLORS.dangerSoft },
   logoutText: { color: COLORS.danger, fontWeight: '700', fontSize: 13 },
-  historyBtn: {
-    paddingHorizontal: 12,
-    paddingVertical: 7,
-    borderRadius: 10,
-    borderWidth: 1,
-    borderColor: COLORS.border,
-    backgroundColor: COLORS.surface,
-  },
-  historyBtnPressed: { backgroundColor: COLORS.surfaceMuted },
-  historyBtnText: { fontSize: 12, fontWeight: '700', color: COLORS.text },
   body: { flex: 1, flexDirection: 'row', padding: 12, gap: 12 },
   leftPane: { flex: 1, minWidth: 0 },
   rightPane: {
@@ -379,47 +285,9 @@ const styles = StyleSheet.create({
     width: 76,
     height: 76,
     borderRadius: 38,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: COLORS.surface,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  successCheck: { fontSize: 40, fontWeight: '900', color: '#16A34A' },
-  successTitle: { color: '#FFFFFF', fontSize: 18, fontWeight: '800' },
-  shiftBanner: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    gap: 10,
-    marginHorizontal: 16,
-    marginTop: 10,
-    paddingHorizontal: 14,
-    paddingVertical: 10,
-    borderRadius: 14,
-    backgroundColor: COLORS.warningSoft,
-    borderWidth: 1,
-    borderColor: COLORS.warningBorder,
-  },
-  shiftBannerTextWrap: { flex: 1, gap: 1 },
-  shiftBannerTitle: { fontSize: 13, fontWeight: '800', color: COLORS.warningStrong },
-  shiftBannerSub: { fontSize: 11, color: COLORS.warning },
-  shiftBannerBtn: {
-    paddingHorizontal: 12,
-    paddingVertical: 7,
-    borderRadius: 10,
-    backgroundColor: COLORS.warningIcon,
-  },
-  shiftBannerBtnPressed: { backgroundColor: COLORS.warningIconPressed },
-  shiftBannerBtnText: { color: '#FFFFFF', fontSize: 12, fontWeight: '800' },
-  shiftBtn: {
-    paddingHorizontal: 12,
-    paddingVertical: 7,
-    borderRadius: 10,
-    borderWidth: 1,
-    borderColor: COLORS.border,
-    backgroundColor: COLORS.surface,
-  },
-  shiftBtnActive: { backgroundColor: COLORS.successSoft, borderColor: COLORS.successBorder },
-  shiftBtnPressed: { backgroundColor: COLORS.surfaceMuted },
-  shiftBtnText: { fontSize: 12, fontWeight: '700', color: COLORS.textMuted },
-  shiftBtnTextActive: { color: COLORS.success },
+  successTitle: { color: COLORS.onSuccess, fontSize: 18, fontWeight: '800' },
 })

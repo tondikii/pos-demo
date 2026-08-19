@@ -1,5 +1,5 @@
 import { createMemo, createSignal, Show } from 'solid-js'
-import { A, useNavigate } from '@solidjs/router'
+import { A, Navigate, useNavigate } from '@solidjs/router'
 import { Motion } from '@motionone/solid'
 import { loginSchema } from '@larispos/shared'
 import AuthLayout from '../layouts/AuthLayout'
@@ -20,8 +20,8 @@ export default function LoginPage() {
   const [submitting, setSubmitting] = createSignal(false)
   const [touched, setTouched] = createSignal<Record<string, boolean>>({})
 
-  // Sudah login → langsung ke onboarding/dashboard
-  if (isAuthenticated()) navigate('/onboarding', { replace: true })
+  // Sudah login → langsung dashboard (outlet otomatis sudah dibuat saat daftar).
+  if (isAuthenticated()) return <Navigate href="/dashboard" />
 
   const fieldErrors = createMemo(() => {
     const errs = errors()
@@ -69,7 +69,7 @@ export default function LoginPage() {
     window.setTimeout(() => {
       try {
         login(res.data)
-        navigate('/onboarding', { replace: true })
+        navigate('/dashboard', { replace: true })
       } catch (err) {
         setFormError(err instanceof Error ? err.message : 'Login gagal. Coba lagi.')
         setSubmitting(false)

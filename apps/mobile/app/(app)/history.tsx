@@ -1,4 +1,3 @@
-import { useRouter } from 'expo-router'
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import {
   Modal,
@@ -469,7 +468,6 @@ function DetailModal({
 }
 
 export default function HistoryScreen() {
-  const router = useRouter()
   const insets = useSafeAreaInsets()
   const { session } = useSession()
 
@@ -519,9 +517,6 @@ export default function HistoryScreen() {
     [views, selectedId],
   )
 
-  const goBackToPos = useCallback(() => router.back(), [router])
-  const goToSync = useCallback(() => router.push('/sync'), [router])
-
   const handleVoided = useCallback(() => {
     setSelectedId(null)
     void reload()
@@ -532,20 +527,7 @@ export default function HistoryScreen() {
       <HeaderBar
         title="Riwayat Transaksi"
         subtitle={session?.outletName ?? 'Outlet'}
-        onBack={goBackToPos}
-        right={
-          <>
-            <Pressable
-              onPress={goToSync}
-              style={({ pressed }) => [styles.syncBtn, pressed && styles.syncBtnPressed]}
-              accessibilityRole="button"
-              accessibilityLabel="Buka layar sinkronisasi"
-            >
-              <Text style={styles.syncBtnText}>Sync</Text>
-            </Pressable>
-            <Text style={styles.footerNote}>Fase 2B.4 · Mock lokal</Text>
-          </>
-        }
+        right={<Text style={styles.footerNote}>Fase 2B.4 · Mock lokal</Text>}
       />
 
       <FilterChips value={filter} counts={counts} onChange={setFilter} />
@@ -594,16 +576,6 @@ export default function HistoryScreen() {
 
 const styles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: COLORS.bg },
-  syncBtn: {
-    paddingHorizontal: 12,
-    paddingVertical: 7,
-    borderRadius: 10,
-    borderWidth: 1,
-    borderColor: COLORS.border,
-    backgroundColor: COLORS.surface,
-  },
-  syncBtnPressed: { backgroundColor: COLORS.surfaceMuted },
-  syncBtnText: { fontSize: 12, fontWeight: '700', color: COLORS.text },
   footerNote: { fontSize: 11, color: COLORS.textMuted },
 
   filterRow: {

@@ -22,10 +22,14 @@ export type MockOutlet = z.output<typeof createOutletSchema> & {
   createdAt: string
 }
 
-export interface MockUser extends RegisterInput {
+export interface MockUser {
   id: string
   role: 'owner'
   createdAt: string
+  email: string
+  businessName: string
+  /** WA opsional (PRD Flow 1) — dilengkapi via pengaturan nanti. */
+  phone?: string
 }
 
 export interface MockSession {
@@ -108,8 +112,28 @@ export function AuthMockProvider(props: ParentProps): JSX.Element {
     isAuthenticated,
     register(input: MockAuthRegister): MockUser {
       registerSchema.parse(input) // throw → handled oleh caller via parseWithZod
-      const userRow: MockUser = { ...input, id: makeId('usr'), role: 'owner', createdAt: new Date().toISOString() }
-      const next: MockSession = { user: userRow, outlet: null }
+      const userRow: MockUser = {
+        ...input,
+        phone: input.phone?.trim() ? input.phone : undefined,
+        id: makeId('usr'),
+        role: 'owner',
+        createdAt: new Date().toISOString(),
+      }
+      // PRD Flow 1 — daftar 1 form: outlet "Outlet Utama" dibuat otomatis
+      // dari nama bisnis (pajak 0). Tidak ada step onboarding wajib.
+      const outletRow: MockOutlet = {
+        id: makeId('out'),
+        name: 'Outlet Utama',
+        address: '',
+        phone: userRow.phone,
+        taxPercent: 0,
+        servicePercent: 0,
+        receiptHeader: undefined,
+        receiptFooter: undefined,
+        isActive: true,
+        createdAt: new Date().toISOString(),
+      }
+      const next: MockSession = { user: userRow, outlet: outletRow }
       persist(next)
       return userRow
     },

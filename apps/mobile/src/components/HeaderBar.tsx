@@ -1,36 +1,27 @@
 import React from 'react'
-import { Pressable, StyleSheet, Text, View } from 'react-native'
+import { StyleSheet, Text, View } from 'react-native'
 
 import { COLORS, SPACING } from '../theme'
 
 /**
- * Header konsisten untuk semua screen non-POS (History, Shift, Sync):
- * tombol kembali + judul + subtitle (outlet), aksi kanan opsional
- * (footerNote fase / tombol ekstra).
+ * Header konsisten untuk semua screen (Fase 2B.8 — navigasi pindah ke
+ * bottom nav): judul 800 + subtitle (outlet), aksi kanan opsional
+ * (badge sync / tombol kontekstual). Tanpa tombol kembali — berpindah
+ * screen cukup lewat BottomNav.
  */
 export default function HeaderBar({
   title,
   subtitle,
-  onBack,
   right,
 }: {
   title: string
   subtitle?: string
-  onBack: () => void
+  onBack?: never
   right?: React.ReactNode
 }) {
   return (
     <View style={styles.header}>
       <View style={styles.headerLeft}>
-        <Pressable
-          onPress={onBack}
-          hitSlop={12}
-          style={({ pressed }) => [styles.backBtn, pressed && styles.backBtnPressed]}
-          accessibilityRole="button"
-          accessibilityLabel="Kembali ke kasir"
-        >
-          <Text style={styles.backBtnText}>‹</Text>
-        </Pressable>
         <View style={styles.titleWrap}>
           <Text style={styles.headerTitle} numberOfLines={1}>
             {title}
@@ -58,20 +49,8 @@ const styles = StyleSheet.create({
     borderBottomColor: COLORS.border,
     backgroundColor: COLORS.surface,
   },
-  headerLeft: { flexDirection: 'row', alignItems: 'center', gap: 12, flex: 1 },
+  headerLeft: { flexDirection: 'row', alignItems: 'center', flex: 1 },
   titleWrap: { flex: 1 },
-  backBtn: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: COLORS.surfaceMuted,
-    borderWidth: 1,
-    borderColor: COLORS.border,
-  },
-  backBtnPressed: { backgroundColor: COLORS.surfacePressed },
-  backBtnText: { fontSize: 22, fontWeight: '700', color: COLORS.text, marginTop: -2 },
   headerTitle: { fontSize: 17, fontWeight: '800', color: COLORS.text },
   headerSubtitle: { fontSize: 12, color: COLORS.textMuted, marginTop: 1 },
   headerRight: { flexDirection: 'row', alignItems: 'center', gap: 10 },

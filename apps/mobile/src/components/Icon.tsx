@@ -1,5 +1,5 @@
 import React from 'react'
-import Svg, { Circle, Path } from 'react-native-svg'
+import Svg, { Circle, Path, Rect } from 'react-native-svg'
 
 /** Icon SVG inline (no emoji) — stroke tipis, warna mengikuti prop color. */
 export default function Icon({
@@ -102,6 +102,36 @@ export default function Icon({
           <Path {...common} d="M2 12l3.5-7h13L22 12" />
           <Path {...common} d="M2 12h6l2 3h4l2-3h6" />
           <Path {...common} d="M2 12v7h20v-7" />
+        </Svg>
+      )
+    case 'cash':
+      return (
+        <Svg width={size} height={size} viewBox="0 0 24 24">
+          <Rect {...common} x="2" y="6" width="20" height="12" rx="2" />
+          <Circle {...common} cx="12" cy="12" r="3" />
+          <Path {...common} d="M6 12h.01M18 12h.01" />
+        </Svg>
+      )
+    case 'lock':
+      return (
+        <Svg width={size} height={size} viewBox="0 0 24 24">
+          <Rect {...common} x="4" y="10" width="16" height="11" rx="2" />
+          <Path {...common} d="M8 10V7a4 4 0 018 0v3" />
+        </Svg>
+      )
+    case 'history':
+      return (
+        <Svg width={size} height={size} viewBox="0 0 24 24">
+          <Path {...common} d="M3 12a9 9 0 109-9 9.8 9.8 0 00-6.4 2.6L3 8" />
+          <Path {...common} d="M3 3v5h5" />
+          <Path {...common} d="M12 7v5l3 2" />
+        </Svg>
+      )
+    case 'power':
+      return (
+        <Svg width={size} height={size} viewBox="0 0 24 24">
+          <Path {...common} d="M12 2v10" />
+          <Path {...common} d="M18.4 6.6a9 9 0 11-12.8 0" />
         </Svg>
       )
     default:

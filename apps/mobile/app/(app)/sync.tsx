@@ -1,4 +1,3 @@
-import { useRouter } from 'expo-router'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import {
   Alert,
@@ -160,7 +159,6 @@ function SyncProgressBar({ progress, active }: { progress: number; active: boole
 }
 
 export default function SyncScreen() {
-  const router = useRouter()
   const insets = useSafeAreaInsets()
   const reducedMotion = useReducedMotion()
 
@@ -255,8 +253,6 @@ export default function SyncScreen() {
     [views, reload, refresh],
   )
 
-  const goBackToPos = useCallback(() => router.back(), [router])
-
   const totalCount = pendingCount + syncingCount + failedCount
 
   return (
@@ -264,7 +260,6 @@ export default function SyncScreen() {
       <HeaderBar
         title="Sinkronisasi"
         subtitle="Antrean transaksi offline"
-        onBack={goBackToPos}
         right={<Text style={styles.footerNote}>Fase 2B.5 · Mock</Text>}
       />
 

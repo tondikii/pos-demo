@@ -4,6 +4,7 @@ import LoginPage from './routes/login'
 import RegisterPage from './routes/register'
 import OnboardingPage from './routes/onboarding'
 import DashboardPage from './routes/dashboard'
+import CashierPage from './routes/cashier'
 import ProductsPage from './routes/products'
 import OutletsPage from './routes/outlets'
 import StaffPage from './routes/staff'
@@ -21,6 +22,7 @@ export default function App() {
         <Route path="/register" component={RegisterPage} />
         <Route path="/onboarding" component={OnboardingPage} />
         <Route path="/dashboard" component={DashboardPage} />
+        <Route path="/cashier" component={CashierPage} />
         <Route path="/products" component={ProductsPage} />
         <Route path="/outlets" component={OutletsPage} />
         <Route path="/staff" component={StaffPage} />

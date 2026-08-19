@@ -1,5 +1,5 @@
 import { createMemo, createSignal, Show } from 'solid-js'
-import { A, useNavigate } from '@solidjs/router'
+import { A, Navigate, useNavigate } from '@solidjs/router'
 import { Motion } from '@motionone/solid'
 import { registerSchema } from '@larispos/shared'
 import AuthLayout from '../layouts/AuthLayout'
@@ -12,6 +12,11 @@ import { useAuth } from '../lib/auth-mock'
 
 type RegisterKeys = 'email' | 'phone' | 'password' | 'businessName'
 
+/**
+ * /register — daftar ringkas (PRD Flow 1): 1 form, nama bisnis + email +
+ * password. WA opsional — collapsed di bawah tombol, bisa dilengkapi nanti.
+ * Setelah daftar → langsung ke dashboard (outlet "Outlet Utama" otomatis).
+ */
 export default function RegisterPage() {
   const { register, isAuthenticated } = useAuth()
   const navigate = useNavigate()
@@ -26,8 +31,9 @@ export default function RegisterPage() {
   const [formError, setFormError] = createSignal<string | null>(null)
   const [submitting, setSubmitting] = createSignal(false)
   const [touched, setTouched] = createSignal<Record<string, boolean>>({})
+  const [showPhone, setShowPhone] = createSignal(false)
 
-  if (isAuthenticated()) navigate('/onboarding', { replace: true })
+  if (isAuthenticated()) return <Navigate href="/dashboard" />
 
   const fieldErrors = createMemo(() => {
     const errs = errors()
@@ -75,7 +81,8 @@ export default function RegisterPage() {
     window.setTimeout(() => {
       try {
         register(res.data)
-        navigate('/onboarding', { replace: true })
+        // Outlet "Outlet Utama" dibuat otomatis — langsung masuk dashboard.
+        navigate('/dashboard', { replace: true })
       } catch (err) {
         setFormError(err instanceof Error ? err.message : 'Daftar gagal. Coba lagi.')
         setSubmitting(false)
@@ -95,7 +102,7 @@ export default function RegisterPage() {
             <div class="mb-6 space-y-1.5">
               <h1 class="text-2xl font-extrabold tracking-tight text-foreground">Coba gratis 14 hari</h1>
               <p class="text-sm text-muted-foreground">
-                Tanpa kartu. Sudah punya akun?{' '}
+                Tanpa kartu, tanpa kontrak. Sudah punya akun?{' '}
                 <A href="/login" class="font-semibold text-primary hover:text-blue-700 hover:underline">
                   Masuk
                 </A>
@@ -137,27 +144,6 @@ export default function RegisterPage() {
                 />
               </Field>
 
-              <Field
-                label="Nomor WhatsApp"
-                for="reg-phone"
-                required
-                errorMessage={fieldErrors().phone}
-                hint="Format Indonesia: 08xx / +62 8xx"
-              >
-                <Input
-                  id="reg-phone"
-                  type="tel"
-                  name="phone"
-                  autocomplete="tel-national"
-                  inputmode="tel"
-                  placeholder="0812 3456 7890"
-                  value={values().phone}
-                  invalid={Boolean(fieldErrors().phone)}
-                  onInput={(e) => setField('phone', e.currentTarget.value)}
-                  onBlur={() => handleBlur('phone')}
-                />
-              </Field>
-
               <Field label="Password" for="reg-password" required errorMessage={fieldErrors().password} hint="Minimal 8 karakter">
                 <Input
                   id="reg-password"
@@ -172,15 +158,51 @@ export default function RegisterPage() {
                 />
               </Field>
 
+              {/* WA opsional — collapsed, dibuka hanya kalau mau diisi sekarang */}
+              <Show
+                when={showPhone()}
+                fallback={
+                  <button
+                    type="button"
+                    onClick={() => setShowPhone(true)}
+                    class="flex w-full items-center gap-2 rounded-xl border border-dashed border-border px-3.5 py-2.5 text-sm font-semibold text-muted-foreground transition-colors duration-150 hover:border-primary/40 hover:text-foreground"
+                  >
+                    <span aria-hidden="true" class="text-base leading-none">＋</span>
+                    Tambahkan nomor WA (opsional)
+                  </button>
+                }
+              >
+                <Field
+                  label="Nomor WhatsApp (opsional)"
+                  for="reg-phone"
+                  errorMessage={fieldErrors().phone}
+                  hint="Format Indonesia: 08xx / +62 8xx"
+                >
+                  <Input
+                    id="reg-phone"
+                    type="tel"
+                    name="phone"
+                    autocomplete="tel-national"
+                    inputmode="tel"
+                    placeholder="0812 3456 7890"
+                    value={values().phone}
+                    invalid={Boolean(fieldErrors().phone)}
+                    onInput={(e) => setField('phone', e.currentTarget.value)}
+                    onBlur={() => handleBlur('phone')}
+                  />
+                </Field>
+              </Show>
+
               <Button type="submit" fullWidth size="lg" loading={submitting()}>
                 {submitting() ? 'Membuat akun…' : 'Daftar & mulai trial'}
               </Button>
             </form>
+
+            <p class="mt-4 text-center text-xs text-muted-foreground">
+              Dengan mendaftar Anda menyetujui Syarat &amp; Ketentuan dan Kebijakan Privasi LarisPOS.
+            </p>
           </CardContent>
         </Card>
-        <p class="mt-4 text-center text-xs text-muted-foreground">
-          Dengan mendaftar Anda menyetujui Syarat &amp; Ketentuan dan Kebijakan Privasi LarisPOS.
-        </p>
       </Motion>
     </AuthLayout>
   )

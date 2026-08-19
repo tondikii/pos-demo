@@ -24,6 +24,12 @@
   --color-on-destructive: #ffffff;
   --color-ring: #2563eb;
 
+  /* MASTER.md larispos — status & selected states */
+  --color-primary-soft: #eff6ff;
+  --color-success: #16a34a;
+  --color-on-success: #ffffff;
+  --color-success-soft: #f0fdf4;
+
   /* Panel brand gelap auth layout */
   --color-brand-950: #0b1120;
   --color-brand-900: #0f172a;

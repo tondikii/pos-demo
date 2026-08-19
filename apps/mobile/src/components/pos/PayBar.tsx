@@ -13,9 +13,12 @@ import { COLORS } from '../../theme'
 export default function PayBar({
   disabled,
   onPress,
+  disabledHint,
 }: {
   disabled: boolean
   onPress: () => void
+  /** Hint pengganti saat disabled karena alasan di luar keranjang (mis. shift belum buka). */
+  disabledHint?: string
 }) {
   const { totals, change } = useCart()
   const hasItems = totals.itemCount > 0
@@ -44,7 +47,7 @@ export default function PayBar({
       </Pressable>
       {disabled && hasItems ? (
         <Text style={styles.hint}>
-          {change === null ? 'Pilih metode bayar & isi uang diterima' : 'Pilih metode bayar'}
+          {disabledHint ?? (change === null ? 'Pilih metode bayar & isi uang diterima' : 'Pilih metode bayar')}
         </Text>
       ) : null}
     </View>
