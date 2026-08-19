@@ -3,6 +3,7 @@ import { Navigate } from '@solidjs/router'
 import { Motion } from '@motionone/solid'
 import { SidebarLayout } from '../components/app/SidebarLayout'
 import { Button } from '../components/ui/button'
+import { Breadcrumb } from '../components/ui/breadcrumb'
 import { Card } from '../components/ui/card'
 import { Modal } from '../components/ui/modal'
 import { Badge } from '../components/ui/badge'
@@ -155,6 +156,7 @@ export default function PaymentMethodsPage() {
           {/* Judul + aksi */}
           <div class="flex flex-wrap items-end justify-between gap-4">
             <div>
+              <Breadcrumb items={[{ label: 'Pengaturan' }, { label: 'Metode Bayar' }]} />
               <h1 class="text-2xl font-extrabold tracking-tight text-foreground">
                 Metode bayar
               </h1>

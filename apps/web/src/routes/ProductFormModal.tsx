@@ -3,6 +3,7 @@ import { PRODUCT_CATEGORIES, DEFAULT_LOW_STOCK_THRESHOLD, createProductSchema } 
 import type { CreateProductInput } from '@larispos/shared'
 import { Button } from '../components/ui/button'
 import { Input } from '../components/ui/input'
+import { CurrencyInput } from '../components/ui/currency-input'
 import { Field } from '../components/ui/field'
 import { parseWithZod, type FieldErrors } from '../lib/validation'
 import type { MockProduct } from '../lib/mocks'
@@ -239,19 +240,15 @@ export function ProductFormModal(props: ProductFormModalProps) {
               label="HPP (harga pokok)"
               for="pf-cost"
               errorMessage={fieldErrors().costPrice}
-              hint="Rp, boleh 0"
+              hint="Boleh 0"
             >
-              <Input
+              <CurrencyInput
                 id="pf-cost"
                 name="costPrice"
-                type="number"
-                inputmode="decimal"
-                min="0"
-                step="500"
                 placeholder="0"
-                value={values().costPrice}
+                value={values().costPrice === '' ? 0 : Number(values().costPrice)}
                 invalid={Boolean(fieldErrors().costPrice)}
-                onInput={(e) => setProductField('costPrice', e.currentTarget.value)}
+                onValue={(n) => setProductField('costPrice', n === 0 ? '' : String(n))}
                 onBlur={() => handleBlur('costPrice')}
               />
             </Field>
@@ -301,17 +298,13 @@ export function ProductFormModal(props: ProductFormModalProps) {
                         />
                       </Field>
                       <Field label="Harga jual" for={`pf-v-${i()}-price`} required errorMessage={variantErrors()[i()]?.sellPrice}>
-                        <Input
+                        <CurrencyInput
                           id={`pf-v-${i()}-price`}
                           name="sellPrice"
-                          type="number"
-                          inputmode="decimal"
-                          min="0"
-                          step="500"
                           placeholder="18000"
-                          value={row.sellPrice}
+                          value={row.sellPrice === '' ? 0 : Number(row.sellPrice)}
                           invalid={Boolean(variantErrors()[i()]?.sellPrice)}
-                          onInput={(e) => setVariantField(i(), 'sellPrice', e.currentTarget.value)}
+                          onValue={(n) => setVariantField(i(), 'sellPrice', n === 0 ? '' : String(n))}
                         />
                       </Field>
                       <Field label="Stok" for={`pf-v-${i()}-stock`} required errorMessage={variantErrors()[i()]?.stock}>

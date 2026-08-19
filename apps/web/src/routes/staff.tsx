@@ -10,6 +10,7 @@ import { Badge } from '../components/ui/badge'
 import { ToastProvider } from '../components/ui/toast'
 import type { ToastApi } from '../components/ui/toast'
 import { EmptyState, ErrorState, CardGridSkeleton } from '../components/ui/state'
+import { Breadcrumb } from '../components/ui/breadcrumb'
 import { StaffFormModal, ResetStaffPinModal } from './StaffFormModal'
 import { useAuth } from '../lib/auth-mock'
 import { MOCK_OUTLETS } from '../lib/mocks'
@@ -180,7 +181,8 @@ export default function StaffPage() {
           {/* Judul + aksi */}
           <div class="flex flex-wrap items-end justify-between gap-4">
             <div>
-              <h1 class="text-2xl font-extrabold tracking-tight text-foreground">Staff</h1>
+              <Breadcrumb items={[{ label: 'Pengaturan' }, { label: 'Staf' }]} />
+<h1 class="text-2xl font-extrabold tracking-tight text-foreground">Staff</h1>
               <p class="mt-1 text-sm text-muted-foreground">
                 {visibleStaff().length} staff · {activeCount()} aktif
               </p>

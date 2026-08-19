@@ -6,6 +6,7 @@ import { Button } from '../components/ui/button'
 import { Card } from '../components/ui/card'
 import { Badge } from '../components/ui/badge'
 import { EmptyState, ErrorState, ListRowSkeleton } from '../components/ui/state'
+import { Breadcrumb } from '../components/ui/breadcrumb'
 import { useAuth } from '../lib/auth-mock'
 import { DEFAULT_OUTLET_ID, MOCK_OUTLETS, toDateKey } from '../lib/mocks'
 import type { MockShift } from '../lib/mocks'
@@ -71,7 +72,8 @@ export default function CashierPage() {
           {/* Judul */}
           <div class="flex flex-wrap items-end justify-between gap-4">
             <div>
-              <h1 class="text-2xl font-extrabold tracking-tight text-foreground">Kasir</h1>
+              <Breadcrumb items={[{ label: 'Kasir' }]} />
+<h1 class="text-2xl font-extrabold tracking-tight text-foreground">Kasir</h1>
               <p class="mt-1 text-sm text-muted-foreground">
                 {activeOutletName()} · shift &amp; riwayat kas
               </p>

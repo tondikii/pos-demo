@@ -15,6 +15,8 @@ import {
 import type { LoginInput, RegisterInput } from '@larispos/shared'
 
 const STORAGE_KEY = 'larispos_mock_auth'
+/** Daftar akun terdaftar (mock) — logout TIDAK menghapus akun, hanya sesi. */
+const ACCOUNTS_KEY = 'larispos_mock_accounts'
 
 /** Bentuk outlet hasil parse Zod — field default/opsional tetap opsional. */
 export type MockOutlet = z.output<typeof createOutletSchema> & {
@@ -30,6 +32,8 @@ export interface MockUser {
   businessName: string
   /** WA opsional (PRD Flow 1) — dilengkapi via pengaturan nanti. */
   phone?: string
+  /** Mock-only: password disimpan plaintext untuk login demo (Fase 3 → bcrypt hash server). */
+  password?: string
 }
 
 export interface MockSession {
@@ -115,6 +119,7 @@ export function AuthMockProvider(props: ParentProps): JSX.Element {
       const userRow: MockUser = {
         ...input,
         phone: input.phone?.trim() ? input.phone : undefined,
+        password: input.password, // mock-only login demo
         id: makeId('usr'),
         role: 'owner',
         createdAt: new Date().toISOString(),
@@ -133,17 +138,39 @@ export function AuthMockProvider(props: ParentProps): JSX.Element {
         isActive: true,
         createdAt: new Date().toISOString(),
       }
+      // simpan akun ke daftar (bisa login lagi setelah logout)
+      const accounts = JSON.parse(localStorage.getItem(ACCOUNTS_KEY) ?? '[]') as MockUser[]
+      const rest = accounts.filter((a) => a.email.toLowerCase() !== userRow.email.toLowerCase())
+      localStorage.setItem(ACCOUNTS_KEY, JSON.stringify([...rest, userRow]))
       const next: MockSession = { user: userRow, outlet: outletRow }
       persist(next)
       return userRow
     },
     login(input: MockAuthLogin): MockUser {
       loginSchema.parse(input)
-      const stored = safeParseSession(localStorage.getItem(STORAGE_KEY))
-      if (!stored) throw new Error('Akun tidak ditemukan. Silakan daftar dulu.')
-      if (stored.user.email !== input.email) throw new Error('Email atau password salah.')
-      persist(stored)
-      return stored.user
+      const accounts = JSON.parse(localStorage.getItem(ACCOUNTS_KEY) ?? '[]') as MockUser[]
+      const account = accounts.find(
+        (a) => a.email.toLowerCase() === input.email.trim().toLowerCase(),
+      )
+      if (!account || account.password !== input.password) {
+        throw new Error('Email atau password salah.')
+      }
+      const sessionUser: MockUser = { ...account }
+      // buat outlet default jika belum ada
+      const outletRow: MockOutlet = {
+        id: makeId('out'),
+        name: 'Outlet Utama',
+        address: '',
+        phone: sessionUser.phone,
+        taxPercent: 0,
+        servicePercent: 0,
+        receiptHeader: undefined,
+        receiptFooter: undefined,
+        isActive: true,
+        createdAt: new Date().toISOString(),
+      }
+      persist({ user: sessionUser, outlet: outletRow })
+      return sessionUser
     },
     createOutlet(input: MockAuthCreateOutlet): MockOutlet {
       createOutletSchema.parse(input)

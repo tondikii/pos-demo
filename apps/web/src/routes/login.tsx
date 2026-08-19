@@ -56,7 +56,8 @@ export default function LoginPage() {
 
   function handleSubmit(e: SubmitEvent) {
     e.preventDefault()
-    const res = parseWithZod(loginSchema, values())
+    const input = { ...values(), email: values().email.trim().toLowerCase() }
+    const res = parseWithZod(loginSchema, input)
     if (!res.ok) {
       setErrors(res.errors ?? {})
       setTouched({ email: true, password: true })
@@ -68,7 +69,7 @@ export default function LoginPage() {
     // Mock — simulasi latensi singkat agar loading state terlihat nyata
     window.setTimeout(() => {
       try {
-        login(res.data)
+        login({ ...res.data, email: res.data.email.trim().toLowerCase() })
         navigate('/dashboard', { replace: true })
       } catch (err) {
         setFormError(err instanceof Error ? err.message : 'Login gagal. Coba lagi.')

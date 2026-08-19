@@ -69,8 +69,12 @@ export default function RegisterPage() {
 
   function handleSubmit(e: SubmitEvent) {
     e.preventDefault()
-    // phone kosong → undefined (Zod .optional() menolak string kosong)
-    const input = { ...values(), phone: values().phone?.trim() ? values().phone : undefined }
+    // phone kosong → undefined; email dinormalisasi (trim + lowercase)
+    const input = {
+      ...values(),
+      email: values().email.trim().toLowerCase(),
+      phone: values().phone?.trim() ? values().phone : undefined,
+    }
     const res = parseWithZod(registerSchema, input)
     if (!res.ok) {
       setErrors(res.errors ?? {})

@@ -11,6 +11,7 @@ import { Badge } from '../components/ui/badge'
 import { ToastProvider } from '../components/ui/toast'
 import type { ToastApi } from '../components/ui/toast'
 import { EmptyState, ErrorState, CardGridSkeleton } from '../components/ui/state'
+import { Breadcrumb } from '../components/ui/breadcrumb'
 import { OutletFormModal } from './OutletFormModal'
 import { useAuth } from '../lib/auth-mock'
 import {
@@ -141,7 +142,8 @@ export default function OutletsPage() {
           {/* Judul + aksi */}
           <div class="flex flex-wrap items-end justify-between gap-4">
             <div>
-              <h1 class="text-2xl font-extrabold tracking-tight text-foreground">Outlet</h1>
+              <Breadcrumb items={[{ label: 'Pengaturan' }, { label: 'Outlet' }]} />
+<h1 class="text-2xl font-extrabold tracking-tight text-foreground">Outlet</h1>
               <p class="mt-1 text-sm text-muted-foreground">
                 {outlets().length} outlet · paket {PLANS.starter.label} (maks {limit().max})
               </p>

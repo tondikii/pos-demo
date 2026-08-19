@@ -12,6 +12,7 @@ import { Modal } from '../components/ui/modal'
 import { ToastProvider } from '../components/ui/toast'
 import type { ToastApi } from '../components/ui/toast'
 import { EmptyState, ErrorState, StatSkeletonCard } from '../components/ui/state'
+import { Breadcrumb } from '../components/ui/breadcrumb'
 import { useAuth } from '../lib/auth-mock'
 import {
   billingCycleLabel,
@@ -22,7 +23,6 @@ import {
 import {
   useSubscription,
   useUpgradeSubscription,
-  useResetSubscription,
 } from '../lib/queries'
 import { formatIDR, formatCompact } from '../lib/format'
 
@@ -470,7 +470,6 @@ export default function SubscriptionPage() {
 
   const sub = useSubscription()
   const upgrade = useUpgradeSubscription()
-  const reset = useResetSubscription()
 
   const [cycle, setCycle] = createSignal<MockBillingCycle>('monthly')
   const [pendingPlan, setPendingPlan] = createSignal<PlanId | null>(null)
@@ -515,14 +514,6 @@ export default function SubscriptionPage() {
     }
   }
 
-  const handleReset = async () => {
-    try {
-      await reset.mutateAsync()
-      toast.info('Langganan dikembalikan ke seed trial (demo).')
-    } catch (err) {
-      toast.error(err instanceof Error ? err.message : 'Reset gagal.')
-    }
-  }
 
   return (
     <SidebarLayout
@@ -541,14 +532,12 @@ export default function SubscriptionPage() {
           {/* Judul + aksi */}
           <div class="flex flex-wrap items-end justify-between gap-4">
             <div>
-              <h1 class="text-2xl font-extrabold tracking-tight text-foreground">Langganan</h1>
+              <Breadcrumb items={[{ label: 'Pengaturan', href: '/outlets' }, { label: 'Langganan' }]} />
+<h1 class="text-2xl font-extrabold tracking-tight text-foreground">Langganan</h1>
               <p class="mt-1 text-sm text-muted-foreground">
                 {user()?.businessName ?? 'Usaha Anda'} · {outlet()?.name ?? ''}
               </p>
             </div>
-            <Button variant="ghost" size="sm" onClick={() => void handleReset()}>
-              Mulai ulang trial (demo)
-            </Button>
           </div>
 
           <Show when={!sub.isPending} fallback={<SubscriptionSkeleton />}>

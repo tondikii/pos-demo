@@ -5,6 +5,7 @@ import { PRODUCT_CATEGORIES } from '@larispos/shared'
 import type { CreateProductInput } from '@larispos/shared'
 import { SidebarLayout } from '../components/app/SidebarLayout'
 import { Button } from '../components/ui/button'
+import { Breadcrumb } from '../components/ui/breadcrumb'
 import { Card } from '../components/ui/card'
 import { Modal } from '../components/ui/modal'
 import { ToastProvider } from '../components/ui/toast'
@@ -215,7 +216,8 @@ export default function ProductsPage() {
           {/* Judul + aksi */}
           <div class="flex flex-wrap items-end justify-between gap-4">
             <div>
-              <h1 class="text-2xl font-extrabold tracking-tight text-foreground">Produk &amp; Varian</h1>
+              <Breadcrumb items={[{ label: 'Produk' }]} />
+<h1 class="text-2xl font-extrabold tracking-tight text-foreground">Produk &amp; Varian</h1>
               <p class="mt-1 text-sm text-muted-foreground">
                 {activeOutlet().name} · {productsQuery.data?.length ?? 0} produk
               </p>

@@ -195,7 +195,14 @@ export function CartProvider({
     [],
   )
   const setCashReceivedText = useCallback(
-    (text: string) => dispatch({ type: 'SET_CASH_RECEIVED', text }),
+    (text: string) => {
+      // format ribuan otomatis: "15000" → "15.000" (hanya angka)
+      const digits = text.replace(/\D/g, '')
+      const formatted = digits
+        ? new Intl.NumberFormat('id-ID').format(Number(digits))
+        : ''
+      dispatch({ type: 'SET_CASH_RECEIVED', text: formatted })
+    },
     [],
   )
 

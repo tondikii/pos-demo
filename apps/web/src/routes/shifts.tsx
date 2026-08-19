@@ -9,6 +9,7 @@ import { Modal } from '../components/ui/modal'
 import { ToastProvider } from '../components/ui/toast'
 import type { ToastApi } from '../components/ui/toast'
 import { EmptyState, ErrorState, StatSkeletonCard, ListRowSkeleton } from '../components/ui/state'
+import { Breadcrumb } from '../components/ui/breadcrumb'
 import { useAuth } from '../lib/auth-mock'
 import { DEFAULT_OUTLET_ID, MOCK_OUTLETS, toDateKey } from '../lib/mocks'
 import type { MockOutlet, MockShift, MockShiftPaymentRow } from '../lib/mocks'
@@ -314,7 +315,8 @@ export default function ShiftsPage() {
           {/* Judul + aksi */}
           <div class="flex flex-wrap items-end justify-between gap-4">
             <div>
-              <h1 class="text-2xl font-extrabold tracking-tight text-foreground">Kasir — Shift</h1>
+              <Breadcrumb items={[{ label: 'Kasir', href: '/cashier' }, { label: 'Shift' }]} />
+<h1 class="text-2xl font-extrabold tracking-tight text-foreground">Kasir — Shift</h1>
               <p class="mt-1 text-sm text-muted-foreground">
                 Riwayat buka/tutup shift · {activeOutlet().name} · {rangeLabel()}
               </p>
