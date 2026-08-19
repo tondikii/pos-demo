@@ -16,6 +16,11 @@
 
 - **Kebijakan Versi: Selalu gunakan `latest stable` untuk semua packages/dependencies. Jika versi latest belum stable (alpha/beta/canary), pakai latest stable. Jangan pin versi lama tanpa approval. Verifikasi versi via Context7 MCP (`context7` server) bila ragu.**
 - **Animasi:** Web pakai `@motionone/solid` (motion.dev); Mobile pakai `react-native-reanimated` 4.x. Patuhi skill `pos-motion` (transform/opacity only, prefers-reduced-motion, durasi hover 150-250ms). UI mengikuti `ui-ux-pro-max`.
+- **UX & Navigasi (kunci — jangan menyimpang):**
+  - **Web dashboard: SIDEBAR kiri** (desktop) / drawer (mobile) — BUKAN top navbar. Item: Dashboard, Kasir, Produk, Laporan, Pengaturan (Outlet, Staf, Metode Bayar, Langganan).
+  - **Mobile kasir: BOTTOM NAVIGATION** — Kasir / Riwayat / Shift / Sync selalu terlihat.
+  - **Auth ringkas:** daftar 1 form (nama bisnis + email + password; WA opsional), outlet otomatis dibuat. Jangan tambah step wajib.
+  - **Konsistensi desain:** semua platform pakai design token dari `ui-ux-pro-max/design-system/larispos/MASTER.md` (warna/typography/spacing). Copywriting natural & manusiawi (skill `pos-copywriting`).
 - Web: **SolidJS + Vite 8 + TailwindCSS + TanStack Query** (latest stable)
 - Mobile: **Expo SDK 57+ + Expo Router + NativeWind + expo-sqlite + MMKV** (latest stable)
 - Backend: **Elysia on Bun 1.2+ (Bun runtime)** (latest stable)

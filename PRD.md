@@ -134,31 +134,31 @@ Rekomendasi: **LarisPOS** — paling brandable, mudah SEO ("POS murah UMKM"), da
 
 ## 9. User Flows (Produk Level)
 
-### Flow 1 — Owner Onboarding & Trial
-1. Kunjungi landing page → CTA "Coba Gratis 14 Hari" → Daftar (nama, WA, email, nama usaha).
-2. Verifikasi → Buat outlet pertama (nama outlet, alamat) → Masuk dashboard (onboarding checklist).
-3. Tambah produk + varian + stok + metode bayar + pajak/layanan opsional.
-4. Undang kasir (buat akun kasir: nama + PIN 6-digit, assign outlet).
-5. Kasir login di Android pakai PIN → siap jualan.
+### Flow 1 — Owner Onboarding & Trial (RINGKAS — max 2 langkah)
+1. Kunjungi landing → CTA "Coba Gratis 14 Hari" → **Daftar dalam 1 form** (nama bisnis + email + password — WA opsional, bisa dilengkapi nanti; trial 14 hari otomatis aktif).
+2. Langsung masuk dashboard (outlet "Outlet Utama" dibuat otomatis dari nama bisnis). Setup lanjutan (produk, kasir, metode bayar, pajak) via checklist onboarding yang bisa di-skip — tidak wajib untuk mulai.
 
-### Flow 2 — Owner Kelola Harian (Web)
-Dashboard → Lihat ringkasan hari ini (omzet, laba, transaksi) → Kelola produk/stok → Atur metode bayar/pajak → Lihat laporan → Kelola staf & outlet → Kelola langganan.
+### Flow 2 — Owner Kelola Harian (Web — Sidebar Navigasi)
+- **Sidebar kiri** (desktop) / drawer (mobile) sebagai navigasi utama — bukan top navbar.
+- **Dashboard** (ringkasan hari ini) → **Kasir** (buka/tutup shift + riwayat) → **Produk** → **Laporan** → **Pengaturan** (outlet, staf, metode bayar, langganan).
+- Kelola produk/stok, metode bayar/pajak, staf & outlet, laporan, langganan — semua dari sidebar.
 
-### Flow 3 — Kasir Cepat (Android — Offline Capable)
-1. Buka app → Login kasir via PIN (atau owner via email/password) → Pilih outlet (jika multi) → **Buka Shift** (input kas awal).
-2. Kasir cepat: Tap produk → Pilih varian → Qty → Keranjang → Pilih metode bayar (Cash/QRIS statis/Transfer) → Input uang diterima (jika cash) → **Bayar**.
+### Flow 3 — Kasir Cepat (Android — Bottom Navigation)
+1. Buka app → Login kasir via **PIN 6 digit** (owner via email/password) → pilih outlet (jika multi) → **Buka Shift** (input kas awal) — ditampilkan sebagai prompt pertama kali, bukan langkah wajib berulang.
+2. Kasir cepat: Tap produk → pilih varian → **langsung masuk keranjang** → pilih metode bayar → input uang diterima (jika cash) → **Bayar**. (Alur dipersingkat: 2 tap untuk tambah item, tanpa step tidak perlu.)
 3. Cetak struk Bluetooth thermal (atau share struk).
 4. Jika offline: transaksi simpan lokal (SQLite) → badge "Menunggu sync" → otomatis sync saat online.
-5. **Tutup Shift:** Lihat rekap shift (total transaksi, per metode bayar, kas akhir) → Konfirmasi tutup.
+5. **Tutup Shift:** rekap shift (total transaksi, per metode bayar, kas akhir) → konfirmasi.
+6. **Bottom Navigation** (mobile): Kasir / Riwayat / Shift / Sync — selalu terlihat, satu tap akses.
 
 ### Flow 4 — Void & Koreksi
 Kasir/Owner bisa void transaksi di shift yang masih buka (alasan wajib) → Stok kembali → Laporan tandai void, tidak hitung omzet.
 
 ### Flow 5 — Laporan untuk Keputusan
-Owner buka Laporan → Filter tanggal/outlet → Lihat: Omzet, HPP, Laba bersih, Best seller & produk sepi, Stok menipis, Metode bayar, Jam ramai (heatmap jam) → Export/share (PDF/WA) — *export detail di Open Question.*
+Owner buka Laporan (dari sidebar) → Filter tanggal/outlet → Lihat: Omzet, HPP, Laba bersih, Best seller & produk sepi, Stok menipis, Metode bayar, Jam ramai → Export/share (PDF/WA).
 
 ### Flow 6 — Langganan
-Owner → Menu Langganan → Lihat status trial/sisa hari → Pilih paket → Bayar via Midtrans → Status aktif (webhook). Gagal bayar → reminder + grace 7 hari.
+Owner → Pengaturan → Langganan → Lihat status trial/sisa hari → Pilih paket → Bayar via Midtrans → Status aktif (webhook). Gagal bayar → reminder + grace 7 hari.
 
 ---
 
