@@ -234,7 +234,7 @@ function BestSellersTable(props: { data: BestSellersData }) {
                   </td>
                   <td class="px-4 py-2.5">
                     <div class="min-w-0">
-                      <p class="truncate font-semibold text-foreground">{row.variantName}</p>
+                      <p class="truncate font-semibold text-foreground" title={row.variantName}>{row.variantName}</p>
                       {/* bar mini — proporsi qty vs produk terlaris */}
                       <div class="mt-1 h-1 w-full max-w-44 overflow-hidden rounded-full bg-muted">
                         <div
@@ -327,7 +327,7 @@ function PaymentBreakdownList(props: { rows: MockPaymentBreakdownRow[] }) {
                     <p class="truncate text-sm font-semibold text-foreground">
                       {row.methodName}
                       <span class="ml-2 text-xs font-medium text-muted-foreground">
-                        {row.count} trx
+                        {row.count} transaksi
                       </span>
                     </p>
                   </div>
@@ -566,7 +566,7 @@ export default function ReportsPage() {
                         <p class="mt-2 text-2xl font-extrabold tracking-tight text-foreground tabular-nums">
                           {formatIDR(totals().omzet)}
                         </p>
-                        <p class="mt-2 text-xs font-semibold text-emerald-700">
+                        <p class="mt-2 text-xs text-muted-foreground">
                           {days().length} hari tercatat
                         </p>
                       </div>
@@ -617,10 +617,10 @@ export default function ReportsPage() {
                       <div class="p-5">
                         <p class="text-xs font-medium text-muted-foreground">Transaksi</p>
                         <p class="mt-2 text-2xl font-extrabold tracking-tight text-foreground tabular-nums">
-                          {totals().txCount} <span class="text-base font-bold text-muted-foreground">trx</span>
+                          {totals().txCount} <span class="text-base font-bold text-muted-foreground">transaksi</span>
                         </p>
                         <p class="mt-2 text-xs text-muted-foreground">
-                          Rata-rata {formatCompact(Math.round(totals().avg))}/trx
+                          Rata-rata {formatIDR(Math.round(totals().avg))}/transaksi
                         </p>
                       </div>
                     </Card>

@@ -205,7 +205,7 @@ function ShiftDetailModal(props: { shift: MockShift | null; onClose: () => void 
                           {METHOD_ICON[row.methodName] ?? '💳'}
                         </span>
                         <span class="truncate">{row.methodName}</span>
-                        <span class="text-xs text-muted-foreground">{row.count} trx</span>
+                        <span class="text-xs text-muted-foreground">{row.count} transaksi</span>
                       </span>
                       <span class="shrink-0 text-sm font-bold text-foreground tabular-nums">
                         {formatIDR(row.total)}
@@ -417,7 +417,7 @@ export default function ShiftsPage() {
                         <p class="text-xs font-medium text-muted-foreground">Total transaksi</p>
                         <p class="mt-2 text-2xl font-extrabold tracking-tight text-foreground tabular-nums">
                           {visibleShifts().reduce((sum, s) => sum + s.txCount, 0)}
-                          <span class="text-base font-bold text-muted-foreground"> trx</span>
+                          <span class="text-base font-bold text-muted-foreground"> transaksi</span>
                         </p>
                         <p class="mt-2 text-xs text-muted-foreground">Rentang terpilih</p>
                       </div>

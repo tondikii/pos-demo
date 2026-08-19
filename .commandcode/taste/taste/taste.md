@@ -31,5 +31,6 @@
 - Wants auth/onboarding flows with minimal friction: fewest possible steps, only required fields, no fields filled repeatedly — criticized an auth flow with too many steps, many non-mandatory forms, and repeated data entry. Confidence: 0.9
 - Wants a consistent, integrated design system across all surfaces (web dashboard, mobile, and landing page) so UI quality is uniform everywhere, not just good in isolation. Confidence: 0.85
 - Wants copywriting to be natural, human, and relevant to the product/business context, and is open to installing or authoring a dedicated copywriting skill to achieve it. Confidence: 0.8
+- Defers validation/verification (build, typecheck, smoke tests, "validasi") on mock/stub implementations until the real implementation exists — told the agent "ini masih mock jangan divalidasi dulu" and to focus on fixing the many remaining issues instead of running validation passes on mock code. Confidence: 0.85
 es (web dashboard, mobile, and landing page) so UI quality is uniform everywhere, not just good in isolation. Confidence: 0.85
 - Wants copywriting to be natural, human, and relevant to the product/business context, and is open to installing or authoring a dedicated copywriting skill to achieve it. Confidence: 0.8

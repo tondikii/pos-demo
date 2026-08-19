@@ -135,7 +135,7 @@ export function OmzetChart(props: OmzetChartProps) {
       <div class="mt-6 rounded-xl border border-border bg-card p-4">
         <div class="flex items-center justify-between">
           <p class="text-xs font-medium text-muted-foreground">
-            Tren omzet <span class="hidden sm:inline">(svg sparkline)</span>
+            Tren omzet
           </p>
           <Show when={todaySummary()}>
             <p class="text-xs font-semibold text-foreground tabular-nums">

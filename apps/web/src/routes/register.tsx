@@ -69,7 +69,9 @@ export default function RegisterPage() {
 
   function handleSubmit(e: SubmitEvent) {
     e.preventDefault()
-    const res = parseWithZod(registerSchema, values())
+    // phone kosong → undefined (Zod .optional() menolak string kosong)
+    const input = { ...values(), phone: values().phone?.trim() ? values().phone : undefined }
+    const res = parseWithZod(registerSchema, input)
     if (!res.ok) {
       setErrors(res.errors ?? {})
       setTouched({ email: true, phone: true, password: true, businessName: true })

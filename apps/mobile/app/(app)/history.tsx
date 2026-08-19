@@ -527,7 +527,6 @@ export default function HistoryScreen() {
       <HeaderBar
         title="Riwayat Transaksi"
         subtitle={session?.outletName ?? 'Outlet'}
-        right={<Text style={styles.footerNote}>Fase 2B.4 · Mock lokal</Text>}
       />
 
       <FilterChips value={filter} counts={counts} onChange={setFilter} />
@@ -576,7 +575,6 @@ export default function HistoryScreen() {
 
 const styles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: COLORS.bg },
-  footerNote: { fontSize: 11, color: COLORS.textMuted },
 
   filterRow: {
     flexDirection: 'row',

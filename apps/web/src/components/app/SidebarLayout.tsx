@@ -4,7 +4,6 @@ import { createEffect, createMemo, createSignal, For, Show } from 'solid-js'
 import type { ParentProps } from 'solid-js'
 import { Button } from '../ui/button'
 import { Icon } from '../ui/icon'
-import { isMockErrorEnabled, setMockErrorEnabled } from '../../lib/mocks'
 
 /**
  * SidebarLayout — navigasi utama web dashboard (PRD Flow 2, MASTER.md).
@@ -159,44 +158,6 @@ function SettingsGroup(props: { onNavigate?: () => void }) {
   )
 }
 
-function MockErrorToggle() {
-  const [mockError, setMockError] = createSignal(isMockErrorEnabled())
-
-  function toggleMockError() {
-    const next = !mockError()
-    setMockError(next)
-    setMockErrorEnabled(next)
-    // Muat ulang agar semua query cache dibersihkan & state konsisten.
-    window.location.reload()
-  }
-
-  return (
-    <button
-      type="button"
-      aria-pressed={mockError()}
-      title={
-        mockError()
-          ? 'Simulasi error aktif — semua query akan gagal'
-          : 'Aktifkan simulasi error untuk verifikasi error state'
-      }
-      onClick={toggleMockError}
-      class={[
-        'flex items-center gap-2 rounded-lg px-3 py-2 text-xs font-semibold transition-colors duration-150',
-        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/30',
-        mockError()
-          ? 'bg-destructive/10 text-destructive hover:bg-destructive/15'
-          : 'text-muted-foreground hover:bg-muted hover:text-foreground',
-      ].join(' ')}
-    >
-      <span
-        aria-hidden="true"
-        class={['size-1.5 rounded-full', mockError() ? 'bg-destructive' : 'bg-slate-400'].join(' ')}
-      />
-      Simulasi error
-    </button>
-  )
-}
-
 function SidebarContent(props: {
   userLabel?: string
   outletName?: string
@@ -217,7 +178,6 @@ function SidebarContent(props: {
         </ul>
       </nav>
       <div class="space-y-3 border-t border-border p-4">
-        <MockErrorToggle />
         <div class="flex items-center gap-3">
           <span
             aria-hidden="true"

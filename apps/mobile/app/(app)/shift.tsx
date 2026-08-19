@@ -331,7 +331,6 @@ export default function ShiftScreen() {
       <HeaderBar
         title="Shift"
         subtitle={session?.outletName ?? 'Outlet'}
-        right={<Text style={styles.footerNote}>Fase 2B.3 · Mock lokal</Text>}
       />
 
       <ScrollView
@@ -370,7 +369,6 @@ export default function ShiftScreen() {
 
 const styles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: COLORS.bg },
-  footerNote: { fontSize: 11, color: COLORS.textMuted },
   content: { padding: 16, gap: 16, paddingBottom: 40 },
   formCard: {
     backgroundColor: COLORS.surface,

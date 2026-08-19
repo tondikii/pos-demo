@@ -260,7 +260,6 @@ export default function SyncScreen() {
       <HeaderBar
         title="Sinkronisasi"
         subtitle="Antrean transaksi offline"
-        right={<Text style={styles.footerNote}>Fase 2B.5 · Mock</Text>}
       />
 
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
@@ -376,7 +375,6 @@ export default function SyncScreen() {
 
 const styles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: COLORS.bg },
-  footerNote: { fontSize: 11, color: COLORS.textMuted },
 
   content: { padding: 16, gap: 12, paddingBottom: 40 },
 

@@ -139,9 +139,9 @@ export default function DashboardPage() {
   })
 
   const presetLabel: Record<DateRangePreset, string> = {
-    today: 'Hari ini',
-    '7d': '7 hari terakhir',
-    custom: 'Rentang custom',
+    today: 'Ringkasan hari ini',
+    '7d': 'Ringkasan 7 hari terakhir',
+    custom: 'Ringkasan rentang custom',
   }
 
   return (
@@ -162,7 +162,7 @@ export default function DashboardPage() {
                 Halo, {user()?.businessName ?? 'Owner'}
               </h1>
               <p class="mt-1 text-sm text-muted-foreground">
-                Ringkasan usaha Anda — {presetLabel[filters().preset]}
+                {presetLabel[filters().preset]}
               </p>
             </div>
             <DashboardFilters value={filters()} onChange={setFilters} outlets={outlets()} />
@@ -354,7 +354,7 @@ export default function DashboardPage() {
                                 </span>
                               </div>
                               <span class="shrink-0 tabular-nums">
-                                {d.txCount} trx · {formatCompact(d.avg)}
+                                {d.txCount} transaksi · {formatCompact(d.avg)}
                               </span>
                             </dl>
                           </li>

@@ -205,7 +205,7 @@ export default function CashierPage() {
                     {(shifts.data ?? [])
                       .filter((s) => s.date === today)
                       .reduce((sum, s) => sum + s.txCount, 0)}{' '}
-                    <span class="text-base font-bold text-muted-foreground">trx</span>
+                    <span class="text-base font-bold text-muted-foreground">transaksi</span>
                   </p>
                   <p class="mt-2 text-xs text-muted-foreground">
                     {formatDayLabel(today, today)} di {activeOutletName()}
@@ -257,7 +257,7 @@ export default function CashierPage() {
                               </p>
                               <p class="mt-0.5 truncate text-xs text-muted-foreground tabular-nums">
                                 {s.cashierName} · {s.openedAt.slice(11, 16)}–
-                                {s.closedAt?.slice(11, 16) ?? '…'} · {s.txCount} trx
+                                {s.closedAt?.slice(11, 16) ?? '…'} · {s.txCount} transaksi
                               </p>
                             </div>
                             <div class="flex shrink-0 items-center gap-2">

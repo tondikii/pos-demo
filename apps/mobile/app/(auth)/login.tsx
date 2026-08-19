@@ -297,7 +297,6 @@ export default function LoginScreen() {
         </Animated.View>
       )}
 
-      <Text style={styles.footer}>Fase 2B.1 · Login mock tanpa API</Text>
     </View>
   )
 }
