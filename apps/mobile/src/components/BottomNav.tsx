@@ -38,7 +38,8 @@ export default function BottomNav() {
       accessibilityRole="tablist"
     >
       {tabs.map((tab) => {
-        const active = pathname === tab.route
+        const clean = pathname.split('?')[0].replace(/\/$/, '')
+        const active = clean === tab.route
         return (
           <Link key={tab.key} href={tab.route} asChild>
             <Pressable
@@ -90,32 +91,38 @@ export default function BottomNav() {
 const styles = StyleSheet.create({
   bar: {
     flexDirection: 'row',
+    width: '100%',
     backgroundColor: COLORS.surface,
     borderTopWidth: 1,
     borderTopColor: COLORS.border,
     paddingTop: 6,
-    paddingHorizontal: 8,
+    paddingHorizontal: 4,
+    shadowColor: '#0F172A',
+    shadowOpacity: 0.04,
+    shadowRadius: 8,
+    shadowOffset: { width: 0, height: -2 },
+    elevation: 6,
   },
   tab: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 3,
+    gap: 2,
     paddingVertical: 4,
     borderRadius: 12,
   },
   tabPressedActive: { opacity: 0.85 },
-  iconWrap: { width: 26, height: 26, alignItems: 'center', justifyContent: 'center' },
+  iconWrap: { width: 28, height: 26, alignItems: 'center', justifyContent: 'center' },
   iconWrapActive: {
-    minWidth: 26,
+    minWidth: 30,
     height: 26,
-    paddingHorizontal: 9,
+    paddingHorizontal: 10,
     borderRadius: 13,
     backgroundColor: COLORS.primary,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  label: { fontSize: 11, fontWeight: '700' },
-  labelActive: { color: COLORS.primary },
+  label: { fontSize: 11, fontWeight: '600' },
+  labelActive: { color: COLORS.primary, fontWeight: '700' },
   labelIdle: { color: COLORS.textMuted },
 })

@@ -47,13 +47,13 @@ function badgeColor(status: QueuedTxRow['status']) {
 function statusLabel(status: QueuedTxRow['status']): string {
   switch (status) {
     case 'pending':
-      return 'Pending'
+      return 'Menunggu'
     case 'syncing':
-      return 'Syncing'
+      return 'Menyinkronkan'
     case 'voided':
-      return 'Voided'
+      return 'Dibatalkan'
     case 'failed':
-      return 'Failed'
+      return 'Gagal'
     default:
       return status
   }

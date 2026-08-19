@@ -39,10 +39,10 @@ type HistoryFilter = 'all' | 'pending' | 'syncing' | 'voided' | 'failed'
 
 const FILTERS: { key: HistoryFilter; label: string }[] = [
   { key: 'all', label: 'Semua' },
-  { key: 'pending', label: 'Pending' },
-  { key: 'syncing', label: 'Syncing' },
-  { key: 'voided', label: 'Voided' },
-  { key: 'failed', label: 'Failed' },
+  { key: 'pending', label: 'Menunggu' },
+  { key: 'syncing', label: 'Menyinkronkan' },
+  { key: 'voided', label: 'Dibatalkan' },
+  { key: 'failed', label: 'Gagal' },
 ]
 
 type TxView = {
@@ -68,13 +68,13 @@ function badgeColor(status: QueuedTxRow['status']) {
 function statusLabel(status: QueuedTxRow['status']): string {
   switch (status) {
     case 'pending':
-      return 'Pending'
+      return 'Menunggu'
     case 'syncing':
-      return 'Syncing'
+      return 'Menyinkronkan'
     case 'voided':
-      return 'Voided'
+      return 'Dibatalkan'
     case 'failed':
-      return 'Failed'
+      return 'Gagal'
     default:
       return status
   }

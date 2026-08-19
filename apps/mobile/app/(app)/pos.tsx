@@ -119,6 +119,8 @@ function PosContent() {
         setLastTx(payload)
         clear()
         setShowSuccess(true)
+        // Refresh rekap shift (jumlah transaksi bertambah) — jangan tunggu fokus.
+        void reloadShift()
         // Overlay sukses singkat → struk (delay 400ms; jangan blok UX).
         setTimeout(() => {
           setShowSuccess(false)
@@ -131,7 +133,7 @@ function PosContent() {
         setShowReceipt(true)
       })
       .finally(() => setIsSaving(false))
-  }, [canCheckout, buildPayload, clear])
+  }, [canCheckout, buildPayload, clear, reloadShift])
 
   const handleAddItem = useCallback(
     (product: MockProduct, variant: CartVariantRef) => {

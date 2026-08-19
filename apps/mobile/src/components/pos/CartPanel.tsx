@@ -208,15 +208,20 @@ export default function CartPanel({
             {paymentMethodId && cashMethod && paymentMethodId === cashMethod.id ? (
               <View style={styles.cashWrap}>
                 <Text style={styles.cashLabel}>Uang diterima</Text>
-                <TextInput
-                  value={cashReceivedText}
-                  onChangeText={setCashReceivedText}
-                  keyboardType="number-pad"
-                  placeholder="0"
-                  placeholderTextColor="#94A3B8"
-                  style={styles.cashInput}
-                  accessibilityLabel="Uang diterima"
-                />
+                <View style={styles.cashInputWrap}>
+                  <Text style={styles.cashPrefix} accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
+                    Rp
+                  </Text>
+                  <TextInput
+                    value={cashReceivedText}
+                    onChangeText={setCashReceivedText}
+                    keyboardType="number-pad"
+                    placeholder="0"
+                    placeholderTextColor="#94A3B8"
+                    style={styles.cashInput}
+                    accessibilityLabel="Uang diterima dalam Rupiah"
+                  />
+                </View>
                 <View style={styles.changeLine}>
                   <Text style={styles.changeLabel}>Kembalian</Text>
                   <Text style={[styles.changeValue, change === null && styles.changeValueInvalid]}>
@@ -329,12 +334,23 @@ const styles = StyleSheet.create({
   pmHint: { fontSize: 12, color: COLORS.textMuted },
   cashWrap: { gap: 6 },
   cashLabel: { fontSize: 13, fontWeight: '600', color: COLORS.text },
-  cashInput: {
+  cashInputWrap: {
+    flexDirection: 'row',
+    alignItems: 'center',
     backgroundColor: COLORS.bg,
     borderRadius: 10,
     borderWidth: 1,
     borderColor: COLORS.border,
-    paddingHorizontal: 12,
+  },
+  cashPrefix: {
+    paddingLeft: 12,
+    fontSize: 16,
+    fontWeight: '700',
+    color: COLORS.textMuted,
+  },
+  cashInput: {
+    flex: 1,
+    paddingHorizontal: 8,
     paddingVertical: 10,
     fontSize: 16,
     fontWeight: '700',

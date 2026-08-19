@@ -100,12 +100,12 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   primaryBtn: {
-    backgroundColor: COLORS.success,
+    backgroundColor: COLORS.primary,
     borderRadius: 14,
     paddingVertical: 15,
     alignItems: 'center',
   },
   primaryBtnDisabled: { opacity: 0.5 },
-  primaryBtnPressed: { transform: [{ scale: 0.96 }], backgroundColor: COLORS.successPressed },
+  primaryBtnPressed: { transform: [{ scale: 0.96 }], backgroundColor: COLORS.primaryPressed },
   primaryBtnText: { color: '#FFFFFF', fontSize: 16, fontWeight: '800', letterSpacing: 0.5 },
 })
