@@ -29,7 +29,7 @@ export default function BottomNav() {
     { key: 'pos', route: '/pos', label: 'Kasir', icon: 'cart', a11y: 'Buka kasir' },
     { key: 'history', route: '/history', label: 'Riwayat', icon: 'receipt', a11y: 'Buka riwayat transaksi' },
     { key: 'shift', route: '/shift', label: 'Shift', icon: 'clock', a11y: 'Buka shift' },
-    { key: 'sync', route: '/sync', label: 'Sync', icon: 'sync', a11y: 'Buka sinkronisasi' },
+    { key: 'sync', route: '/sync', label: 'Sinkron', icon: 'sync', a11y: 'Buka sinkronisasi' },
   ]
 
   return (
@@ -95,8 +95,8 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.surface,
     borderTopWidth: 1,
     borderTopColor: COLORS.border,
-    paddingTop: 6,
-    paddingHorizontal: 4,
+    paddingTop: 7,
+    paddingHorizontal: 6,
     shadowColor: '#0F172A',
     shadowOpacity: 0.04,
     shadowRadius: 8,
@@ -107,8 +107,8 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 2,
-    paddingVertical: 4,
+    gap: 3,
+    paddingVertical: 5,
     borderRadius: 12,
   },
   tabPressedActive: { opacity: 0.85 },

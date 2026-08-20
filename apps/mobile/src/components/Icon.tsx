@@ -119,6 +119,12 @@ export default function Icon({
           <Path {...common} d="M8 10V7a4 4 0 018 0v3" />
         </Svg>
       )
+    case 'close':
+      return (
+        <Svg width={size} height={size} viewBox="0 0 24 24">
+          <Path {...common} d="M6 6l12 12M18 6L6 18" />
+        </Svg>
+      )
     case 'history':
       return (
         <Svg width={size} height={size} viewBox="0 0 24 24">

@@ -1,6 +1,6 @@
 import { useRouter } from 'expo-router'
 import React, { useCallback, useState } from 'react'
-import { Pressable, StyleSheet, Text, View } from 'react-native'
+import { Modal, Pressable, StyleSheet, Text, useWindowDimensions, View } from 'react-native'
 import Animated, { FadeIn, FadeOut, ZoomIn, useReducedMotion } from 'react-native-reanimated'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
@@ -18,6 +18,7 @@ import {
   type MockProduct,
 } from '../../src/lib/mock-data'
 import { enqueueTransaction, type QueuedTransactionPayload } from '../../src/db/queue'
+import { formatIDR } from '../../src/lib/format'
 import { useActiveShift } from '../../src/db/use-shift'
 import ProductGrid from '../../src/components/pos/ProductGrid'
 import CartPanel from '../../src/components/pos/CartPanel'
@@ -68,6 +69,9 @@ function PosContent() {
   const [showReceipt, setShowReceipt] = useState(false)
   const [showSuccess, setShowSuccess] = useState(false)
   const [isSaving, setIsSaving] = useState(false)
+  const [cartOpen, setCartOpen] = useState(false)
+  const { width } = useWindowDimensions()
+  const isTablet = width >= 768
 
   const cashMethod = MOCK_PAYMENT_METHODS.find((m) => m.type === 'cash')
   const isCash = paymentMethodId !== null && paymentMethodId === cashMethod?.id
@@ -160,14 +164,14 @@ function PosContent() {
       ) : null}
 
       <View style={styles.body}>
-        <View style={styles.leftPane}>
-          <ProductGrid
-            products={MOCK_PRODUCTS}
-            categories={MOCK_CATEGORIES}
-            onAddItem={handleAddItem}
-          />
-        </View>
+        <ProductGrid
+          products={MOCK_PRODUCTS}
+          categories={MOCK_CATEGORIES}
+          onAddItem={handleAddItem}
+        />
+      </View>
 
+      {isTablet ? (
         <View style={styles.rightPane}>
           <CartPanel paymentMethods={MOCK_PAYMENT_METHODS} />
           <PayBar
@@ -176,7 +180,61 @@ function PosContent() {
             disabledHint={hasOpenShift ? undefined : 'Buka shift dulu'}
           />
         </View>
-      </View>
+      ) : (
+        <>
+          {/* Bar keranjang ringkas (phone) — jumlah item + total + tombol buka */}
+          <Pressable
+            onPress={() => setCartOpen(true)}
+            disabled={items.length === 0}
+            style={({ pressed }) => [
+              styles.cartBar,
+              (items.length === 0 || pressed) && { opacity: pressed ? 0.85 : 0.6 },
+            ]}
+            accessibilityRole="button"
+            accessibilityLabel={`Buka keranjang, ${items.length} item`}
+          >
+            <View style={styles.cartBarLeft}>
+              <Icon name="cart" size={18} color={COLORS.text} />
+              <Text style={styles.cartBarCount}>{items.length} item</Text>
+            </View>
+            <Text style={styles.cartBarTotal}>{formatIDR(totals.total)}</Text>
+          </Pressable>
+
+          {/* Bottom sheet keranjang (phone) */}
+          <Modal
+            visible={cartOpen}
+            transparent
+            animationType="slide"
+            onRequestClose={() => setCartOpen(false)}
+          >
+            <View style={styles.sheetRoot}>
+              <Pressable style={styles.sheetScrim} onPress={() => setCartOpen(false)} />
+              <View style={styles.sheet}>
+                <View style={styles.sheetHandle} />
+                <View style={styles.sheetHeader}>
+                  <Text style={styles.sheetTitle}>Keranjang</Text>
+                  <Pressable onPress={() => setCartOpen(false)} hitSlop={10} accessibilityRole="button" accessibilityLabel="Tutup keranjang">
+                    <Icon name="close" size={20} color={COLORS.textMuted} />
+                  </Pressable>
+                </View>
+                <View style={styles.sheetBody}>
+                  <CartPanel paymentMethods={MOCK_PAYMENT_METHODS} />
+                </View>
+                <View style={styles.sheetFooter}>
+                  <PayBar
+                    disabled={!canCheckout}
+                    onPress={() => {
+                      setCartOpen(false)
+                      handleCheckout()
+                    }}
+                    disabledHint={hasOpenShift ? undefined : 'Buka shift dulu'}
+                  />
+                </View>
+              </View>
+            </View>
+          </Modal>
+        </>
+      )}
 
       <SuccessOverlay visible={showSuccess} />
 
@@ -213,8 +271,6 @@ export default function PosScreen() {
             </View>
           </View>
           <View style={styles.headerRight}>
-            <SyncBadge />
-            <PrinterStatus />
             <Pressable
               onPress={handleLogout}
               hitSlop={6}
@@ -225,6 +281,12 @@ export default function PosScreen() {
               <Text style={styles.logoutText}>Keluar</Text>
             </Pressable>
           </View>
+        </View>
+
+        {/* Baris status ramping: sync + printer (bukan di header agar tidak berdesakan) */}
+        <View style={styles.statusRow}>
+          <SyncBadge />
+          <PrinterStatus />
         </View>
 
         <PosContent />
@@ -251,6 +313,14 @@ const styles = StyleSheet.create({
   outletName: { fontSize: 15, fontWeight: '800', color: COLORS.text },
   cashierName: { fontSize: 12, color: COLORS.textMuted },
   headerRight: { flexDirection: 'row', alignItems: 'center', gap: 10 },
+  statusRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    backgroundColor: COLORS.bg,
+  },
   logoutBtn: {
     paddingHorizontal: 12,
     paddingVertical: 7,
@@ -261,16 +331,65 @@ const styles = StyleSheet.create({
   },
   logoutBtnPressed: { backgroundColor: COLORS.dangerSoft },
   logoutText: { color: COLORS.danger, fontWeight: '700', fontSize: 13 },
-  body: { flex: 1, flexDirection: 'row', padding: 12, gap: 12 },
-  leftPane: { flex: 1, minWidth: 0 },
+  body: { flex: 1, padding: 12 },
   rightPane: {
-    width: 320,
+    position: 'absolute',
+    right: 12,
+    top: 12,
+    bottom: 12,
+    width: 340,
     borderRadius: 20,
     overflow: 'hidden',
     backgroundColor: COLORS.surface,
     borderWidth: 1,
     borderColor: COLORS.border,
   },
+  /* Bar keranjang ringkas (phone) */
+  cartBar: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginHorizontal: 12,
+    marginBottom: 8,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    borderRadius: 14,
+    backgroundColor: COLORS.surface,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+  },
+  cartBarLeft: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  cartBarCount: { fontSize: 13, fontWeight: '700', color: COLORS.text },
+  cartBarTotal: { fontSize: 15, fontWeight: '800', color: COLORS.primary },
+  /* Bottom sheet keranjang */
+  sheetRoot: { flex: 1, justifyContent: 'flex-end' },
+  sheetScrim: { ...StyleSheet.absoluteFill, backgroundColor: 'rgba(15,23,42,0.45)' },
+  sheet: {
+    backgroundColor: COLORS.bg,
+    borderTopLeftRadius: 22,
+    borderTopRightRadius: 22,
+    paddingTop: 8,
+    paddingHorizontal: 4,
+    maxHeight: '88%',
+  },
+  sheetHandle: {
+    alignSelf: 'center',
+    width: 40,
+    height: 4,
+    borderRadius: 2,
+    backgroundColor: COLORS.border,
+    marginBottom: 6,
+  },
+  sheetHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+  },
+  sheetTitle: { fontSize: 17, fontWeight: '800', color: COLORS.text },
+  sheetBody: { flexGrow: 1, paddingHorizontal: 12 },
+  sheetFooter: { paddingHorizontal: 12, paddingBottom: 12, paddingTop: 4 },
   successOverlay: {
     position: 'absolute',
     top: 0,
