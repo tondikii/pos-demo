@@ -272,16 +272,16 @@ export default function ProductsPage() {
                   {(c) => (
                     <button
                       type="button"
-                      onClick={() => setCategory(category() === c ? 'Semua' : c)}
-                      aria-pressed={category() === c}
+                      onClick={() => setCategory(category() === c.name ? 'Semua' : c.name)}
+                      aria-pressed={category() === c.name}
                       class={[
                         'rounded-lg px-3 py-1.5 text-sm font-semibold transition-colors duration-150',
-                        category() === c
+                        category() === c.name
                           ? 'bg-primary text-on-primary'
                           : 'text-muted-foreground hover:bg-muted hover:text-foreground',
                       ].join(' ')}
                     >
-                      {c}
+                      {c.name}
                     </button>
                   )}
                 </For>

@@ -26,6 +26,7 @@ export type CartVariantRef = {
   sellPrice: number
   stock: number
   lowStockThreshold: number
+  note?: string
 }
 
 export type CartItem = {
@@ -37,6 +38,8 @@ export type CartItem = {
   costPrice: number
   qty: number
   maxStock: number
+  /** Catatan singkat item (mis. "less sugar") — opsional, F&B (PRD). */
+  note?: string
 }
 
 export type CartState = {
@@ -50,6 +53,7 @@ export type CartAction =
   | { type: 'INC'; variantId: string }
   | { type: 'DEC'; variantId: string }
   | { type: 'REMOVE'; variantId: string }
+  | { type: 'SET_NOTE'; variantId: string; note: string }
   | { type: 'CLEAR' }
   | { type: 'SET_PAYMENT_METHOD'; paymentMethodId: string }
   | { type: 'SET_CASH_RECEIVED'; text: string }
@@ -77,11 +81,14 @@ function upsertLine(
     ]
   }
   return items.map((i) =>
-    i.variantId === variant.id ? { ...i, qty: Math.min(i.qty + qty, i.maxStock) } : i,
+    i.variantId === variant.id
+      ? { ...i, qty: Math.min(i.qty + qty, i.maxStock), note: i.note ?? variant.note }
+      : i,
   )
 }
 
-function cartReducer(state: CartState, action: CartAction): CartState {
+/** Reducer keranjang — diekspor untuk unit test (murni, tanpa side effect). */
+export function cartReducer(state: CartState, action: CartAction): CartState {
   switch (action.type) {
     case 'ADD_ITEM': {
       const { product, variant } = action
@@ -109,6 +116,14 @@ function cartReducer(state: CartState, action: CartAction): CartState {
     }
     case 'REMOVE': {
       return { ...state, items: state.items.filter((i) => i.variantId !== action.variantId) }
+    }
+    case 'SET_NOTE': {
+      return {
+        ...state,
+        items: state.items.map((i) =>
+          i.variantId === action.variantId ? { ...i, note: action.note } : i,
+        ),
+      }
     }
     case 'CLEAR': {
       return { ...state, items: [], cashReceivedText: '' }
@@ -159,6 +174,7 @@ export type CartContextValue = {
   increment: (variantId: string) => void
   decrement: (variantId: string) => void
   removeItem: (variantId: string) => void
+  setNote: (variantId: string, note: string) => void
   clear: () => void
   totals: CartTotals
   cashReceived: number
@@ -174,10 +190,16 @@ export function CartProvider({
   children,
   taxPercent = 0,
   servicePercent = 0,
+  cashMethodId,
 }: {
   children: React.ReactNode
   taxPercent?: number
   servicePercent?: number
+  /**
+   * id metode bayar tunai — dipakai untuk logika `canCheckout`:
+   * cek kecukupan uang diterima HANYA untuk metode cash.
+   */
+  cashMethodId?: string | null
 }) {
   const [state, dispatch] = useReducer(cartReducer, INITIAL_STATE)
 
@@ -189,6 +211,10 @@ export function CartProvider({
   const increment = useCallback((variantId: string) => dispatch({ type: 'INC', variantId }), [])
   const decrement = useCallback((variantId: string) => dispatch({ type: 'DEC', variantId }), [])
   const removeItem = useCallback((variantId: string) => dispatch({ type: 'REMOVE', variantId }), [])
+  const setNote = useCallback(
+    (variantId: string, note: string) => dispatch({ type: 'SET_NOTE', variantId, note }),
+    [],
+  )
   const clear = useCallback(() => dispatch({ type: 'CLEAR' }), [])
   const setPaymentMethodId = useCallback(
     (paymentMethodId: string) => dispatch({ type: 'SET_PAYMENT_METHOD', paymentMethodId }),
@@ -222,7 +248,9 @@ export function CartProvider({
   )
 
   const canCheckout =
-    state.items.length > 0 && state.paymentMethodId !== null && change !== null
+    state.items.length > 0 &&
+    state.paymentMethodId !== null &&
+    (state.paymentMethodId !== cashMethodId || change !== null)
 
   const value = useMemo<CartContextValue>(
     () => ({
@@ -235,6 +263,7 @@ export function CartProvider({
       increment,
       decrement,
       removeItem,
+      setNote,
       clear,
       totals,
       cashReceived,
@@ -251,6 +280,7 @@ export function CartProvider({
       increment,
       decrement,
       removeItem,
+      setNote,
       clear,
       totals,
       cashReceived,

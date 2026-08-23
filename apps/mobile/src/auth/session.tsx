@@ -1,4 +1,4 @@
-import * as SecureStore from 'expo-secure-store'
+import * as storage from '../lib/secure-storage'
 import React, {
   createContext,
   useCallback,
@@ -8,13 +8,11 @@ import React, {
   useState,
 } from 'react'
 
+import { DEMO_CASHIERS, DEMO_OUTLETS, type DemoCashier, type DemoOutlet } from '@larispos/shared'
+
 const SESSION_KEY = 'larispos.session'
 
-export type OutletInfo = {
-  id: string
-  name: string
-  address: string
-}
+export type OutletInfo = DemoOutlet
 
 export type SessionInfo = {
   id: string
@@ -25,24 +23,20 @@ export type SessionInfo = {
 }
 
 /** Outlet mock — Fase 2B.1 tanpa API. Sync dengan seed `packages/db` saat wiring. */
-export const MOCK_OUTLETS: OutletInfo[] = [
-  {
-    id: 'b6f5c8a1-2d3e-4f5a-9b8c-7d6e5f4a3b21',
-    name: 'Warung Demo Pusat',
-    address: 'Jl. Merdeka No. 1, Jakarta',
-  },
-  {
-    id: 'c7a6d9b2-3e4f-5a6b-8c9d-0e1f2a3b4c32',
-    name: 'Cabang Tebet',
-    address: 'Jl. Tebet Raya No. 45, Jakarta Selatan',
-  },
-]
+export const MOCK_OUTLETS: OutletInfo[] = DEMO_OUTLETS
 
 /** Staff mock — outlet → list kasir (PIN plaintext hanya untuk mock Fase 2B.1). */
-export const MOCK_CASHIERS: Record<string, { id: string; name: string; pin: string }[]> = {
-  [MOCK_OUTLETS[0].id]: [{ id: 'stf-demo-pusat', name: 'Budi Kasir', pin: '123456' }],
-  [MOCK_OUTLETS[1].id]: [{ id: 'stf-demo-tebet', name: 'Sari Kasir', pin: '123456' }],
-}
+export const MOCK_CASHIERS: Record<string, { id: string; name: string; pin: string }[]> =
+  Object.fromEntries(
+    DEMO_OUTLETS.map((o) => [
+      o.id,
+      DEMO_CASHIERS.filter((c: DemoCashier) => c.outletId === o.id).map((c) => ({
+        id: c.id,
+        name: c.name,
+        pin: c.pin,
+      })),
+    ]),
+  )
 
 export function findCashierByPin(
   outletId: string,
@@ -68,7 +62,8 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     let mounted = true
-    SecureStore.getItemAsync(SESSION_KEY)
+    storage
+      .getItemAsync(SESSION_KEY)
       .then((raw) => {
         if (!mounted || !raw) return
         try {
@@ -76,14 +71,14 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
           if (parsed && typeof parsed.outletId === 'string' && typeof parsed.name === 'string') {
             setSession(parsed)
           } else {
-            void SecureStore.deleteItemAsync(SESSION_KEY)
+            void storage.deleteItemAsync(SESSION_KEY)
           }
         } catch {
-          void SecureStore.deleteItemAsync(SESSION_KEY)
+          void storage.deleteItemAsync(SESSION_KEY)
         }
       })
       .catch(() => {
-        // secure-store error saat restore → anggap belum login
+        // storage error saat restore → anggap belum login
       })
       .finally(() => {
         if (mounted) setIsLoading(false)
@@ -94,12 +89,12 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
   }, [])
 
   const signIn = useCallback(async (info: SessionInfo) => {
-    await SecureStore.setItemAsync(SESSION_KEY, JSON.stringify(info))
+    await storage.setItemAsync(SESSION_KEY, JSON.stringify(info))
     setSession(info)
   }, [])
 
   const signOut = useCallback(async () => {
-    await SecureStore.deleteItemAsync(SESSION_KEY).catch(() => {})
+    await storage.deleteItemAsync(SESSION_KEY).catch(() => {})
     setSession(null)
   }, [])
 

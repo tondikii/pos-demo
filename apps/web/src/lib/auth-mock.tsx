@@ -18,6 +18,12 @@ const STORAGE_KEY = 'larispos_mock_auth'
 /** Daftar akun terdaftar (mock) — logout TIDAK menghapus akun, hanya sesi. */
 const ACCOUNTS_KEY = 'larispos_mock_accounts'
 
+/** Akun tersimpan: user + outlet yang dibuat saat daftar (PRD Flow 1). */
+export interface MockAccount {
+  user: MockUser
+  outlet: MockOutlet
+}
+
 /** Bentuk outlet hasil parse Zod — field default/opsional tetap opsional. */
 export type MockOutlet = z.output<typeof createOutletSchema> & {
   id: string
@@ -86,6 +92,40 @@ function makeId(prefix: string): string {
   })
 }
 
+/** Outlet "Outlet Utama" otomatis dari nama bisnis (PRD Flow 1). */
+function buildDefaultOutlet(user: MockUser): MockOutlet {
+  return {
+    id: makeId('out'),
+    name: `${user.businessName} — Outlet Utama`,
+    address: '',
+    phone: user.phone,
+    taxPercent: 0,
+    servicePercent: 0,
+    receiptHeader: undefined,
+    receiptFooter: undefined,
+    isActive: true,
+    createdAt: new Date().toISOString(),
+  }
+}
+
+function loadAccounts(): MockAccount[] {
+  try {
+    const parsed = JSON.parse(localStorage.getItem(ACCOUNTS_KEY) ?? '[]') as unknown
+    if (!Array.isArray(parsed)) return []
+    return parsed as MockAccount[]
+  } catch {
+    return []
+  }
+}
+
+function saveAccounts(accounts: MockAccount[]): void {
+  try {
+    localStorage.setItem(ACCOUNTS_KEY, JSON.stringify(accounts))
+  } catch {
+    // kuota penuh / private mode — abaikan
+  }
+}
+
 /**
  * AuthMockProvider — state autentikasi Fase 2 (tanpa API).
  * Sesi dipersist di localStorage (`larispos_mock_auth`).
@@ -124,51 +164,30 @@ export function AuthMockProvider(props: ParentProps): JSX.Element {
         role: 'owner',
         createdAt: new Date().toISOString(),
       }
-      // PRD Flow 1 — daftar 1 form: outlet "Outlet Utama" dibuat otomatis
-      // dari nama bisnis (pajak 0). Tidak ada step onboarding wajib.
-      const outletRow: MockOutlet = {
-        id: makeId('out'),
-        name: 'Outlet Utama',
-        address: '',
-        phone: userRow.phone,
-        taxPercent: 0,
-        servicePercent: 0,
-        receiptHeader: undefined,
-        receiptFooter: undefined,
-        isActive: true,
-        createdAt: new Date().toISOString(),
-      }
-      // simpan akun ke daftar (bisa login lagi setelah logout)
-      const accounts = JSON.parse(localStorage.getItem(ACCOUNTS_KEY) ?? '[]') as MockUser[]
-      const rest = accounts.filter((a) => a.email.toLowerCase() !== userRow.email.toLowerCase())
-      localStorage.setItem(ACCOUNTS_KEY, JSON.stringify([...rest, userRow]))
-      const next: MockSession = { user: userRow, outlet: outletRow }
-      persist(next)
+      // PRD Flow 1 — daftar 1 form: outlet dibuat otomatis dari nama bisnis
+      // (pajak 0). Tidak ada step onboarding wajib.
+      const outletRow = buildDefaultOutlet(userRow)
+      // simpan akun + outlet (bisa login lagi setelah logout — outlet yang
+      // sama dipakai ulang, bukan dibuat baru tiap login).
+      const accounts = loadAccounts()
+      const rest = accounts.filter((a) => a.user.email.toLowerCase() !== userRow.email.toLowerCase())
+      saveAccounts([...rest, { user: userRow, outlet: outletRow }])
+      persist({ user: userRow, outlet: outletRow })
       return userRow
     },
     login(input: MockAuthLogin): MockUser {
       loginSchema.parse(input)
-      const accounts = JSON.parse(localStorage.getItem(ACCOUNTS_KEY) ?? '[]') as MockUser[]
+      const accounts = loadAccounts()
       const account = accounts.find(
-        (a) => a.email.toLowerCase() === input.email.trim().toLowerCase(),
+        (a) => a.user.email.toLowerCase() === input.email.trim().toLowerCase(),
       )
-      if (!account || account.password !== input.password) {
+      if (!account || account.user.password !== input.password) {
         throw new Error('Email atau password salah.')
       }
-      const sessionUser: MockUser = { ...account }
-      // buat outlet default jika belum ada
-      const outletRow: MockOutlet = {
-        id: makeId('out'),
-        name: 'Outlet Utama',
-        address: '',
-        phone: sessionUser.phone,
-        taxPercent: 0,
-        servicePercent: 0,
-        receiptHeader: undefined,
-        receiptFooter: undefined,
-        isActive: true,
-        createdAt: new Date().toISOString(),
-      }
+      const sessionUser: MockUser = { ...account.user }
+      // Outlet TETAP dari akun (tidak dibuat ulang) — pengaturan outlet yang
+      // sudah dibuat sebelumnya tidak ter-orphan.
+      const outletRow: MockOutlet = account.outlet ?? buildDefaultOutlet(sessionUser)
       persist({ user: sessionUser, outlet: outletRow })
       return sessionUser
     },

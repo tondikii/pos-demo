@@ -1,13 +1,10 @@
 import React from 'react'
-import { StyleSheet, Text, View } from 'react-native'
-
-import { COLORS, SPACING } from '../theme'
+import { Text, View } from 'react-native'
 
 /**
- * Header konsisten untuk semua screen (Fase 2B.8 — navigasi pindah ke
- * bottom nav): judul 800 + subtitle (outlet), aksi kanan opsional
- * (badge sync / tombol kontekstual). Tanpa tombol kembali — berpindah
- * screen cukup lewat BottomNav.
+ * Header layar (app) — judul 800 + subtitle outlet, aksi kanan opsional
+ * (StatusPill kompak / tombol kontekstual). Seragam di semua screen:
+ * judul 18 extrabold, subtitle 12 muted, padding 16/8, border bawah.
  */
 export default function HeaderBar({
   title,
@@ -16,42 +13,21 @@ export default function HeaderBar({
 }: {
   title: string
   subtitle?: string
-  onBack?: never
   right?: React.ReactNode
 }) {
   return (
-    <View style={styles.header}>
-      <View style={styles.headerLeft}>
-        <View style={styles.titleWrap}>
-          <Text style={styles.headerTitle} numberOfLines={1}>
-            {title}
+    <View className="flex-row items-center justify-between px-4 pt-2 pb-2 border-b border-border bg-surface">
+      <View className="flex-1 pr-2">
+        <Text className="text-[18px] font-extrabold text-text tracking-[-0.02em]" numberOfLines={1}>
+          {title}
+        </Text>
+        {subtitle ? (
+          <Text className="text-[12px] text-text-muted mt-0.5" numberOfLines={1}>
+            {subtitle}
           </Text>
-          {subtitle ? (
-            <Text style={styles.headerSubtitle} numberOfLines={1}>
-              {subtitle}
-            </Text>
-          ) : null}
-        </View>
+        ) : null}
       </View>
-      {right ? <View style={styles.headerRight}>{right}</View> : null}
+      {right ? <View className="flex-row items-center gap-2">{right}</View> : null}
     </View>
   )
 }
-
-const styles = StyleSheet.create({
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: SPACING.lg,
-    paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: COLORS.border,
-    backgroundColor: COLORS.surface,
-  },
-  headerLeft: { flexDirection: 'row', alignItems: 'center', flex: 1 },
-  titleWrap: { flex: 1 },
-  headerTitle: { fontSize: 17, fontWeight: '800', color: COLORS.text },
-  headerSubtitle: { fontSize: 12, color: COLORS.textMuted, marginTop: 1 },
-  headerRight: { flexDirection: 'row', alignItems: 'center', gap: 10 },
-})

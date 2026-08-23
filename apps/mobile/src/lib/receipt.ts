@@ -68,6 +68,7 @@ export function buildReceiptText(tx: QueuedTransactionPayload): string {
     const label = `${item.variantName} ${item.productName}`.slice(0, 22)
     lines.push(padRight(label, 22))
     lines.push(row(`${item.qty} x ${formatIDR(item.sellPrice)}`, formatIDR(item.lineTotal)))
+    if (item.note) lines.push(`  > ${item.note.slice(0, W - 4)}`)
   }
   lines.push(line('-'))
   lines.push(row('Subtotal', formatIDR(tx.subtotal)))

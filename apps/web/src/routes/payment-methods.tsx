@@ -210,7 +210,7 @@ export default function PaymentMethodsPage() {
                 fallback={
                   <div class="mt-6">
                     <EmptyState
-                      icon="💳"
+                      icon="wallet"
                       title="Belum ada metode bayar"
                       description="Tambahkan Cash, QRIS, transfer, atau e-wallet. Minimal 1 metode harus aktif."
                       action={

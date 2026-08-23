@@ -100,9 +100,9 @@ export function ProductFormModal(props: ProductFormModalProps) {
   // Kategori dari state adjustable (bukan constant) — fallback ke default.
   const categoriesQuery = useCategories(() => props.outletId)
   const categoryOptions = createMemo(() => {
-    const list = categoriesQuery.data ?? []
+    const names = (categoriesQuery.data ?? []).map((c) => c.name)
     const current = values().category
-    return current && !list.includes(current) ? [...list, current] : list
+    return current && !names.includes(current) ? [...names, current] : names
   })
 
   // Reset form setiap kali modal dibuka (create ataupun edit).
@@ -219,7 +219,7 @@ export function ProductFormModal(props: ProductFormModalProps) {
             <Input
               id="pf-name"
               name="name"
-              placeholder="mis. Ayam Geprek Original"
+              placeholder="mis. Kopi Susu Gula Aren"
               value={values().name}
               invalid={Boolean(fieldErrors().name)}
               onInput={(e) => setProductField('name', e.currentTarget.value)}

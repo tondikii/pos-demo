@@ -18,7 +18,7 @@ const features = [
   },
   {
     icon: 'wifi-off',
-    title: 'Offline-First',
+    title: 'Jualan Tetap Jalan Saat Offline',
     desc: 'Internet mati? Tetap jualan. Transaksi tersimpan di perangkat dan otomatis tersinkron ke cloud begitu internet kembali.',
   },
   {
@@ -51,7 +51,7 @@ const plans = [
       '1 outlet',
       '2 kasir aktif',
       'Kasir cepat <15 detik',
-      'Offline-first',
+      'Jualan tetap jalan saat offline',
       'Laporan laba otomatis',
       'Stok per varian',
       'Cetak struk Bluetooth',
@@ -77,8 +77,8 @@ const plans = [
       'Hingga 99 outlet',
       'Outlet tambahan Rp 25rb/outlet',
       'Laporan konsolidasi',
-      'Onboarding & training khusus',
-      'Penyesuaian harga (custom)',
+      'Pendampingan dan pelatihan khusus',
+      'Penyesuaian harga khusus',
     ],
     featured: false,
   },
@@ -90,20 +90,20 @@ const testimonials = [
   {
     quote:
       'Dulu kasir sering antre dan stok sering telat dicatat. Sekarang satu transaksi nggak sampai 15 detik, laporan laba tinggal lihat di HP.',
-    name: 'Sari Wulandari',
-    role: 'Pemilik Warung Sari — Cilacap',
+    name: 'Rina Kusuma',
+    role: 'Pemilik Kedai Kopi Senja — Bandung',
   },
   {
     quote:
       'Internet sempat mati pas jam ramai, tetap bisa jualan. Pas internet balik, datanya langsung nyambung semua. Ini penyelamat.',
     name: 'Andi Pratama',
-    role: 'Owner Kedai Kopi Senja — Bandung',
+    role: 'Owner Kopi Senja — Jakarta Selatan',
   },
   {
     quote:
       'Dari gerobak, modal kecil, jadi nggak mau bayar mahal. Rp 39rb sebulan dapat fitur yang dulu cuma ada di POS mahal.',
     name: 'Budi Santoso',
-    role: 'Gerobak Seblak Gacor — Jakarta',
+    role: 'Gerobak Kopi Senja — Jakarta',
   },
 ]
 ---
@@ -122,8 +122,8 @@ const testimonials = [
           internet offline. Cukup buka aplikasi, langsung jualan.
         </p>
         <div class="hero-ctas">
-          <!-- Wiring ke web app (app.larispos.id) dilakukan saat domain web tersedia -->
-          <a class="btn btn-primary" href="/register">Coba Gratis 14 Hari</a>
+          <!-- CTA → web app (app.larispos.id/register) sesuai alur PRD §4.1: Landing → Web → API -->
+          <a class="btn btn-primary" href="https://app.larispos.id/register">Coba Gratis 14 Hari</a>
           <a class="btn btn-secondary" href="#fitur">Lihat Fitur</a>
         </div>
         <ul class="hero-bullets">
@@ -190,7 +190,7 @@ const testimonials = [
               <ul class="pricing-features">
                 {p.features.map((f) => <li>{f}</li>)}
               </ul>
-              <a class="btn btn-primary" href="/register">Coba Gratis 14 Hari</a>
+              <a class="btn btn-primary" href="https://app.larispos.id/register">Coba Gratis 14 Hari</a>
             </article>
           ))}
         </div>
@@ -247,7 +247,7 @@ const testimonials = [
           <p class="cta-sub">
             Gratis 14 hari, tanpa kartu kredit, tanpa kontrak. Siap berjualan dalam 15 menit.
           </p>
-          <a class="btn btn-primary" href="/register">Coba Gratis 14 Hari</a>
+          <a class="btn btn-primary" href="https://app.larispos.id/register">Coba Gratis 14 Hari</a>
         </div>
       </div>
     </section>

@@ -1,48 +1,19 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
-import {
-  Alert,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  Text,
-  View,
-  type DimensionValue,
-} from 'react-native'
-import Animated, {
-  FadeIn,
-  FadeInDown,
-  FadeOut,
-  Layout,
-  useReducedMotion,
-} from 'react-native-reanimated'
-import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import { Alert, Pressable, ScrollView, Text, View, type DimensionValue } from 'react-native'
+import Animated, { FadeIn, FadeInDown, FadeOut, useReducedMotion } from 'react-native-reanimated'
 
+import Icon from '../../src/components/Icon'
+import HeaderBar from '../../src/components/HeaderBar'
+import StatusPill from '../../src/components/ui/StatusPill'
+import EmptyState from '../../src/components/EmptyState'
+import Button from '../../src/components/ui/Button'
+import Badge from '../../src/components/ui/Badge'
 import { getQueuedTransactions, type QueuedTxRow, type QueuedTransactionPayload } from '../../src/db/queue'
 import { formatDateTime, formatIDR } from '../../src/lib/format'
 import { useSync } from '../../src/sync/sync-context'
-import HeaderBar from '../../src/components/HeaderBar'
-import EmptyState from '../../src/components/EmptyState'
-import { COLORS } from '../../src/theme'
+import { usePrinter } from '../../src/print/use-printer'
 
-type TxView = {
-  row: QueuedTxRow
-  payload: QueuedTransactionPayload
-}
-
-function badgeColor(status: QueuedTxRow['status']) {
-  switch (status) {
-    case 'pending':
-      return { bg: COLORS.pendingSoft, fg: '#B45309' }
-    case 'syncing':
-      return { bg: COLORS.primarySoft, fg: '#1D4ED8' }
-    case 'voided':
-      return { bg: COLORS.voidedSoft, fg: COLORS.voidedStrong }
-    case 'failed':
-      return { bg: COLORS.failedSoft, fg: COLORS.dangerStrong }
-    default:
-      return { bg: COLORS.grayBadge, fg: COLORS.grayBadgeText }
-  }
-}
+type TxView = { row: QueuedTxRow; payload: QueuedTransactionPayload }
 
 function statusLabel(status: QueuedTxRow['status']): string {
   switch (status) {
@@ -59,6 +30,21 @@ function statusLabel(status: QueuedTxRow['status']): string {
   }
 }
 
+function statusTone(status: QueuedTxRow['status']): 'warning' | 'primary' | 'danger' | 'neutral' {
+  switch (status) {
+    case 'pending':
+      return 'warning'
+    case 'syncing':
+      return 'primary'
+    case 'voided':
+      return 'neutral'
+    case 'failed':
+      return 'danger'
+    default:
+      return 'neutral'
+  }
+}
+
 function firstItemLabel(payload: QueuedTransactionPayload): string {
   const first = payload.items[0]
   if (!first) return 'Tanpa item'
@@ -67,68 +53,50 @@ function firstItemLabel(payload: QueuedTransactionPayload): string {
   return `${first.qty}x ${first.productName} +${totalQty - first.qty} lainnya`
 }
 
-/** Satu baris antrean — stagger FadeInDown (delay i*40ms), Layout saat status berubah. */
-function QueueRow({
-  tx,
-  index,
-  onDeleteFailed,
-}: {
-  tx: TxView
-  index: number
-  onDeleteFailed: (offlineId: string) => void
-}) {
+function QueueRow({ tx, index, onDeleteFailed }: { tx: TxView; index: number; onDeleteFailed: (offlineId: string) => void }) {
   const reducedMotion = useReducedMotion()
   const { row, payload } = tx
-  const badge = badgeColor(row.status)
   const isFailed = row.status === 'failed'
 
   return (
     <Animated.View
       entering={
-        reducedMotion
-          ? FadeIn.duration(150)
-          : FadeInDown.duration(250).delay(Math.min(index, 8) * 40)
+        reducedMotion ? FadeIn.duration(150) : FadeInDown.duration(250).delay(Math.min(index, 8) * 40)
       }
       exiting={FadeOut.duration(120)}
-      layout={Layout.duration(250)}
     >
-      <View style={[styles.txRow, isFailed && styles.txRowFailed]}>
-        <View style={styles.txMain}>
-          <View style={styles.txTop}>
-            <Text style={styles.txName} numberOfLines={1}>
+      <View className="flex-row items-center justify-between rounded-2xl border border-border bg-surface p-4 gap-2">
+        <View className="flex-1 gap-1 min-w-0">
+          <View className="flex-row items-center gap-2">
+            <Text className="text-[14px] font-bold text-text flex-shrink" numberOfLines={1}>
               {firstItemLabel(payload)}
             </Text>
-            <View style={[styles.badge, { backgroundColor: badge.bg }]}>
-              <Text style={[styles.badgeText, { color: badge.fg }]}>{statusLabel(row.status)}</Text>
-            </View>
+            <Badge label={statusLabel(row.status)} tone={statusTone(row.status)} />
           </View>
-          <Text style={styles.txMeta}>{formatDateTime(payload.createdAt)}</Text>
-          {row.status === 'failed' ? (
-            <Text style={styles.txError} numberOfLines={1}>
-              {row.error ?? 'Gagal sync'}
+          <Text className="text-[12px] text-text-muted">{formatDateTime(payload.createdAt)}</Text>
+          {isFailed ? (
+            <Text className="text-[12px] font-semibold text-danger" numberOfLines={1}>
+              {row.error ?? 'Gagal sinkron'}
             </Text>
           ) : (
-            <Text style={styles.txRetries}>
-              {row.status === 'pending' || row.status === 'syncing'
-                ? `Percobaan ${row.retries}/3`
-                : `Percobaan ${row.retries}/3 · selesai`}
+            <Text className="text-[12px] text-text-muted">
+              Percobaan {row.retries}/3{row.status === 'voided' ? ' · selesai' : ''}
             </Text>
           )}
         </View>
-
-        <View style={styles.txRight}>
-          <Text style={styles.txTotal}>{formatIDR(payload.total)}</Text>
+        <View className="flex-row items-center gap-2">
+          <Text className="text-[15px] font-extrabold text-text tabular-nums">{formatIDR(payload.total)}</Text>
           {isFailed ? (
             <Pressable
               onPress={() => onDeleteFailed(row.offlineId)}
-              style={({ pressed }) => [styles.deleteBtn, pressed && styles.deleteBtnPressed]}
               accessibilityRole="button"
               accessibilityLabel={`Hapus transaksi gagal ${formatIDR(payload.total)} dari antrean`}
+              className="h-11 px-3 rounded-xl bg-danger-soft border border-danger-border items-center justify-center active:opacity-75"
             >
-              <Text style={styles.deleteBtnText}>Hapus</Text>
+              <Text className="text-[12px] font-extrabold text-danger">Hapus</Text>
             </Pressable>
           ) : (
-            <Text style={styles.txChevron}>›</Text>
+            <Icon name="chevron-right" size={18} color="#64748B" />
           )}
         </View>
       </View>
@@ -136,7 +104,6 @@ function QueueRow({
   )
 }
 
-/** Progress bar sync — animasi width via Layout (reduced-motion aman). */
 function SyncProgressBar({ progress, active }: { progress: number; active: boolean }) {
   const reducedMotion = useReducedMotion()
   const width = useMemo<DimensionValue>(
@@ -148,20 +115,59 @@ function SyncProgressBar({ progress, active }: { progress: number; active: boole
     <Animated.View
       entering={reducedMotion ? FadeIn.duration(150) : FadeIn.duration(250)}
       exiting={FadeOut.duration(150)}
-      style={styles.progressTrack}
+      className="h-1.5 rounded-full bg-border overflow-hidden"
     >
-      <Animated.View
-        layout={Layout.duration(250)}
-        style={[styles.progressFill, { width }]}
-      />
+      <View className="h-full rounded-full bg-primary" style={{ width }} />
     </Animated.View>
   )
 }
 
-export default function SyncScreen() {
-  const insets = useSafeAreaInsets()
-  const reducedMotion = useReducedMotion()
+/** Kartu printer 58mm — detail pairing ada di sini (bukan chip di header POS). */
+function PrinterCard() {
+  const { connected, printerName, printing, connect } = usePrinter()
+  const [connecting, setConnecting] = useState(false)
 
+  const handleConnect = useCallback(() => {
+    if (connecting || connected) return
+    setConnecting(true)
+    void connect().finally(() => setConnecting(false))
+  }, [connecting, connected, connect])
+
+  return (
+    <View className="rounded-2xl border border-border bg-surface p-4 gap-3">
+      <View className="flex-row items-center gap-3">
+        <View className="w-10 h-10 rounded-full bg-primary-soft items-center justify-center">
+          <Icon name="bluetooth" size={20} color="#2563EB" />
+        </View>
+        <View className="flex-1">
+          <Text className="text-[15px] font-extrabold text-text">Printer Struk 58mm</Text>
+          <Text className="text-[12px] text-text-muted">
+            {connected ? printerName ?? 'Terhubung' : 'Belum terhubung · transaksi tetap jalan'}
+          </Text>
+        </View>
+        <View className={`w-2.5 h-2.5 rounded-full ${connected ? 'bg-success' : 'bg-offline-dot'}`} />
+      </View>
+      {!connected ? (
+        <Button
+          label={connecting ? 'Menghubungkan…' : 'Hubungkan Printer'}
+          variant="outline"
+          size="md"
+          onPress={() => void handleConnect()}
+          disabled={connecting}
+          loading={connecting}
+          icon={<Icon name="bluetooth" size={16} color="#0F172A" />}
+        />
+      ) : (
+        <Text className="text-[12px] text-success-pressed font-semibold">
+          {printing ? 'Mencetak…' : 'Siap cetak — struk keluar otomatis setelah bayar.'}
+        </Text>
+      )}
+    </View>
+  )
+}
+
+export default function SyncScreen() {
+  const reducedMotion = useReducedMotion()
   const {
     isOnline,
     pendingCount,
@@ -193,7 +199,6 @@ export default function SyncScreen() {
     void reload()
   }, [reload])
 
-  // Refresh list saat count berubah (item berhasil sync / masuk baru).
   useEffect(() => {
     if (isSyncing) return
     void reload()
@@ -210,21 +215,13 @@ export default function SyncScreen() {
   }, [syncNow, reload])
 
   const handleToggleOffline = useCallback(() => {
-    const nextOnline = !isOnline
     toggleOffline()
-    if (!nextOnline) {
-      // Kini offline — badge di POS ikut oranye; transaksi baru menumpuk pending.
+    if (isOnline) {
       void reload()
     } else {
-      // Kini online — auto-sync (debounce 1.5s) + refresh list.
       setTimeout(() => void reload(), 2000)
     }
   }, [isOnline, toggleOffline, reload])
-
-  const handleResetOverride = useCallback(() => {
-    resetOverride()
-    void reload()
-  }, [resetOverride, reload])
 
   const handleDeleteFailed = useCallback(
     (offlineId: string) => {
@@ -254,233 +251,106 @@ export default function SyncScreen() {
   )
 
   const totalCount = pendingCount + syncingCount + failedCount
+  const syncDisabled = isSyncing || !isOnline || pendingCount === 0
 
   return (
-    <View style={[styles.screen, { paddingTop: insets.top, paddingBottom: insets.bottom }]}>
-      <HeaderBar
-        title="Sinkronisasi"
-        subtitle="Antrean transaksi offline"
-      />
+    <View className="flex-1 bg-bg">
+      <HeaderBar title="Sync" subtitle="Antrean transaksi offline" right={<StatusPill />} />
 
-      <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-        {/* Status card: online/offline + toggle simulasi */}
+      <ScrollView contentContainerClassName="p-3 pb-8 gap-3" showsVerticalScrollIndicator={false}>
+        {/* Status online/offline + toggle simulasi */}
         <Animated.View
           entering={reducedMotion ? FadeIn.duration(150) : FadeIn.duration(250)}
-          style={[styles.statusCard, isOnline ? styles.statusCardOnline : styles.statusCardOffline]}
+          className={`rounded-2xl border p-4 gap-3 ${
+            isOnline ? 'bg-success-soft border-success-border' : 'bg-warning-soft border-warning-border'
+          }`}
         >
-          <View style={styles.statusRow}>
-            <View style={[styles.statusDot, isOnline ? styles.statusDotOnline : styles.statusDotOffline]} />
-            <View style={styles.statusTextWrap}>
-              <Text style={[styles.statusTitle, isOnline ? styles.statusTitleOnline : styles.statusTitleOffline]}>
+          <View className="flex-row items-center gap-3">
+            <View className={`w-2.5 h-2.5 rounded-full ${isOnline ? 'bg-success' : 'bg-offline-dot'}`} />
+            <View className="flex-1">
+              <Text className={`text-[15px] font-extrabold ${isOnline ? 'text-success-pressed' : 'text-warning-strong'}`}>
                 {isOnline ? 'Online' : 'Offline'}
               </Text>
-              <Text style={styles.statusSubtitle}>
+              <Text className="text-[12px] text-text-muted">
                 {isOnline
                   ? pendingCount > 0
-                    ? `${pendingCount} transaksi menunggu sync`
+                    ? `${pendingCount} transaksi menunggu sinkron`
                     : 'Semua transaksi tersinkron'
-                  : 'Transaksi baru disimpan lokal & akan sync saat online'}
+                  : 'Transaksi baru disimpan lokal & akan sinkron saat online'}
               </Text>
             </View>
             <Pressable
               onPress={handleToggleOffline}
-              style={({ pressed }) => [styles.toggleBtn, pressed && styles.toggleBtnPressed]}
               accessibilityRole="button"
               accessibilityLabel={isOnline ? 'Simulasikan offline' : 'Simulasikan online'}
+              className="min-h-12 justify-center px-3.5 rounded-xl bg-surface border border-border active:bg-surfaceMuted"
             >
-              <Text style={styles.toggleBtnText}>
+              <Text className="text-[12px] font-bold text-text">
                 {isOnline ? 'Jadikan Offline' : 'Jadikan Online'}
               </Text>
             </Pressable>
           </View>
 
           {isOverrideActive ? (
-            <Animated.View
-              entering={FadeIn.duration(200)}
-              exiting={FadeOut.duration(150)}
-              style={styles.overrideRow}
-            >
-              <Text style={styles.overrideText}>
+            <View className="flex-row items-center gap-2">
+              <Text className="flex-1 text-[11px] text-text-muted">
                 Mode simulasi aktif (mengabaikan deteksi jaringan perangkat).
               </Text>
               <Pressable
-                onPress={handleResetOverride}
-                style={({ pressed }) => [styles.resetLink, pressed && styles.resetLinkPressed]}
+                onPress={resetOverride}
                 accessibilityRole="button"
                 accessibilityLabel="Kembali ikuti deteksi jaringan perangkat"
+                className="px-3 h-8 rounded-lg bg-primary-soft items-center justify-center active:opacity-70"
               >
-                <Text style={styles.resetLinkText}>Ikuti jaringan asli</Text>
+                <Text className="text-[11px] font-bold text-primary">Ikuti jaringan asli</Text>
               </Pressable>
-            </Animated.View>
+            </View>
           ) : null}
 
-          <Text style={styles.autoSyncHint}>
-            Auto-sync berjalan saat online · antrean diproses FIFO · max 3 percobaan per transaksi
+          <Text className="text-[11px] text-text-muted">
+            Auto-sinkron saat online · antrean diproses urut · maks 3 percobaan per transaksi
           </Text>
         </Animated.View>
 
-        {/* Action: sync sekarang + progress */}
-        <View style={styles.actionCard}>
-          <View style={styles.actionRow}>
-            <View style={styles.actionTextWrap}>
-              <Text style={styles.actionTitle}>Antrean Transaksi</Text>
-              <Text style={styles.actionSubtitle}>
+        <PrinterCard />
+
+        {/* Aksi sync + progres */}
+        <View className="rounded-2xl border border-border bg-surface p-4 gap-3">
+          <View className="flex-row items-center gap-3">
+            <View className="flex-1">
+              <Text className="text-[15px] font-extrabold text-text">Antrean Transaksi</Text>
+              <Text className="text-[12px] text-text-muted">
                 {totalCount} total · {pendingCount} menunggu · {failedCount} gagal
               </Text>
             </View>
-            <Pressable
+            <Button
+              label={isSyncing ? 'Menyinkronkan…' : 'Sinkron Sekarang'}
+              size="md"
               onPress={() => void handleSyncNow()}
-              disabled={isSyncing || !isOnline || pendingCount === 0}
-              style={({ pressed }) => [
-                styles.syncNowBtn,
-                (isSyncing || !isOnline || pendingCount === 0) && styles.syncNowBtnDisabled,
-                pressed && styles.syncNowBtnPressed,
-              ]}
-              accessibilityRole="button"
-              accessibilityState={{
-                disabled: isSyncing || !isOnline || pendingCount === 0,
-              }}
-              accessibilityLabel="Sinkronkan sekarang"
-            >
-              <Text style={styles.syncNowBtnText}>
-                {isSyncing ? 'Menyinkronkan…' : 'Sync Sekarang'}
-              </Text>
-            </Pressable>
+              disabled={syncDisabled}
+              loading={isSyncing}
+            />
           </View>
           <SyncProgressBar progress={progress} active={isSyncing} />
         </View>
 
         {/* List antrean */}
-        <View style={styles.listSection}>
-          {loading ? (
-            <Text style={styles.emptyHint}>Memuat antrean…</Text>
-          ) : views.length === 0 ? (
-            <EmptyState
-              icon="signal"
-              title="Antrean kosong"
-              text="Semua transaksi sudah tersinkron. Transaksi baru yang dibuat saat offline akan muncul di sini."
-            />
-          ) : (
-            <View style={styles.list}>
-              {views.map((v, i) => (
-                <QueueRow key={v.row.offlineId} tx={v} index={i} onDeleteFailed={handleDeleteFailed} />
-              ))}
-            </View>
-          )}
-        </View>
+        {loading ? (
+          <Text className="text-[13px] text-text-muted py-2">Memuat antrean…</Text>
+        ) : views.length === 0 ? (
+          <EmptyState
+            icon="signal"
+            title="Antrean kosong"
+            text="Semua transaksi sudah tersinkron. Transaksi offline akan muncul di sini."
+          />
+        ) : (
+          <View className="gap-3">
+            {views.map((v, i) => (
+              <QueueRow key={v.row.offlineId} tx={v} index={i} onDeleteFailed={handleDeleteFailed} />
+            ))}
+          </View>
+        )}
       </ScrollView>
     </View>
   )
 }
-
-const styles = StyleSheet.create({
-  screen: { flex: 1, backgroundColor: COLORS.bg },
-
-  content: { padding: 16, gap: 12, paddingBottom: 40 },
-
-  statusCard: {
-    borderRadius: 16,
-    borderWidth: 1,
-    padding: 14,
-    gap: 10,
-  },
-  statusCardOnline: { backgroundColor: COLORS.successSoft, borderColor: COLORS.successBorder },
-  statusCardOffline: { backgroundColor: COLORS.warningSoft, borderColor: COLORS.warningBorder },
-  statusRow: { flexDirection: 'row', alignItems: 'center', gap: 10 },
-  statusDot: { width: 10, height: 10, borderRadius: 5 },
-  statusDotOnline: { backgroundColor: COLORS.success },
-  statusDotOffline: { backgroundColor: COLORS.offlineDot },
-  statusTextWrap: { flex: 1, gap: 2 },
-  statusTitle: { fontSize: 16, fontWeight: '800' },
-  statusTitleOnline: { color: COLORS.successStrong },
-  statusTitleOffline: { color: COLORS.warningStrong },
-  statusSubtitle: { fontSize: 12, color: COLORS.textMuted },
-  toggleBtn: {
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    borderRadius: 10,
-    backgroundColor: COLORS.surface,
-    borderWidth: 1,
-    borderColor: COLORS.border,
-  },
-  toggleBtnPressed: { backgroundColor: COLORS.surfaceMuted },
-  toggleBtnText: { fontSize: 12, fontWeight: '700', color: COLORS.text },
-  overrideRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
-  overrideText: { flex: 1, fontSize: 11, color: COLORS.textMuted },
-  resetLink: { paddingHorizontal: 8, paddingVertical: 4, borderRadius: 8, backgroundColor: COLORS.primarySoft },
-  resetLinkPressed: { opacity: 0.7 },
-  resetLinkText: { fontSize: 11, fontWeight: '700', color: COLORS.primary },
-  autoSyncHint: { fontSize: 11, color: COLORS.textMuted },
-
-  actionCard: {
-    backgroundColor: COLORS.surface,
-    borderRadius: 16,
-    borderWidth: 1,
-    borderColor: COLORS.border,
-    padding: 14,
-    gap: 10,
-  },
-  actionRow: { flexDirection: 'row', alignItems: 'center', gap: 10 },
-  actionTextWrap: { flex: 1, gap: 2 },
-  actionTitle: { fontSize: 15, fontWeight: '800', color: COLORS.text },
-  actionSubtitle: { fontSize: 12, color: COLORS.textMuted },
-  syncNowBtn: {
-    paddingHorizontal: 14,
-    paddingVertical: 10,
-    borderRadius: 12,
-    backgroundColor: COLORS.primary,
-    alignItems: 'center',
-  },
-  syncNowBtnDisabled: { opacity: 0.45 },
-  syncNowBtnPressed: { backgroundColor: COLORS.primaryPressed },
-  syncNowBtnText: { color: '#FFFFFF', fontSize: 13, fontWeight: '800' },
-  progressTrack: {
-    height: 6,
-    borderRadius: 3,
-    backgroundColor: COLORS.border,
-    overflow: 'hidden',
-  },
-  progressFill: {
-    height: '100%',
-    borderRadius: 3,
-    backgroundColor: COLORS.primary,
-  },
-
-  listSection: { gap: 8 },
-  list: { gap: 8 },
-  txRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    backgroundColor: COLORS.surface,
-    borderRadius: 14,
-    borderWidth: 1,
-    borderColor: COLORS.border,
-    padding: 14,
-    gap: 10,
-  },
-  txRowFailed: { backgroundColor: '#FFFBFB' },
-  txMain: { flex: 1, gap: 3, minWidth: 0 },
-  txTop: { flexDirection: 'row', alignItems: 'center', gap: 8 },
-  txName: { fontSize: 14, fontWeight: '700', color: COLORS.text, flexShrink: 1 },
-  badge: { paddingHorizontal: 8, paddingVertical: 3, borderRadius: 999, overflow: 'hidden' },
-  badgeText: { fontSize: 11, fontWeight: '800' },
-  txMeta: { fontSize: 12, color: COLORS.textMuted },
-  txError: { fontSize: 12, fontWeight: '600', color: COLORS.danger },
-  txRetries: { fontSize: 12, color: COLORS.textMuted },
-  txRight: { flexDirection: 'row', alignItems: 'center', gap: 8 },
-  txTotal: { fontSize: 15, fontWeight: '800', color: COLORS.text },
-  txChevron: { fontSize: 20, color: COLORS.textMuted },
-  deleteBtn: {
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-    borderRadius: 8,
-    backgroundColor: COLORS.dangerSoft,
-    borderWidth: 1,
-    borderColor: COLORS.dangerBorder,
-  },
-  deleteBtnPressed: { opacity: 0.75 },
-  deleteBtnText: { fontSize: 11, fontWeight: '800', color: COLORS.danger },
-
-  emptyHint: { fontSize: 13, color: COLORS.textMuted, paddingVertical: 8 },
-})

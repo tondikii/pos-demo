@@ -1,6 +1,10 @@
 import {
   DASHBOARD_DAYS,
   DEFAULT_LOW_STOCK_THRESHOLD,
+  DEMO_CASHIERS,
+  DEMO_OUTLETS,
+  DEMO_PAYMENT_METHODS,
+  DEMO_PRODUCTS,
 } from '@larispos/shared'
 import type { CreateProductInput, UpdateProductInput } from '@larispos/shared'
 
@@ -88,24 +92,8 @@ export interface MockDashboardData {
   days: MockOutletSummary[]
 }
 
-/** Outlet mock — UUID valid (v4), bukan ID singkat seperti auth-mock. */
-export const MOCK_OUTLETS: MockOutlet[] = [
-  {
-    id: '4c8a4e5c-2d64-4f2f-9f2a-1b8a3c5d7e01',
-    name: 'Gerai Geprek Sari — Pasar Baru',
-    address: 'Jl. Pasar Baru No. 12, Jakarta Pusat',
-  },
-  {
-    id: '9f3b7d1a-6c42-4a5b-b3c1-2d8e4f6a8b02',
-    name: 'Gerai Geprek Sari — Senayan',
-    address: 'Jl. Asia Afrika, Senayan, Jakarta Selatan',
-  },
-  {
-    id: 'b2c9e8f3-1a5d-4c6e-8f2a-3d7b9a1c4e03',
-    name: 'Gerai Geprek Sari — Kelapa Gading',
-    address: 'Jl. Kelapa Gading Boulevard, Jakarta Utara',
-  },
-]
+/** Outlet mock — sync single-source dari packages/shared (brand: Kopi Senja). */
+export const MOCK_OUTLETS: MockOutlet[] = DEMO_OUTLETS.map((o) => ({ ...o }))
 
 export const MOCK_OUTLET_IDS: string[] = MOCK_OUTLETS.map((o) => o.id)
 
@@ -203,18 +191,13 @@ function hashSeed(str: string): number {
 /** Threshold per varian: default 5, sebagian kecil 3/8 agar badge bervariasi. */
 const THRESHOLDS = [5, 5, 5, 3, 8, 5, 5, 3] as const
 
-const PRODUCTS: ReadonlyArray<{ name: string; category: string; variants: readonly string[] }> = [
-  { name: 'Ayam Geprek Original', category: 'Makanan', variants: ['S', 'M', 'L'] },
-  { name: 'Ayam Geprek Keju', category: 'Makanan', variants: ['M', 'L'] },
-  { name: 'Es Teh Manis', category: 'Minuman', variants: ['Reguler', 'Jumbo'] },
-  { name: 'Es Jeruk Peras', category: 'Minuman', variants: ['Reguler', 'Jumbo'] },
-  { name: 'Nasi Putih', category: 'Makanan', variants: ['Porsi'] },
-  { name: 'Lele Goreng Sambal', category: 'Makanan', variants: ['M'] },
-  { name: 'Tahu Crispy', category: 'Camilan', variants: ['5 pcs', '10 pcs'] },
-  { name: 'Kulit Ayam Crispy', category: 'Camilan', variants: ['5 pcs'] },
-  { name: 'Air Mineral', category: 'Minuman', variants: ['Botol 600ml'] },
-  { name: 'Teh Botol', category: 'Minuman', variants: ['Reguler'] },
-]
+/** Kandidat produk laporan stok — sync dari menu demo (Kopi Senja). */
+const PRODUCTS: ReadonlyArray<{ name: string; category: string; variants: readonly string[] }> =
+  DEMO_PRODUCTS.map((p) => ({
+    name: p.name,
+    category: p.category,
+    variants: p.variants.map((v) => v.name),
+  }))
 
 /**
  * Varian stok menipis (stock <= lowStockThreshold) per outlet.
@@ -239,7 +222,7 @@ export function buildMockLowStock(outletId: string): MockLowStockVariant[] {
     const stock = Math.floor(rand() * (threshold + 1))
 
     picks.push({
-      id: cryptoRandomUUID(),
+      id: `${product.name}-${variantName}`.replace(/\s+/g, '-').toLowerCase(),
       productName: product.name,
       variantName,
       stock,
@@ -256,7 +239,7 @@ export function buildMockLowStock(outletId: string): MockLowStockVariant[] {
 
 /** Satu baris best seller — padanan `GET /reports/best-sellers`. */
 export interface MockBestSeller {
-  /** Nama varian terjual (produk + varian, mis. "Ayam Geprek Original — M"). */
+  /** Nama varian terjual (produk + varian, mis. "Kopi Susu Gula Aren — M"). */
   variantName: string
   productName: string
   /** Jumlah unit terjual pada rentang. */
@@ -284,95 +267,16 @@ export interface MockPaymentBreakdownRow {
   total: number
 }
 
-/** Daftar kandidat produk laporan (12 produk F&B seed 2A.3, +2 variasi). */
+/** Daftar kandidat produk laporan — sync dari menu demo (Kopi Senja). */
 const REPORT_PRODUCTS: ReadonlyArray<{
   name: string
   category: string
   variants: ReadonlyArray<{ name: string; price: number }>
-}> = [
-  {
-    name: 'Ayam Geprek Original',
-    category: 'Makanan',
-    variants: [
-      { name: 'S', price: 16_000 },
-      { name: 'M', price: 18_000 },
-      { name: 'L', price: 20_000 },
-    ],
-  },
-  {
-    name: 'Ayam Geprek Keju',
-    category: 'Makanan',
-    variants: [
-      { name: 'M', price: 23_000 },
-      { name: 'L', price: 25_000 },
-    ],
-  },
-  {
-    name: 'Paket Geprek Nasi + Es Teh',
-    category: 'Paket',
-    variants: [
-      { name: 'Reguler', price: 22_000 },
-      { name: 'Jumbo', price: 26_000 },
-    ],
-  },
-  {
-    name: 'Paket Nasi Ayam + Es Jeruk',
-    category: 'Paket',
-    variants: [{ name: 'Reguler', price: 25_000 }],
-  },
-  {
-    name: 'Nasi Putih',
-    category: 'Makanan',
-    variants: [{ name: 'Porsi', price: 5_000 }],
-  },
-  {
-    name: 'Lele Goreng Sambal',
-    category: 'Makanan',
-    variants: [
-      { name: '1 ekor', price: 15_000 },
-      { name: '2 ekor', price: 27_000 },
-    ],
-  },
-  {
-    name: 'Tahu Crispy',
-    category: 'Snack',
-    variants: [
-      { name: '5 pcs', price: 8_000 },
-      { name: '10 pcs', price: 15_000 },
-    ],
-  },
-  {
-    name: 'Kulit Ayam Crispy',
-    category: 'Snack',
-    variants: [{ name: '5 pcs', price: 10_000 }],
-  },
-  {
-    name: 'Pisang Goreng Keju',
-    category: 'Snack',
-    variants: [{ name: '3 pcs', price: 9_000 }],
-  },
-  {
-    name: 'Es Teh Manis',
-    category: 'Minuman',
-    variants: [
-      { name: 'Reguler', price: 4_000 },
-      { name: 'Jumbo', price: 6_000 },
-    ],
-  },
-  {
-    name: 'Es Jeruk Peras',
-    category: 'Minuman',
-    variants: [
-      { name: 'Reguler', price: 8_000 },
-      { name: 'Jumbo', price: 11_000 },
-    ],
-  },
-  {
-    name: 'Air Mineral',
-    category: 'Minuman',
-    variants: [{ name: 'Botol 600ml', price: 5_000 }],
-  },
-]
+}> = DEMO_PRODUCTS.map((p) => ({
+  name: p.name,
+  category: p.category,
+  variants: p.variants.map((v) => ({ name: v.name, price: v.sellPrice })),
+}))
 
 /**
  * Best seller top 10 + produk sepi — deterministik per outlet.
@@ -388,12 +292,14 @@ export function buildMockBestSellers(outletId: string): {
   const rand = mulberry32(hashSeed(`${outletId}:bestsellers`))
   const base = 8 + Math.floor(rand() * 6) // 8–13 unit varian populer/hari
   const popularWeights: Record<string, number> = {
-    'Es Teh Manis': 2.2,
-    'Ayam Geprek Original': 1.9,
-    'Nasi Putih': 1.7,
-    'Ayam Geprek Keju': 1.25,
-    'Es Jeruk Peras': 1.15,
-    'Tahu Crispy': 1.05,
+    'Kopi Susu Gula Aren': 2.4,
+    Cappuccino: 2.0,
+    'Cafe Latte': 1.8,
+    'Es Teh Manis': 1.6,
+    Espresso: 1.3,
+    'V60 Manual Brew': 1.05,
+    'Matcha Latte': 1.0,
+    'Banana Bread': 0.9,
   }
 
   const rows: MockBestSeller[] = []
@@ -439,12 +345,9 @@ export function buildMockBusyHours(outletId: string): MockBusyHour[] {
   return hours
 }
 
-/** Nama & tipe metode bayar mock — konsisten dgn seed settings-mocks. */
-const REPORT_PAYMENT_METHODS: ReadonlyArray<{ name: string; type: 'cash' | 'non_cash' }> = [
-  { name: 'Cash', type: 'cash' },
-  { name: 'QRIS', type: 'non_cash' },
-  { name: 'Transfer Bank', type: 'non_cash' },
-]
+/** Nama & tipe metode bayar mock — konsisten dgn seed settings-mocks & shared demo. */
+const REPORT_PAYMENT_METHODS: ReadonlyArray<{ name: string; type: 'cash' | 'non_cash' }> =
+  DEMO_PAYMENT_METHODS.map((m) => ({ name: m.name, type: m.type }))
 
 /**
  * Rekap per metode bayar — deterministik. Share metode dari seed outlet
@@ -462,7 +365,7 @@ export function buildMockPaymentBreakdown(outletId: string): MockPaymentBreakdow
 
   const shares: Record<string, number> = {
     Cash: cashShare,
-    QRIS: qrisShare,
+    'QRIS Statis': qrisShare,
     'Transfer Bank': transferShare,
   }
 
@@ -530,7 +433,8 @@ export interface MockShift {
   paymentBreakdown: MockShiftPaymentRow[]
 }
 
-const SHIFT_CASHIERS = ['Sari', 'Budi', 'Rina', 'Dimas'] as const
+/** Nama kasir demo — sync dari shared (Raka/Sari/Dimas). */
+const SHIFT_CASHIERS = DEMO_CASHIERS.map((c) => c.name) as readonly string[]
 
 /** Format Date lokal → ISO tanpa zona (deterministik antar browser). */
 function toLocalIso(d: Date): string {
@@ -601,7 +505,7 @@ export function buildMockShifts(outletId: string, count = 14): MockShift[] {
         total: cashTotal,
       },
       {
-        methodName: 'QRIS',
+        methodName: 'QRIS Statis',
         type: 'non_cash',
         count: Math.max(1, Math.round(qrisTotal / avgTicket)),
         total: qrisTotal,
@@ -648,10 +552,6 @@ function cryptoRandomUUID(): string {
 
 /** API mock — seluruh fetch dashboard & produk (Fase 2) diarahkan ke sini. */
 
-function sleep(ms: number): Promise<void> {
-  return new Promise((resolve) => setTimeout(resolve, ms))
-}
-
 /* ------------------------------------------------------------------ */
 /* Fase 2A.3 — Produk & Varian (mock CRUD, TANPA API)                 */
 /* ------------------------------------------------------------------ */
@@ -686,24 +586,9 @@ export interface MockProductFilter {
 
 export type StockStatus = 'aman' | 'menipis' | 'habis'
 
-const PRODUCT_STORAGE_KEY = 'larispos_mock_products_v1'
+const PRODUCT_STORAGE_KEY = 'larispos_mock_products_v2'
 
 const nowIso = () => new Date().toISOString()
-
-interface SeedVariant {
-  name: string
-  sellPrice: number
-  stock: number
-  /** Nilai threshold default (tidak semua varian diberi nilai unik). */
-  lowStockThreshold?: number
-}
-
-interface SeedProduct {
-  name: string
-  category: string
-  costPrice: number
-  variants: SeedVariant[]
-}
 
 /** Menghitung total stok sebuah varian (untuk badge produk). */
 export function productTotalStock(product: MockProduct): number {
@@ -718,116 +603,20 @@ export function variantStockStatus(v: MockProductVariant): StockStatus {
 }
 
 /**
- * Seed 12 produk F&B (kategori Makanan/Minuman/Snack/Paket/Umum).
- * Tiap produk punya 1–3 varian dengan harga & stok berbeda; sebagian stok
- * 0 / menipis agar badge stok & kartu "stok menipis" punya data.
+ * Seed produk — sync single-source dari `DEMO_PRODUCTS` (Kopi Senja, 13 produk).
+ * ID produk/varian SAMA dengan mock kasir (mobile) → data lintas platform
+ * sinkron. Tiap produk 1–3 varian; sebagian stok menipis/habis (Kopi Susu
+ * Gula Aren, V60, Croissant) agar badge stok & kartu "stok menipis" berisi.
  */
 export function buildSeedProducts(outletId: string): MockProduct[] {
-  const seeded: SeedProduct[] = [
-    {
-      name: 'Ayam Geprek Original',
-      category: 'Makanan',
-      costPrice: 11_000,
-      variants: [
-        { name: 'S', sellPrice: 16_000, stock: 18 },
-        { name: 'M', sellPrice: 18_000, stock: 4, lowStockThreshold: 5 },
-        { name: 'L', sellPrice: 20_000, stock: 0, lowStockThreshold: 5 },
-      ],
-    },
-    {
-      name: 'Ayam Geprek Keju',
-      category: 'Makanan',
-      costPrice: 14_000,
-      variants: [
-        { name: 'M', sellPrice: 23_000, stock: 12 },
-        { name: 'L', sellPrice: 25_000, stock: 6 },
-      ],
-    },
-    {
-      name: 'Paket Geprek Nasi + Es Teh',
-      category: 'Paket',
-      costPrice: 14_500,
-      variants: [
-        { name: 'Reguler', sellPrice: 22_000, stock: 9 },
-        { name: 'Jumbo', sellPrice: 26_000, stock: 3, lowStockThreshold: 5 },
-      ],
-    },
-    {
-      name: 'Paket Nasi Ayam + Es Jeruk',
-      category: 'Paket',
-      costPrice: 16_000,
-      variants: [{ name: 'Reguler', sellPrice: 25_000, stock: 7 }],
-    },
-    {
-      name: 'Nasi Putih',
-      category: 'Makanan',
-      costPrice: 3_000,
-      variants: [{ name: 'Porsi', sellPrice: 5_000, stock: 60 }],
-    },
-    {
-      name: 'Lele Goreng Sambal',
-      category: 'Makanan',
-      costPrice: 9_000,
-      variants: [
-        { name: '1 ekor', sellPrice: 15_000, stock: 10 },
-        { name: '2 ekor', sellPrice: 27_000, stock: 5 },
-      ],
-    },
-    {
-      name: 'Tahu Crispy',
-      category: 'Snack',
-      costPrice: 4_000,
-      variants: [
-        { name: '5 pcs', sellPrice: 8_000, stock: 20 },
-        { name: '10 pcs', sellPrice: 15_000, stock: 2, lowStockThreshold: 5 },
-      ],
-    },
-    {
-      name: 'Kulit Ayam Crispy',
-      category: 'Snack',
-      costPrice: 6_000,
-      variants: [{ name: '5 pcs', sellPrice: 10_000, stock: 0, lowStockThreshold: 5 }],
-    },
-    {
-      name: 'Pisang Goreng Keju',
-      category: 'Snack',
-      costPrice: 5_000,
-      variants: [{ name: '3 pcs', sellPrice: 9_000, stock: 15 }],
-    },
-    {
-      name: 'Es Teh Manis',
-      category: 'Minuman',
-      costPrice: 1_500,
-      variants: [
-        { name: 'Reguler', sellPrice: 4_000, stock: 40 },
-        { name: 'Jumbo', sellPrice: 6_000, stock: 12 },
-      ],
-    },
-    {
-      name: 'Es Jeruk Peras',
-      category: 'Minuman',
-      costPrice: 4_000,
-      variants: [
-        { name: 'Reguler', sellPrice: 8_000, stock: 5 },
-        { name: 'Jumbo', sellPrice: 11_000, stock: 0, lowStockThreshold: 5 },
-      ],
-    },
-    {
-      name: 'Air Mineral',
-      category: 'Minuman',
-      costPrice: 2_000,
-      variants: [{ name: 'Botol 600ml', sellPrice: 5_000, stock: 48 }],
-    },
-  ]
-
-  return seeded.map((p, i) => ({
-    id: `seed-${outletId.slice(0, 8)}-${String(i + 1).padStart(2, '0')}`,
+  return DEMO_PRODUCTS.map((p) => ({
+    id: p.id,
     outletId,
     name: p.name,
     category: p.category,
     costPrice: p.costPrice,
-    variants: p.variants.map((v, j) => ({
-      id: `seed-${outletId.slice(0, 8)}-${String(i + 1).padStart(2, '0')}-v${j + 1}`,
+    variants: p.variants.map((v) => ({
+      id: v.id,
       name: v.name,
       sellPrice: v.sellPrice,
       stock: v.stock,
@@ -997,31 +786,26 @@ export const mockApi = {
    * yang tetap menyediakan ringkasan hari ini di payload).
    */
   async summary(outletId: string): Promise<MockDashboardData> {
-    await sleep(300)
     return { outletId, days: buildMockDays(outletId) }
   },
 
   /** GET /reports/low-stock — varian dengan stock <= lowStockThreshold. */
   async lowStock(outletId: string): Promise<MockLowStockVariant[]> {
-    await sleep(300)
     return buildMockLowStock(outletId)
   },
 
   /** GET /reports/best-sellers — top 10 + produk sepi (rentang diabaikan di mock). */
   async bestSellers(outletId: string): Promise<ReturnType<typeof buildMockBestSellers>> {
-    await sleep(300)
     return buildMockBestSellers(outletId)
   },
 
   /** GET /reports/busy-hours — count transaksi per jam 06–22. */
   async busyHours(outletId: string): Promise<MockBusyHour[]> {
-    await sleep(300)
     return buildMockBusyHours(outletId)
   },
 
   /** GET /reports/payment-methods — rekap per metode bayar. */
   async paymentBreakdown(outletId: string): Promise<MockPaymentBreakdownRow[]> {
-    await sleep(300)
     return buildMockPaymentBreakdown(outletId)
   },
 
@@ -1029,32 +813,27 @@ export const mockApi = {
 
   /** GET /products?outletId=&category=&search= */
   async listProducts(filter: MockProductFilter): Promise<MockProduct[]> {
-    await sleep(300)
     return listMockProducts(filter)
   },
 
   /** POST /products — body `CreateProductInput` (Zod shared). */
   async createProduct(input: CreateProductInput): Promise<MockProduct> {
-    await sleep(350)
     return createMockProduct(input)
   },
 
   /** PATCH /products/:id — body `UpdateProductInput`. */
   async updateProduct(id: string, input: UpdateProductInput): Promise<MockProduct> {
-    await sleep(350)
     return updateMockProduct(id, input)
   },
 
   /** DELETE /products/:id */
   async deleteProduct(id: string): Promise<{ id: string }> {
-    await sleep(300)
     deleteMockProduct(id)
     return { id }
   },
 
   /** POST /products/reset — kembalikan katalog ke seed 12 produk/outlet. */
   async resetProducts(): Promise<MockProduct[]> {
-    await sleep(250)
     return resetMockProducts()
   },
 
@@ -1062,7 +841,6 @@ export const mockApi = {
 
   /** GET /shifts?outletId= — riwayat shift 14 hari per outlet. */
   async shifts(outletId: string): Promise<MockShift[]> {
-    await sleep(300)
     return buildMockShifts(outletId)
   },
 }

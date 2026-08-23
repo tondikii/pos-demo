@@ -1,13 +1,12 @@
 import React from 'react'
-import { StyleSheet, Text, View } from 'react-native'
+import { Text, View } from 'react-native'
 
-import { COLORS, SPACING } from '../theme'
 import Icon from './Icon'
 
 /**
- * Empty state konsisten untuk semua screen (Fase 2B.7):
- * emoji/ikon + judul + teks bantu + aksi opsional.
- * Dipakai di POS (produk kosong / keranjang kosong), History, Shift, Sync.
+ * Empty state RINGKAS & branded — circle primary-soft + icon primary
+ * (bukan abu-abu generik), judul + 1 baris + CTA opsional.
+ * Maks ~40% tinggi layar visible: jangan dominan.
  */
 export default function EmptyState({
   icon = 'inbox',
@@ -21,26 +20,17 @@ export default function EmptyState({
   action?: React.ReactNode
 }) {
   return (
-    <View style={styles.box} accessibilityRole="summary">
-      <View style={styles.iconWrap} accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
-        <Icon name={icon} size={30} color={COLORS.textMuted} />
+    <View className="items-center justify-center px-6 py-8" accessibilityRole="summary">
+      <View
+        className="w-12 h-12 rounded-full bg-primary-soft items-center justify-center mb-2"
+        accessibilityElementsHidden
+        importantForAccessibility="no-hide-descendants"
+      >
+        <Icon name={icon} size={26} color="#2563EB" />
       </View>
-      <Text style={styles.title}>{title}</Text>
-      <Text style={styles.text}>{text}</Text>
-      {action ? <View style={styles.action}>{action}</View> : null}
+      <Text className="text-[14px] font-bold text-text text-center">{title}</Text>
+      <Text className="text-[13px] text-text-muted text-center leading-5 mt-0.5">{text}</Text>
+      {action ? <View className="mt-3">{action}</View> : null}
     </View>
   )
 }
-
-const styles = StyleSheet.create({
-  box: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: SPACING.xl,
-    gap: 6,
-  },
-  iconWrap: { marginBottom: 2 },
-  title: { fontSize: 15, fontWeight: '700', color: COLORS.text },
-  text: { fontSize: 13, color: COLORS.textMuted, textAlign: 'center', lineHeight: 19 },
-  action: { marginTop: SPACING.md },
-})

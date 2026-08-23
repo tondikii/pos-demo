@@ -6,6 +6,7 @@ import {
   createStaffSchema,
   resetStaffPinSchema,
   createPaymentMethodSchema,
+  type PlanId,
 } from '@larispos/shared'
 import type {
   CreateOutletInput,
@@ -198,12 +199,15 @@ export interface OutletLimitStatus {
 }
 
 /**
- * Status batas outlet sesuai plan (PLANS.starter.maxOutlets = 1 di mock).
+ * Status batas outlet sesuai plan langganan (Starter = 1, Tumbuh = 3, dst).
  * Outlet demo (contoh deterministik) tidak dihitung sebagai milik user.
  */
-export function outletLimitStatus(session: MockSessionOutlet | null): OutletLimitStatus {
+export function outletLimitStatus(
+  session: MockSessionOutlet | null,
+  plan: PlanId = 'starter',
+): OutletLimitStatus {
   syncSessionOutlet(session)
-  const max = PLANS.starter.maxOutlets
+  const max = PLANS[plan].maxOutlets
   const used = ownedMockOutlets(getOutletDb()).length
   return { max, used, reached: used >= max }
 }
@@ -337,7 +341,7 @@ function seedPaymentMethods(): MockPaymentMethod[] {
       {
         id: newUuid(),
         outletId,
-        name: 'QRIS',
+        name: 'QRIS Statis',
         type: 'non_cash',
         instruction: 'Scan QRIS — semua e-wallet & m-banking.',
         isActive: true,
@@ -739,11 +743,15 @@ function persistCategories(list: MockCategory[]) {
   localStorage.setItem(CATEGORIES_STORAGE_KEY, JSON.stringify(list))
 }
 
+/** Daftar kategori untuk outlet (id + nama) — dipakai halaman kelola kategori. */
+export function listCategories(outletId: string | null): MockCategory[] {
+  const list = loadCategories().filter((c) => !outletId || c.outletId === outletId)
+  return list.length ? list : defaultCategories(outletId ?? 'out-demo').map((c) => ({ ...c, outletId: outletId ?? c.outletId }))
+}
+
 /** Daftar kategori unik (nama) untuk outlet — dipakai filter & form produk. */
 export function listCategoryNames(outletId: string | null): string[] {
-  const list = loadCategories().filter((c) => !outletId || c.outletId === outletId)
-  const names = list.map((c) => c.name)
-  return names.length ? names : [...PRODUCT_CATEGORIES]
+  return listCategories(outletId).map((c) => c.name)
 }
 
 export function createMockCategory(name: string, outletId: string): MockCategory {
@@ -782,9 +790,9 @@ export function deleteMockCategory(id: string): void {
 
 /** Kelola kategori — API mock konsisten dgn settings lain. */
 export const categoriesApi = {
-  async list(outletId: string | null): Promise<string[]> {
+  async list(outletId: string | null): Promise<MockCategory[]> {
     await sleep(250)
-    return listCategoryNames(outletId)
+    return listCategories(outletId)
   },
   async create(name: string, outletId: string): Promise<MockCategory> {
     await sleep(300)

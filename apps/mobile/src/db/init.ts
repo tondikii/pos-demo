@@ -56,7 +56,8 @@ export const LOCAL_DB_DDL: string[] = [
     status text NOT NULL DEFAULT 'open',
     opened_at integer NOT NULL DEFAULT (unixepoch() * 1000),
     closed_at integer,
-    created_at integer NOT NULL DEFAULT (unixepoch() * 1000)
+    created_at integer NOT NULL DEFAULT (unixepoch() * 1000),
+    updated_at integer NOT NULL DEFAULT (unixepoch() * 1000)
   )`,
   // 1 open shift per kasir per outlet — PRD §10.7
   `CREATE UNIQUE INDEX IF NOT EXISTS idx_shifts_open_one_per_staff

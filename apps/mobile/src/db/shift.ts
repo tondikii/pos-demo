@@ -1,6 +1,6 @@
 import { and, asc, desc, eq, inArray } from 'drizzle-orm'
 
-import { db } from './client'
+import { getDrizzle } from './client'
 import { MOCK_PAYMENT_METHODS } from '../lib/mock-data'
 import { queuedTransactions, shifts, type ShiftStatus } from './schema'
 import { summarizeShiftTransactions, type ShiftTxSummary } from './shift-types'
@@ -43,31 +43,31 @@ export type ActiveShiftView = {
   autoClosedNote: string | null
 }
 
-function isAutoCloseEligible(shift: ShiftRow): boolean {
-  if (shift.status !== 'open') return false
-  const d = new Date(shift.openedAt)
-  // Shift dianggap "lupa tutup" HANYA jika dibuka SEBELUM jam 03:00 dan
-  // sekarang sudah melewati jam 03:00 (hari berikutnya). Shift yang dibuka
-  // jam 03:00+ tidak langsung di-auto-close.
-  if (d.getHours() >= AUTO_CLOSE_HOUR) return false
-  const now = new Date()
-  const autoCloseToday = new Date(
-    now.getFullYear(),
-    now.getMonth(),
-    now.getDate(),
+/** 03:00 pertama SETELAH shift dibuka — batas auto-close (PRD). */
+function nextAutoCloseBoundary(openedAt: Date): Date {
+  const boundary = new Date(
+    openedAt.getFullYear(),
+    openedAt.getMonth(),
+    openedAt.getDate(),
     AUTO_CLOSE_HOUR,
     0,
     0,
     0,
   )
-  return now.getTime() >= autoCloseToday.getTime()
+  // Shift dibuka jam 03:00+ tidak di-auto-close di hari yang sama; batasnya
+  // pindah ke 03:00 hari berikutnya.
+  if (openedAt.getHours() >= AUTO_CLOSE_HOUR) boundary.setDate(boundary.getDate() + 1)
+  return boundary
 }
 
-/** Tanggal "03:00 hari ini" untuk catatan auto-close. */
+function isAutoCloseEligible(shift: ShiftRow): boolean {
+  if (shift.status !== 'open') return false
+  return Date.now() >= nextAutoCloseBoundary(new Date(shift.openedAt)).getTime()
+}
+
+/** Tanggal jam 03:00 (setelah shift dibuka) untuk catatan auto-close. */
 function autoCloseTimestamp(shift: ShiftRow): number {
-  const d = new Date(shift.openedAt)
-  const closed = new Date(d.getFullYear(), d.getMonth(), d.getDate(), AUTO_CLOSE_HOUR, 0, 0, 0)
-  return closed.getTime()
+  return nextAutoCloseBoundary(new Date(shift.openedAt)).getTime()
 }
 
 /**
@@ -77,6 +77,7 @@ function autoCloseTimestamp(shift: ShiftRow): number {
  * mengoreksi expectedCash; mock ini belum ada void.
  */
 export async function getShiftTransactions(shift: ShiftRow): Promise<ShiftTxSummaryByShift> {
+  const db = await getDrizzle()
   const rows = await db
     .select({ payload: queuedTransactions.payload })
     .from(queuedTransactions)
@@ -103,6 +104,7 @@ export async function getShiftTransactions(shift: ShiftRow): Promise<ShiftTxSumm
  * (ditampilkan sebagai riwayat, bukan "aktif"); catatan dibawa ke UI.
  */
 export async function getActiveShift(outletId: string, staffId: string): Promise<ActiveShiftView | null> {
+  const db = await getDrizzle()
   const rows = await db
     .select()
     .from(shifts)
@@ -117,8 +119,17 @@ export async function getActiveShift(outletId: string, staffId: string): Promise
   if (open && isAutoCloseEligible(open)) {
     const { summary, transactions } = await getShiftTransactions(open)
     const closedAt = autoCloseTimestamp(open)
+    const expected = Math.round(open.openingCash + summary.cashTotal)
+    // Persistenkan auto-close: tanpa ini baris lama tetap `status='open'` dan
+    // partial unique index `idx_shifts_open_one_per_staff` memblokir shift baru.
+    await db
+      .update(shifts)
+      .set({ expectedCash: expected, status: 'closed', closedAt: new Date(closedAt), updatedAt: new Date() })
+      .where(eq(shifts.id, open.id))
+      .all()
     const autoClosed: ShiftRow = {
       ...open,
+      expectedCash: expected,
       status: 'closed',
       actualCash: null,
       difference: null,
@@ -149,6 +160,7 @@ export async function openShift(
   staffId: string,
   openingCash: number,
 ): Promise<{ ok: true; shift: ShiftRow } | { ok: false; error: string }> {
+  const db = await getDrizzle()
   const cash = Math.max(0, Math.round(openingCash))
   const existing = await getActiveShift(outletId, staffId)
   if (existing && existing.shift.status === 'open') {
@@ -161,20 +173,27 @@ export async function openShift(
       : `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`
 
   const now = new Date()
-  const inserted = await db
-    .insert(shifts)
-    .values({
-      id,
-      outletId,
-      staffId,
-      openingCash: cash,
-      expectedCash: cash, // expected dihitung ulang saat close
-      status: 'open',
-      openedAt: now,
-      createdAt: now,
-    })
-    .returning()
-    .all()
+  let inserted: typeof shifts.$inferSelect[]
+  try {
+    inserted = await db
+      .insert(shifts)
+      .values({
+        id,
+        outletId,
+        staffId,
+        openingCash: cash,
+        expectedCash: cash, // expected dihitung ulang saat close
+        status: 'open',
+        openedAt: now,
+        createdAt: now,
+      })
+      .returning()
+      .all()
+  } catch {
+    // Partial unique index `idx_shifts_open_one_per_staff` — jaring pengaman
+    // ganda jika ada race/double-submit dengan shift open yang lain.
+    return { ok: false, error: 'Masih ada shift yang sedang berjalan untuk kasir ini.' }
+  }
 
   const shift = inserted[0]
   if (!shift) return { ok: false, error: 'Gagal membuka shift.' }
@@ -199,6 +218,7 @@ export async function closeShift(
   staffId: string,
   actualCash: number,
 ): Promise<{ ok: true; shift: ShiftRow; summary: ShiftTxSummary } | { ok: false; error: string }> {
+  const db = await getDrizzle()
   const rows = await db
     .select()
     .from(shifts)
@@ -240,6 +260,7 @@ export async function getShiftHistory(
   outletId: string,
   staffId?: string,
 ): Promise<(ShiftRow & ShiftTxSummaryByShift)[]> {
+  const db = await getDrizzle()
   const conditions = [eq(shifts.outletId, outletId)]
   if (staffId) conditions.push(eq(shifts.staffId, staffId))
 

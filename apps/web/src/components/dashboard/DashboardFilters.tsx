@@ -31,9 +31,8 @@ export function DashboardFilters(props: DashboardFiltersProps) {
 
   const value = () => props.value
 
-  const presetOptions = createMemo(() =>
-    presets.filter((p) => p.id !== 'custom' || value().preset === 'custom'),
-  )
+  // Semua preset tersedia (termasuk "Custom") — custom membuka date pickers.
+  const presetOptions = createMemo(() => presets)
 
   const isCustom = () => value().preset === 'custom'
 

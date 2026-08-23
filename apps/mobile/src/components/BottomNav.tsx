@@ -1,40 +1,54 @@
 import { Link, usePathname, type Href } from 'expo-router'
 import React from 'react'
-import { Pressable, StyleSheet, View } from 'react-native'
-import Animated, {
-  FadeIn,
-  FadeOut,
-  Layout,
-  ZoomIn,
-  useReducedMotion,
-} from 'react-native-reanimated'
+import { Pressable, Text, View } from 'react-native'
+import Animated from 'react-native-reanimated'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 import Icon from './Icon'
-import { COLORS } from '../theme'
+import { useSync } from '../sync/sync-context'
+
+/** Tinggi bar navigasi (tanpa safe area) — dipakai layout cart bar di POS. */
+export const TAB_BAR_BASE_HEIGHT = 58
 
 /**
- * Bottom navigation kasir (Fase 2B.8 — wajib per MASTER.md & PRD Flow 3):
- * Kasir / Riwayat / Shift / Sync, selalu terlihat, satu tap akses.
- * - Aktif: primary + label, ikon melebar (Layout). Non-aktif: muted.
- * - Safe area bottom dari insets. Render di layout (app) — bukan di header.
- * - Animasi: tab switch FadeIn + ZoomIn halus; reduced-motion → fade saja.
+ * Bottom navigation kasir (WAJIB per MASTER.md & PRD Flow 3):
+ * Kasir / Riwayat / Shift / Sync — 4 tab fixed, satu tap akses.
+ * - Ikon 24px, label 11-12px, active = ikon + label primary + pill lembut.
+ * - Badge counter di tab Sync: oranye (pending) / merah (failed).
+ * - Touch target tab ≥48px; transform/opacity only.
  */
 export default function BottomNav() {
   const pathname = usePathname()
   const insets = useSafeAreaInsets()
-  const reducedMotion = useReducedMotion()
+  const { pendingCount, failedCount } = useSync()
 
-  const tabs: { key: string; route: Href; label: string; icon: string; a11y: string }[] = [
+  const tabs: {
+    key: string
+    route: Href
+    label: string
+    icon: string
+    a11y: string
+    badge?: number
+    badgeTone?: 'warning' | 'danger'
+  }[] = [
     { key: 'pos', route: '/pos', label: 'Kasir', icon: 'cart', a11y: 'Buka kasir' },
     { key: 'history', route: '/history', label: 'Riwayat', icon: 'receipt', a11y: 'Buka riwayat transaksi' },
     { key: 'shift', route: '/shift', label: 'Shift', icon: 'clock', a11y: 'Buka shift' },
-    { key: 'sync', route: '/sync', label: 'Sinkron', icon: 'sync', a11y: 'Buka sinkronisasi' },
+    {
+      key: 'sync',
+      route: '/sync',
+      label: 'Sync',
+      icon: 'sync',
+      a11y: 'Buka sinkronisasi',
+      badge: failedCount > 0 ? failedCount : pendingCount > 0 ? pendingCount : 0,
+      badgeTone: failedCount > 0 ? 'danger' : 'warning',
+    },
   ]
 
   return (
     <View
-      style={[styles.bar, { paddingBottom: Math.max(insets.bottom, 8) }]}
+      className="flex-row w-full bg-surface border-t border-border"
+      style={{ paddingBottom: Math.max(insets.bottom, 8), paddingTop: 4 }}
       accessibilityRole="tablist"
     >
       {tabs.map((tab) => {
@@ -46,40 +60,36 @@ export default function BottomNav() {
               accessibilityRole="tab"
               accessibilityLabel={tab.a11y}
               accessibilityState={{ selected: active }}
-              style={({ pressed }) => [
-                styles.tab,
-                pressed && active && styles.tabPressedActive,
-              ]}
+              className="flex-1 items-center justify-center pt-1.5 pb-1 active:opacity-80"
+              style={{ minHeight: 48 }}
             >
-              {active ? (
-                <Animated.View
-                  key="active"
-                  entering={reducedMotion ? FadeIn.duration(150) : FadeIn.duration(200)}
-                  layout={Layout.duration(200)}
-                  style={styles.iconWrapActive}
-                  accessibilityElementsHidden
-                  importantForAccessibility="no-hide-descendants"
-                >
-                  <Icon name={tab.icon} size={17} color={COLORS.onPrimary} />
-                </Animated.View>
-              ) : (
-                <Animated.View
-                  key="inactive"
-                  entering={FadeIn.duration(150)}
-                  exiting={FadeOut.duration(100)}
-                  style={styles.iconWrap}
-                  accessibilityElementsHidden
-                  importantForAccessibility="no-hide-descendants"
-                >
-                  <Icon name={tab.icon} size={20} color={COLORS.textMuted} />
-                </Animated.View>
-              )}
-              <Animated.Text
-                entering={reducedMotion ? FadeIn.duration(150) : ZoomIn.duration(180)}
-                style={[styles.label, active ? styles.labelActive : styles.labelIdle]}
+              <Animated.View
+                className={`flex-row items-center justify-center rounded-full px-3.5 h-7 ${
+                  active ? 'bg-primary-soft' : 'bg-transparent'
+                }`}
+                accessibilityElementsHidden
+                importantForAccessibility="no-hide-descendants"
+              >
+                <Icon name={tab.icon} size={24} color={active ? '#2563EB' : '#64748B'} />
+                {tab.badge ? (
+                  <View
+                    className={`absolute -top-1 -right-1 min-w-[18px] h-[18px] rounded-full items-center justify-center px-1 ${
+                      tab.badgeTone === 'danger' ? 'bg-danger' : 'bg-warning-icon'
+                    }`}
+                  >
+                    <Text className="text-[10px] font-extrabold text-on-primary leading-4">
+                      {tab.badge > 99 ? '99+' : tab.badge}
+                    </Text>
+                  </View>
+                ) : null}
+              </Animated.View>
+              <Text
+                className={`mt-0.5 text-[11px] leading-4 ${
+                  active ? 'text-primary font-bold' : 'text-text-muted font-medium'
+                }`}
               >
                 {tab.label}
-              </Animated.Text>
+              </Text>
             </Pressable>
           </Link>
         )
@@ -87,42 +97,3 @@ export default function BottomNav() {
     </View>
   )
 }
-
-const styles = StyleSheet.create({
-  bar: {
-    flexDirection: 'row',
-    width: '100%',
-    backgroundColor: COLORS.surface,
-    borderTopWidth: 1,
-    borderTopColor: COLORS.border,
-    paddingTop: 7,
-    paddingHorizontal: 6,
-    shadowColor: '#0F172A',
-    shadowOpacity: 0.04,
-    shadowRadius: 8,
-    shadowOffset: { width: 0, height: -2 },
-    elevation: 6,
-  },
-  tab: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 3,
-    paddingVertical: 5,
-    borderRadius: 12,
-  },
-  tabPressedActive: { opacity: 0.85 },
-  iconWrap: { width: 28, height: 26, alignItems: 'center', justifyContent: 'center' },
-  iconWrapActive: {
-    minWidth: 30,
-    height: 26,
-    paddingHorizontal: 10,
-    borderRadius: 13,
-    backgroundColor: COLORS.primary,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  label: { fontSize: 11, fontWeight: '600' },
-  labelActive: { color: COLORS.primary, fontWeight: '700' },
-  labelIdle: { color: COLORS.textMuted },
-})

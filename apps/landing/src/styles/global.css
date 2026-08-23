@@ -11,10 +11,10 @@
   --brand-dark: #1d4ed8;
   --accent: #ea580c;
   --ink: #0f172a;
-  --muted: #475569;
+  --muted: #64748b;
   --bg: #ffffff;
   --bg-soft: #eff6ff;
-  --border: #dbeafe;
+  --border: #e2e8f0;
   --shadow: 0 14px 40px -18px rgb(37 99 235 / 0.35);
 }
 
@@ -61,7 +61,7 @@ body {
   margin: 0;
   font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
   color: var(--ink);
-  background: var(--bg);
+  background: #f8fafc;
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
@@ -612,4 +612,13 @@ body {
   margin: 0;
   font-size: 0.9rem;
   color: var(--muted);
+}
+
+.footer-link {
+  color: var(--brand);
+  text-decoration: none;
+  font-weight: 600;
+}
+.footer-link:hover {
+  text-decoration: underline;
 }

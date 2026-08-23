@@ -24,6 +24,7 @@ import {
   useCreateOutlet,
   useUpdateOutlet,
   useToggleOutletActive,
+  useSubscription,
 } from '../lib/queries'
 
 function percentLabel(value: number | undefined): string {
@@ -61,11 +62,15 @@ export default function OutletsPage() {
   const createMutation = useCreateOutlet()
   const updateMutation = useUpdateOutlet()
   const toggleMutation = useToggleOutletActive()
+  const subscriptionQuery = useSubscription()
 
   const outlets = createMemo<MockSettingsOutlet[]>(() => outletsQuery.data ?? [])
 
-  /** Status batas outlet sesuai plan (Starter = 1 outlet milik user). */
-  const limit = createMemo(() => outletLimitStatus(sessionOutlet()))
+  /** Status batas outlet sesuai plan langganan (Starter 1 / Tumbuh 3 / dst). */
+  const limit = createMemo(() =>
+    outletLimitStatus(sessionOutlet(), subscriptionQuery.data?.plan ?? 'starter'),
+  )
+  const planLabel = createMemo(() => subscriptionQuery.data?.planLabel ?? PLANS.starter.label)
 
   const submitting = () => createMutation.isPending || updateMutation.isPending
   const busyToggle = () => toggleMutation.isPending
@@ -145,7 +150,7 @@ export default function OutletsPage() {
               <Breadcrumb items={[{ label: 'Pengaturan' }, { label: 'Outlet' }]} />
 <h1 class="text-2xl font-extrabold tracking-tight text-foreground">Outlet</h1>
               <p class="mt-1 text-sm text-muted-foreground">
-                {outlets().length} outlet · paket {PLANS.starter.label} (maks {limit().max})
+                {outlets().length} outlet · paket {planLabel()} (maks {limit().max})
               </p>
             </div>
             <div class="flex items-center gap-3">
@@ -158,7 +163,7 @@ export default function OutletsPage() {
                 onClick={openCreate}
                 disabled={limit().reached}
                 aria-disabled={limit().reached}
-                title={limit().reached ? `Paket ${PLANS.starter.label} maksimal ${limit().max} outlet` : undefined}
+                title={limit().reached ? `Paket ${planLabel()} maksimal ${limit().max} outlet` : undefined}
               >
                 + Tambah outlet
               </Button>
@@ -168,7 +173,7 @@ export default function OutletsPage() {
           {/* Hint batas plan */}
           <Show when={limit().reached}>
             <div class="mt-4 rounded-xl border border-amber-500/30 bg-amber-500/5 px-4 py-3 text-sm text-amber-700">
-              Paket <span class="font-semibold">{PLANS.starter.label}</span> Anda maksimal{' '}
+              Paket <span class="font-semibold">{planLabel()}</span> Anda maksimal{' '}
               <span class="font-semibold">{limit().max} outlet</span>. Upgrade paket untuk
               menambah outlet lagi.
             </div>

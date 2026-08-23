@@ -18,7 +18,7 @@
   --color-card: #ffffff;
   --color-card-foreground: #1e293b;
   --color-muted: #e9eff8;
-  --color-muted-foreground: #475569;
+  --color-muted-foreground: #64748b;
   --color-border: #e2e8f0;
   --color-destructive: #dc2626;
   --color-on-destructive: #ffffff;
@@ -29,6 +29,13 @@
   --color-success: #16a34a;
   --color-on-success: #ffffff;
   --color-success-soft: #f0fdf4;
+  --color-danger: #dc2626;
+  --color-danger-soft: #fef2f2;
+  --color-warning: #b45309;
+  --color-warning-strong: #9a3412;
+  --color-warning-icon: #ea580c;
+  --color-warning-soft: #fff7ed;
+  --color-warning-border: #fed7aa;
 
   /* Panel brand gelap auth layout */
   --color-brand-950: #0b1120;

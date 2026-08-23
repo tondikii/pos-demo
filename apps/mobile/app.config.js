@@ -3,8 +3,13 @@ export default {
     name: 'LarisPOS Kasir',
     slug: 'larispos-kasir',
     scheme: 'larispos',
-    platforms: ['android'],
+    platforms: ['android', 'web'],
+    userInterfaceStyle: 'light',
     android: { package: 'id.larispos.kasir' },
+    web: {
+      bundler: 'metro',
+      output: 'single',
+    },
     plugins: ['expo-router', 'expo-secure-store', 'expo-sqlite'],
   },
 }

@@ -1,6 +1,6 @@
 import { eq, sql } from 'drizzle-orm'
 
-import { db } from './client'
+import { getDrizzle } from './client'
 import { queuedTransactions, shifts, variantsCache } from './schema'
 import {
   isVoidedPayload,
@@ -68,6 +68,7 @@ export async function voidTransaction(
   offlineId: string,
   reason: string,
 ): Promise<VoidResult> {
+  const db = await getDrizzle()
   const trimmed = reason.trim()
   if (!trimmed) {
     return { ok: false, error: voidErrorMessage('REASON_REQUIRED', ''), code: 'REASON_REQUIRED' }

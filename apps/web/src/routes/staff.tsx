@@ -234,7 +234,7 @@ export default function StaffPage() {
                 fallback={
                   <div class="mt-6">
                     <EmptyState
-                      icon="👩‍🍳"
+                      icon="users"
                       title="Belum ada staff"
                       description="Tambahkan kasir pertama Anda — masing-masing punya PIN 6 digit untuk login di aplikasi kasir."
                       action={

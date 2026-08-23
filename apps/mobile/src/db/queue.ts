@@ -1,6 +1,6 @@
 import { and, asc, eq, inArray, sql } from 'drizzle-orm'
 
-import { db } from './client'
+import { getDrizzle } from './client'
 import { queuedTransactions, type QueueStatus } from './schema'
 
 /**
@@ -30,6 +30,8 @@ export type QueuedTransactionPayload = {
     costPrice: number
     qty: number
     lineTotal: number
+    /** Catatan item (opsional, F&B) — usulan kolom `transaction_items.note` utk Fase 3. */
+    note?: string
   }[]
   createdAt: number
   /**
@@ -65,6 +67,7 @@ export type QueuedTxRow = typeof queuedTransactions.$inferSelect
  * `offlineId` di-generate client (crypto.randomUUID) sebagai idempotency key.
  */
 export async function enqueueTransaction(payload: QueuedTransactionPayload): Promise<void> {
+  const db = await getDrizzle()
   await db.insert(queuedTransactions).values({
     offlineId: payload.offlineId,
     payload,
@@ -78,6 +81,7 @@ export async function enqueueTransaction(payload: QueuedTransactionPayload): Pro
 export async function getQueuedTransactions(
   status?: QueueStatus | QueueStatus[],
 ): Promise<QueuedTxRow[]> {
+  const db = await getDrizzle()
   const orderBy = [asc(queuedTransactions.createdAt)]
   if (!status) {
     return db.select().from(queuedTransactions).orderBy(...orderBy).all()
@@ -101,6 +105,7 @@ export async function getQueuedTransactions(
 
 /** Hapus dari antrean setelah sync sukses (200). */
 export async function deleteQueuedTransaction(offlineId: string): Promise<void> {
+  const db = await getDrizzle()
   await db.delete(queuedTransactions).where(eq(queuedTransactions.offlineId, offlineId))
 }
 
@@ -109,6 +114,7 @@ export async function markQueuedTransactionFailed(
   offlineId: string,
   error: string,
 ): Promise<void> {
+  const db = await getDrizzle()
   await db
     .update(queuedTransactions)
     .set({ status: 'failed', error, updatedAt: new Date() })
@@ -120,6 +126,7 @@ export async function bumpQueuedTransactionRetry(
   offlineId: string,
   maxRetries = 3,
 ): Promise<'pending' | 'failed'> {
+  const db = await getDrizzle()
   const rows = await db
     .select({ retries: queuedTransactions.retries })
     .from(queuedTransactions)
@@ -139,6 +146,7 @@ export async function bumpQueuedTransactionRetry(
 
 /** Kunci antrean transaksi yang mulai di-sync (status syncing) — cegah drain ganda. */
 export async function claimQueuedTransaction(offlineId: string): Promise<boolean> {
+  const db = await getDrizzle()
   const result = await db
     .update(queuedTransactions)
     .set({ status: 'syncing', updatedAt: new Date() })
@@ -159,6 +167,7 @@ export async function claimQueuedTransaction(offlineId: string): Promise<boolean
  * sync terputus di tengah (crash/kill) — baris syncing tidak pernah di-drain.
  */
 export async function recoverStuckSyncing(): Promise<number> {
+  const db = await getDrizzle()
   const result = await db
     .update(queuedTransactions)
     .set({ status: 'pending', updatedAt: new Date() })
@@ -170,6 +179,7 @@ export async function recoverStuckSyncing(): Promise<number> {
 
 /** Count per status — untuk badge "Menunggu sync" (Fase 2B.5). */
 export async function getQueueStats(): Promise<Record<QueueStatus, number>> {
+  const db = await getDrizzle()
   const rows = await db
     .select({ status: queuedTransactions.status, count: sql<number>`count(*)` })
     .from(queuedTransactions)

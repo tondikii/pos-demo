@@ -1,9 +1,10 @@
-import * as SecureStore from 'expo-secure-store'
+import * as storage from '../lib/secure-storage'
 
 /**
  * Lock PIN kasir (PRD §13): PIN salah 5x → kunci login 5 menit.
- * State di-persist ke SecureStore supaya RESTART tidak me-reset lock —
- * counter percobaan & waktu lock tersimpan sampai lock habis / login sukses.
+ * State di-persist ke SecureStore (fallback localStorage di web) supaya
+ * RESTART tidak me-reset lock — counter percobaan & waktu lock tersimpan
+ * sampai lock habis / login sukses.
  *
  * Aturan yang di-mirror:
  * - `failedAttempts` naik tiap PIN salah; >= 5 → `lockedUntil = now + 5 menit`.
@@ -25,7 +26,7 @@ export type PinLockState = {
 
 export async function loadPinLock(): Promise<PinLockState> {
   try {
-    const raw = await SecureStore.getItemAsync(PIN_LOCK_KEY)
+    const raw = await storage.getItemAsync(PIN_LOCK_KEY)
     if (!raw) return { failedAttempts: 0, lockedUntil: null }
     const parsed = JSON.parse(raw) as Partial<PinLockState>
     return {
@@ -39,14 +40,14 @@ export async function loadPinLock(): Promise<PinLockState> {
           : null,
     }
   } catch {
-    // secure-store rusak → anggap belum pernah salah PIN.
+    // storage rusak → anggap belum pernah salah PIN.
     return { failedAttempts: 0, lockedUntil: null }
   }
 }
 
 export async function savePinLock(state: PinLockState): Promise<void> {
   try {
-    await SecureStore.setItemAsync(PIN_LOCK_KEY, JSON.stringify(state))
+    await storage.setItemAsync(PIN_LOCK_KEY, JSON.stringify(state))
   } catch {
     // persist gagal → lock tetap berlaku di sesi ini (tidak fatal).
   }
@@ -54,7 +55,7 @@ export async function savePinLock(state: PinLockState): Promise<void> {
 
 export async function clearPinLock(): Promise<void> {
   try {
-    await SecureStore.deleteItemAsync(PIN_LOCK_KEY)
+    await storage.deleteItemAsync(PIN_LOCK_KEY)
   } catch {
     // non-fatal
   }

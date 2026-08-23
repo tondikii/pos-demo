@@ -154,7 +154,7 @@ export function OutletFormModal(props: OutletFormModalProps) {
             <Input
               id="of-name"
               name="name"
-              placeholder="mis. Gerai Geprek Sari — Pasar Baru"
+              placeholder="mis. Kopi Senja — Tebet"
               value={values().name}
               invalid={Boolean(fieldErrors().name)}
               onInput={(e) => setField('name', e.currentTarget.value)}

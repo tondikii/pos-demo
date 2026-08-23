@@ -43,11 +43,10 @@ export const PIN_LOCK_MS = 5 * 60 * 1000
 
 /** Kategori produk DEFAULT (seed) — owner bisa tambah/edit/hapus kategori sendiri (adjustable). */
 export const PRODUCT_CATEGORIES = [
-  'Makanan',
+  'Kopi',
   'Minuman',
+  'Makanan',
   'Snack',
-  'Paket',
-  'Umum',
 ] as const
 export type ProductCategory = (typeof PRODUCT_CATEGORIES)[number]
 

@@ -62,6 +62,41 @@
 
 ---
 
+## Fase 2 — Final (Audit & Polish Tambahan)
+
+> Checkpoint Fase 2 lolos setelah audit menyeluruh + sinkronisasi lintas platform (kasir ↔ dashboard ↔ landing). Semua di bawah dikerjakan dan diverifikasi (typecheck + lint + test hijau).
+
+- [x] 2F.1 **Audit kasir (mobile) & perbaikan bug:**
+  - BUG: checkout non-cash (QRIS/Transfer) selalu diblokir karena `canCheckout` mengharuskan `change !== null` (cash saja). Fixed di `cart.tsx` (`cashMethodId` prop) & `pos.tsx` (`(!isCash || change !== null)`).
+  - BUG: cart bar (footer keranjang) ikut ke atas saat keranjang kosong → kini SELALU fixed di bawah (phone) & footer panel tablet tetap di bawah saat kosong (empty state flex-1).
+  - BUG: grid produk stretch di baris terakhir → grid di-redesign pakai lebar kartu FIXED (diukur dari container, flexWrap) — konsisten di phone/tablet/web.
+  - Cleanup: dead code numpad, skeleton grid disinkronkan.
+- [x] 2F.2 **Dukungan Expo Web penuh (`bun run dev:web` di apps/mobile):**
+  - COOP/COEP (cross-origin isolation) via `scripts/start-web.js` + `public/index.html` (expo-sqlite web butuh SharedArrayBuffer).
+  - FIX: cold-start `openDatabaseSync` timeout → koneksi DB lazy + warm-up async (`src/db/client.ts`, `getDrizzle()`).
+  - FIX (patch expo-sqlite web): `sendWorkerResult` menulis panjang hasil 1 byte (bug length > 255 → "Unexpected end of JSON input") → patch project-owned via metro `resolveRequest` (`patches/expo-sqlite-web/WorkerChannel.ts`).
+  - Web-safe: haptics, SecureStore (localStorage fallback), Share fallback (navigator.share → clipboard).
+  - NativeWind darkMode `class` + StatusBar skip web → zero console error.
+  - Verified end-to-end via Playwright: login PIN → buka shift → tambah item → cash/Uang Pas → BAYAR → struk, tanpa error.
+- [x] 2F.3 **Sinkronisasi brand & data lintas platform — KOPI SENJA (single source):**
+  - `packages/shared/src/demo.ts` = sumber tunggal: 3 outlet, 3 kasir, menu 13 produk (Espresso s/d Kentang Goreng, stok menipis/habis untuk demo), metode bayar, konfigurasi pajak.
+  - Mobile, Web dashboard, `packages/db` seed, dan Landing (testimoni) semuanya mengonsumsi `demo.ts` — tidak ada lagi "Warung Demo"/"Gerai Geprek" yang berbeda-beda.
+- [x] 2F.4 **Audit web dashboard & perbaikan bug:**
+  - BUG: login membuat outlet UUID baru tiap kali (setting ter-orphan) → akun menyimpan outlet, login memakai ulang.
+  - BUG: batas outlet selalu Starter padahal sudah upgrade → limit mengikuti plan langganan (`outletLimitStatus(plan)`).
+  - BUG: kategori edit/hapus pakai id fabricated → query mengembalikan `{id, name}` asli.
+  - BUG: preset filter "Custom" tidak bisa dipilih → selalu tersedia.
+  - Ikon emoji diganti SVG, latency ganda (600ms) dikurangi, token warna sinkron MASTER.md, favicon/meta, dead code (AppHeader) dihapus.
+- [x] 2F.5 **Audit landing & perbaikan:**
+  - Harga paket kini import dari `@larispos/shared` (bukan duplikat).
+  - CTA "Coba Gratis" → `https://app.larispos.id/register` (alur PRD §4.1), jargon Inggris dihapus ("Offline-First" → Bahasa Indonesia), testimoni sinkron brand Kopi Senja, footer kontak (WA/email), favicon & token warna sinkron MASTER.md.
+- [x] 2F.6 **Testing (Vitest):** 16 test baru — Zod schemas shared (auth/produk/transaksi/konstanta/demo) + cart reducer mobile (termasuk regresi bug non-cash). `bun run test` hijau di root.
+- [x] 2F.7 Verifikasi: `turbo run typecheck` (6 pkg), `turbo run lint` (6 pkg, landing kini pakai eslint-plugin-astro), `bun run test` — semua hijau; web & landing build sukses; mobile web E2E pass.
+
+> **STOP — Review Checkpoint Fase 2 (Final)** — lanjut ke Fase 3 (Backend & Wiring) setelah approval.
+
+---
+
 ## Fase 3 — Backend & Wiring
 
 > API endpoints, business logic, validasi sesuai shared schema dari Fase 1. Lalu **wiring**: ganti mock Frontend dengan koneksi ke API asli.

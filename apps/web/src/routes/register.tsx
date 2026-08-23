@@ -137,7 +137,7 @@ export default function RegisterPage() {
                   id="reg-business"
                   name="businessName"
                   autocomplete="organization"
-                  placeholder="mis. Warung Ayam Geprek Sari"
+                  placeholder="mis. Kopi Senja"
                   value={values().businessName}
                   invalid={Boolean(fieldErrors().businessName)}
                   onInput={(e) => setField('businessName', e.currentTarget.value)}

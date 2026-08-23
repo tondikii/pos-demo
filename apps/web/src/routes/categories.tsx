@@ -104,23 +104,23 @@ export default function CategoriesPage() {
             >
               <ul class="mt-3 divide-y divide-border">
                 <For each={categories.data ?? []}>
-                  {(name, i) => {
+                  {(cat) => {
                     return (
                       <li class="flex items-center justify-between gap-3 py-2.5">
                         <Show
-                          when={editing()?.name === name}
+                          when={editing()?.id === cat.id}
                           fallback={
-                            <span class="text-sm font-medium text-foreground">{name}</span>
+                            <span class="text-sm font-medium text-foreground">{cat.name}</span>
                           }
                         >
                           <Input
-                            value={editing()?.name ?? name}
+                            value={editing()?.name ?? cat.name}
                             onInput={(e) => setEditing((ed) => (ed ? { ...ed, name: e.currentTarget.value } : ed))}
                             class="max-w-56"
                           />
                         </Show>
                         <div class="flex items-center gap-1.5">
-                          {editing()?.name === name ? (
+                          {editing()?.id === cat.id ? (
                             <>
                               <Button size="sm" onClick={handleRename} disabled={updateCat.isPending}>
                                 Simpan
@@ -134,7 +134,7 @@ export default function CategoriesPage() {
                               <Button
                                 size="sm"
                                 variant="ghost"
-                                onClick={() => setEditing({ id: `cat-${i() + 1}`, name })}
+                                onClick={() => setEditing({ id: cat.id, name: cat.name })}
                               >
                                 <Icon name="edit" class="size-3.5" />
                                 <span class="ml-1">Ubah</span>
@@ -143,7 +143,7 @@ export default function CategoriesPage() {
                                 size="sm"
                                 variant="ghost"
                                 class="text-destructive hover:bg-destructive/10"
-                                onClick={() => handleDelete(`cat-${i() + 1}`, name)}
+                                onClick={() => handleDelete(cat.id, cat.name)}
                               >
                                 <Icon name="trash" class="size-3.5" />
                                 <span class="ml-1">Hapus</span>

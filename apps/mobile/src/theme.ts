@@ -39,19 +39,13 @@ export const COLORS = {
   /** Alias error — dipakai teks error form & login (sama dengan danger). */
   error: '#DC2626',
 
-  // --- peringatan / offline ---
+  // --- peringatan / offline (MASTER.md: Warning tokens, resmi sejak audit R4) ---
   warning: '#B45309',
   warningStrong: '#9A3412',
   warningIcon: '#EA580C',
   warningIconPressed: '#C2410C',
   warningSoft: '#FFF7ED',
   warningBorder: '#FED7AA',
-
-  // --- void badge ---
-  voided: '#7C3AED',
-  voidedStrong: '#6D28D9',
-  voidedSoft: '#F3E8FF',
-  voidedBorder: '#D8B4FE',
 
   // --- status antrean sync ---
   pendingSoft: '#FFF7ED',
@@ -66,7 +60,7 @@ export const COLORS = {
   onSuccess: '#FFFFFF',
 
   // --- overlay & aksen ---
-  overlay: 'rgba(15, 23, 42, 0.55)',
+  overlay: 'rgba(15, 23, 42, 0.5)',
   successOverlay: 'rgba(16, 185, 129, 0.94)',
   dotEmpty: '#CBD5E1',
   /** Dot PIN terisi — sama dengan primary. */

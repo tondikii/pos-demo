@@ -1,15 +1,16 @@
 import { useRouter } from 'expo-router'
-import React, { useCallback, useState } from 'react'
-import { Modal, Pressable, StyleSheet, Text, useWindowDimensions, View } from 'react-native'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import { Pressable, Text, TextInput, useWindowDimensions, View } from 'react-native'
 import Animated, { FadeIn, FadeOut, ZoomIn, useReducedMotion } from 'react-native-reanimated'
-import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 import Icon from '../../src/components/Icon'
+import StatusPill from '../../src/components/ui/StatusPill'
+import Sheet from '../../src/components/ui/Sheet'
+import Button from '../../src/components/ui/Button'
 import { useSession } from '../../src/auth/session'
-import PrinterStatus from '../../src/components/print/PrinterStatus'
-import SyncBadge from '../../src/components/pos/SyncBadge'
 import { COLORS } from '../../src/theme'
-import { CartProvider, useCart, type CartVariantRef } from '../../src/lib/cart'
+import { CartProvider, useCart } from '../../src/lib/cart'
+import { hapticLight, hapticMedium, hapticSuccess } from '../../src/lib/haptics'
 import {
   MOCK_CATEGORIES,
   MOCK_OUTLET_CONFIG,
@@ -18,70 +19,192 @@ import {
   type MockProduct,
 } from '../../src/lib/mock-data'
 import { enqueueTransaction, type QueuedTransactionPayload } from '../../src/db/queue'
-import { formatIDR } from '../../src/lib/format'
+import { openShift } from '../../src/db/shift'
 import { useActiveShift } from '../../src/db/use-shift'
 import ProductGrid from '../../src/components/pos/ProductGrid'
-import CartPanel from '../../src/components/pos/CartPanel'
-import PayBar from '../../src/components/pos/PayBar'
-import StrukPreview from '../../src/components/pos/StrukPreview'
-import ShiftPrompt from '../../src/components/pos/ShiftPrompt'
+import VariantSheet from '../../src/components/pos/VariantSheet'
+import CartBar from '../../src/components/pos/CartBar'
+import CartSheet from '../../src/components/pos/CartSheet'
+import CartPanelContent from '../../src/components/pos/CartPanelContent'
+import ReceiptSheet from '../../src/components/pos/ReceiptSheet'
+import { formatIDR, formatNumber } from '../../src/lib/format'
 
-/** Overlay sukses singkat (ZoomIn check) sebelum struk preview — a11y reduced-motion aware. */
+/** Overlay sukses singkat — NETRAL (surface + aksen hijau tipis). */
 function SuccessOverlay({ visible }: { visible: boolean }) {
   const reducedMotion = useReducedMotion()
   if (!visible) return null
   return (
     <Animated.View
-      entering={reducedMotion ? FadeIn.duration(150) : ZoomIn.duration(250)}
+      entering={reducedMotion ? FadeIn.duration(150) : FadeIn.duration(200)}
       exiting={FadeOut.duration(200)}
-      style={styles.successOverlay}
+      className="absolute inset-0 bg-surface items-center justify-center gap-2.5 z-50"
       pointerEvents="none"
     >
-      <View style={styles.successCircle}>
-        <Icon name="check" size={40} color={COLORS.success} />
-      </View>
-      <Text style={styles.successTitle}>Pembayaran Berhasil</Text>
+      <Animated.View
+        entering={reducedMotion ? FadeIn.duration(150) : ZoomIn.duration(250)}
+        className="w-[76px] h-[76px] rounded-full bg-success-soft border border-success-border items-center justify-center"
+      >
+        <Icon name="check" size={36} color={COLORS.success} />
+      </Animated.View>
+      <Text className="text-[18px] font-extrabold text-text tracking-[-0.02em]">Pembayaran Berhasil</Text>
+      <Text className="text-[13px] text-text-muted">Menyiapkan struk…</Text>
     </Animated.View>
   )
 }
 
-/** Isi layar kasir — butuh CartProvider (cart state). */
-function PosContent() {
-  const {
-    items,
-    paymentMethodId,
-    cashReceived,
-    change,
-    totals,
-    addItem,
-    clear,
-  } = useCart()
+/**
+ * State LOCK "belum ada shift" — menggantikan SELURUH area grid (bug #1/#2):
+ * grid & search tidak bisa diakses, satu-satunya aksi = Buka Shift (sheet).
+ */
+function ShiftLockState({ onOpenShift }: { onOpenShift: () => void }) {
+  return (
+    <View className="flex-1 items-center justify-center px-8 gap-3">
+      <View
+        className="w-16 h-16 rounded-full bg-primary-soft items-center justify-center"
+        accessibilityElementsHidden
+        importantForAccessibility="no-hide-descendants"
+      >
+        <Icon name="lock" size={30} color="#2563EB" />
+      </View>
+      <Text className="text-[18px] font-extrabold text-text tracking-[-0.02em] text-center">
+        Belum ada shift
+      </Text>
+      <Text className="text-[13px] text-text-muted text-center leading-5 max-w-[340px]">
+        Buka shift dulu — produk baru bisa dijual setelah shift dimulai.
+      </Text>
+      <Button label="Buka Shift" onPress={onOpenShift} className="mt-2 self-center px-8" />
+    </View>
+  )
+}
 
+/** Sheet buka shift — form kas awal yang menutup penuh (tanpa tumpang tindih). */
+function ShiftOpenSheet({
+  visible,
+  onClose,
+  onOpened,
+}: {
+  visible: boolean
+  onClose: () => void
+  onOpened: () => void
+}) {
+  const { session } = useSession()
+  const [cash, setCash] = useState('')
+  const [error, setError] = useState<string | null>(null)
+  const [saving, setSaving] = useState(false)
+
+  const handleOpen = useCallback(async () => {
+    if (!session || saving) return
+    setError(null)
+    setSaving(true)
+    try {
+      const openingCash = Number(cash.replace(/\D/g, '') || 0)
+      const result = await openShift(session.outletId, session.id, openingCash)
+      if (!result.ok) {
+        setError(result.error)
+        return
+      }
+      setCash('')
+      onOpened()
+      onClose()
+    } catch {
+      setError('Gagal membuka shift. Coba lagi.')
+    } finally {
+      setSaving(false)
+    }
+  }, [cash, session, saving, onOpened, onClose])
+
+  return (
+    <Sheet
+      visible={visible}
+      onClose={onClose}
+      title="Buka Shift"
+      subtitle="Kas awal di laci — bisa diisi 0."
+      maxHeight="55%"
+    >
+      <View className="px-4 pb-4 gap-2.5">
+        <View className="flex-row items-center h-14 rounded-xl bg-bg border border-border px-3 gap-1.5">
+          <Text className="text-[16px] font-bold text-text-muted" accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
+            Rp
+          </Text>
+          <TextInput
+            value={cash}
+            onChangeText={setCash}
+            keyboardType="number-pad"
+            placeholder="0"
+            placeholderTextColor="#94A3B8"
+            className="flex-1 text-[18px] font-bold text-text p-0 tabular-nums"
+            accessibilityLabel="Kas awal, default 0"
+          />
+        </View>
+        <Text className="text-[12px] text-text-muted">
+          Jumlah uang tunai di laci saat shift dimulai. Diisi 0 jika kosong.
+        </Text>
+        {error ? <Text className="text-[13px] font-semibold text-danger">{error}</Text> : null}
+        <Button
+          label={saving ? 'Membuka…' : 'Buka Shift'}
+          onPress={() => void handleOpen()}
+          disabled={saving}
+          loading={saving}
+          className="mt-1"
+        />
+        <Button label="Nanti" variant="ghost" size="md" onPress={onClose} />
+      </View>
+    </Sheet>
+  )
+}
+
+/** Isi layar kasir — butuh CartProvider. */
+function PosContent() {
+  const { items, totals, paymentMethodId, cashReceived, change, addItem, clear, setNote } = useCart()
   const { session } = useSession()
   const { active, loading: shiftLoading, reload: reloadShift } = useActiveShift(
     session?.outletId ?? '',
     session?.id ?? '',
   )
-
   const hasOpenShift = active?.shift.status === 'open'
+  const locked = !shiftLoading && !hasOpenShift
 
   const [lastTx, setLastTx] = useState<QueuedTransactionPayload | null>(null)
   const [showReceipt, setShowReceipt] = useState(false)
   const [showSuccess, setShowSuccess] = useState(false)
   const [isSaving, setIsSaving] = useState(false)
   const [cartOpen, setCartOpen] = useState(false)
+  const [variantProduct, setVariantProduct] = useState<MockProduct | null>(null)
+  const [showShiftOpen, setShowShiftOpen] = useState(false)
   const { width } = useWindowDimensions()
   const isTablet = width >= 768
+
+  // Bug #1: saat shift terkunci (belum dibuka / sudah tutup), cart dikosongkan
+  // — tidak ada item yang terbawa antar shift.
+  useEffect(() => {
+    if (locked) clear()
+  }, [locked, clear])
 
   const cashMethod = MOCK_PAYMENT_METHODS.find((m) => m.type === 'cash')
   const isCash = paymentMethodId !== null && paymentMethodId === cashMethod?.id
 
   const canCheckout =
+    !locked &&
     items.length > 0 &&
     paymentMethodId !== null &&
-    change !== null &&
-    !isSaving &&
-    hasOpenShift
+    (!isCash || change !== null) &&
+    !isSaving
+
+  // Badge qty per produk di grid (jumlah qty semua varian produk itu).
+  const cartQtys = useMemo(() => {
+    return items.reduce<Record<string, number>>((acc, i) => {
+      acc[i.productId] = (acc[i.productId] ?? 0) + i.qty
+      return acc
+    }, {})
+  }, [items])
+
+  // Counter produk per kategori untuk chip filter.
+  const categoryCounts = useMemo(() => {
+    return MOCK_PRODUCTS.reduce<Record<string, number>>((acc, p) => {
+      acc[p.category] = (acc[p.category] ?? 0) + 1
+      return acc
+    }, {})
+  }, [])
 
   const buildPayload = useCallback((): QueuedTransactionPayload => {
     const offlineId =
@@ -108,12 +231,13 @@ function PosContent() {
         costPrice: i.costPrice,
         qty: i.qty,
         lineTotal: i.sellPrice * i.qty,
+        note: i.note,
       })),
       createdAt: Date.now(),
     }
   }, [items, totals, paymentMethodId, cashReceived, change, isCash, active, session?.id])
 
-  /** BAYAR: simpan ke antrean SQLite (offline-first sejak awal) → sukses → struk preview. */
+  /** BAYAR: simpan ke antrean SQLite (offline-first) → sukses → struk preview. */
   const handleCheckout = useCallback(() => {
     if (!canCheckout) return
     setIsSaving(true)
@@ -122,25 +246,27 @@ function PosContent() {
       .then(() => {
         setLastTx(payload)
         clear()
+        setCartOpen(false)
         setShowSuccess(true)
-        // Refresh rekap shift (jumlah transaksi bertambah) — jangan tunggu fokus.
+        hapticSuccess()
         void reloadShift()
-        // Overlay sukses singkat → struk (delay 400ms; jangan blok UX).
         setTimeout(() => {
           setShowSuccess(false)
           setShowReceipt(true)
         }, 400)
       })
       .catch(() => {
-        // Gagal simpan (jarang) — tetap tampilkan struk, tanpa antrean.
         setLastTx(payload)
+        setCartOpen(false)
         setShowReceipt(true)
       })
       .finally(() => setIsSaving(false))
   }, [canCheckout, buildPayload, clear, reloadShift])
 
-  const handleAddItem = useCallback(
-    (product: MockProduct, variant: CartVariantRef) => {
+  const handleAdd = useCallback(
+    (product: MockProduct, variantId: string) => {
+      const variant = product.variants.find((v) => v.id === variantId)
+      if (!variant) return
       addItem(
         {
           id: product.id,
@@ -150,143 +276,187 @@ function PosContent() {
         },
         variant,
       )
+      hapticLight()
     },
     [addItem],
   )
 
-  const closeReceipt = useCallback(() => setShowReceipt(false), [])
+  /** Kartu 1 varian → tambah langsung (1 tap); multi varian → sheet (2 tap). */
+  const handleCardTap = useCallback(
+    (product: MockProduct) => {
+      if (product.variants.length === 1) {
+        handleAdd(product, product.variants[0].id)
+      } else {
+        setVariantProduct(product)
+      }
+    },
+    [handleAdd],
+  )
+
+  /** Quick-add: long-press → +1 langsung (varian pertama) tanpa sheet. */
+  const handleQuickAdd = useCallback(
+    (product: MockProduct) => {
+      const first = product.variants[0]
+      if (!first || first.stock <= 0) return
+      handleAdd(product, first.id)
+      hapticMedium()
+    },
+    [handleAdd],
+  )
 
   return (
-    <View style={styles.container}>
-      {/* Prompt buka shift: card besar + form inline (PRD Flow 3.1). */}
-      {!shiftLoading && !hasOpenShift ? (
-        <ShiftPrompt onOpened={() => void reloadShift()} />
-      ) : null}
-
-      <View style={styles.body}>
-        <ProductGrid
-          products={MOCK_PRODUCTS}
-          categories={MOCK_CATEGORIES}
-          onAddItem={handleAddItem}
-        />
-      </View>
-
+    <View className="flex-1">
       {isTablet ? (
-        <View style={styles.rightPane}>
-          <CartPanel paymentMethods={MOCK_PAYMENT_METHODS} />
-          <PayBar
-            disabled={!canCheckout}
-            onPress={handleCheckout}
-            disabledHint={hasOpenShift ? undefined : 'Buka shift dulu'}
-          />
+        /* ===== TABLET LANDSCAPE: grid kiri + cart panel tetap kanan ===== */
+        <View className="flex-1 flex-row">
+          <View className="flex-1">
+            {locked ? (
+              <ShiftLockState onOpenShift={() => setShowShiftOpen(true)} />
+            ) : (
+              <ProductGrid
+                products={MOCK_PRODUCTS}
+                categories={MOCK_CATEGORIES}
+                onAdd={handleCardTap}
+                onNeedVariant={setVariantProduct}
+                onQuickAdd={handleQuickAdd}
+                cartQtys={cartQtys}
+                categoryCounts={categoryCounts}
+              />
+            )}
+          </View>
+          <View className="w-[34%] max-w-[420px] border-l border-border bg-surface">
+            <View className="flex-row items-center justify-between px-4 pt-3 pb-2 border-b border-border">
+              <View>
+                <Text className="text-[17px] font-extrabold text-text tracking-[-0.02em]">Keranjang</Text>
+                <Text className="text-[12px] text-text-muted">
+                  {items.length > 0
+                    ? `${formatNumber(totals.itemCount)} item · ${formatIDR(totals.total)}`
+                    : 'Belum ada item'}
+                </Text>
+              </View>
+              {items.length > 0 ? (
+                <Pressable
+                  onPress={clear}
+                  hitSlop={8}
+                  accessibilityRole="button"
+                  accessibilityLabel="Kosongkan keranjang"
+                  className="h-12 px-3 justify-center"
+                >
+                  <Text className="text-[13px] font-bold text-danger">Kosongkan</Text>
+                </Pressable>
+              ) : null}
+            </View>
+            <CartPanelContent
+              onCheckout={handleCheckout}
+              canCheckout={canCheckout}
+              disabledHint={locked ? 'Buka shift dulu' : undefined}
+              saving={isSaving}
+              paymentMethods={MOCK_PAYMENT_METHODS}
+              onSetNote={setNote}
+            />
+          </View>
         </View>
       ) : (
+        /* ===== PHONE: grid + cart bar + bottom sheet ===== */
         <>
-          {/* Bar keranjang ringkas (phone) — jumlah item + total + tombol buka */}
-          <Pressable
-            onPress={() => setCartOpen(true)}
-            disabled={items.length === 0}
-            style={({ pressed }) => [
-              styles.cartBar,
-              (items.length === 0 || pressed) && { opacity: pressed ? 0.85 : 0.6 },
-            ]}
-            accessibilityRole="button"
-            accessibilityLabel={`Buka keranjang, ${items.length} item`}
-          >
-            <View style={styles.cartBarLeft}>
-              <Icon name="cart" size={18} color={COLORS.text} />
-              <Text style={styles.cartBarCount}>{items.length} item</Text>
-            </View>
-            <Text style={styles.cartBarTotal}>{formatIDR(totals.total)}</Text>
-          </Pressable>
+          {locked ? (
+            <ShiftLockState onOpenShift={() => setShowShiftOpen(true)} />
+          ) : (
+            <ProductGrid
+              products={MOCK_PRODUCTS}
+              categories={MOCK_CATEGORIES}
+              onAdd={handleCardTap}
+              onNeedVariant={setVariantProduct}
+              onQuickAdd={handleQuickAdd}
+              cartQtys={cartQtys}
+              categoryCounts={categoryCounts}
+            />
+          )}
 
-          {/* Bottom sheet keranjang (phone) */}
-          <Modal
-            visible={cartOpen}
-            transparent
-            animationType="slide"
-            onRequestClose={() => setCartOpen(false)}
-          >
-            <View style={styles.sheetRoot}>
-              <Pressable style={styles.sheetScrim} onPress={() => setCartOpen(false)} />
-              <View style={styles.sheet}>
-                <View style={styles.sheetHandle} />
-                <View style={styles.sheetHeader}>
-                  <Text style={styles.sheetTitle}>Keranjang</Text>
-                  <Pressable onPress={() => setCartOpen(false)} hitSlop={10} accessibilityRole="button" accessibilityLabel="Tutup keranjang">
-                    <Icon name="close" size={20} color={COLORS.textMuted} />
-                  </Pressable>
-                </View>
-                <View style={styles.sheetBody}>
-                  <CartPanel paymentMethods={MOCK_PAYMENT_METHODS} />
-                </View>
-                <View style={styles.sheetFooter}>
-                  <PayBar
-                    disabled={!canCheckout}
-                    onPress={() => {
-                      setCartOpen(false)
-                      handleCheckout()
-                    }}
-                    disabledHint={hasOpenShift ? undefined : 'Buka shift dulu'}
-                  />
-                </View>
-              </View>
+          {!locked ? (
+            <View className="absolute left-0 right-0 bottom-0 px-3 pb-2">
+              <CartBar
+                itemCount={totals.itemCount}
+                total={totals.total}
+                onPress={() => setCartOpen(true)}
+              />
             </View>
-          </Modal>
+          ) : null}
+
+          <CartSheet
+            visible={cartOpen && !locked}
+            onClose={() => setCartOpen(false)}
+            onCheckout={handleCheckout}
+            canCheckout={canCheckout}
+            disabledHint={locked ? 'Buka shift dulu' : undefined}
+            saving={isSaving}
+            paymentMethods={MOCK_PAYMENT_METHODS}
+          />
         </>
       )}
 
+      <ShiftOpenSheet
+        visible={showShiftOpen}
+        onClose={() => setShowShiftOpen(false)}
+        onOpened={() => void reloadShift()}
+      />
+
+      <VariantSheet
+        product={variantProduct}
+        onClose={() => setVariantProduct(null)}
+        onSelect={(product, variantId) => {
+          handleAdd(product, variantId)
+          setVariantProduct(null)
+        }}
+      />
+
       <SuccessOverlay visible={showSuccess} />
 
-      <StrukPreview
-        visible={showReceipt}
-        transaction={lastTx}
-        onClose={closeReceipt}
-      />
+      <ReceiptSheet visible={showReceipt} transaction={lastTx} onClose={() => setShowReceipt(false)} />
     </View>
   )
 }
 
 export default function PosScreen() {
   const router = useRouter()
-  const insets = useSafeAreaInsets()
-  const { signOut } = useSession()
+  const { session, signOut } = useSession()
 
   const handleLogout = useCallback(() => {
     void signOut().then(() => router.replace('/(auth)/login'))
   }, [router, signOut])
 
   return (
-    <CartProvider taxPercent={MOCK_OUTLET_CONFIG.taxPercent} servicePercent={MOCK_OUTLET_CONFIG.servicePercent}>
-      <View style={[styles.screen, { paddingTop: insets.top }]}>
-        {/* Header POS: judul outlet + status (bukan navigasi — bottom nav yang navigasi). */}
-        <View style={styles.header}>
-          <View style={styles.headerLeft}>
-            <View style={styles.outletDot} />
-            <View>
-              <Text style={styles.outletName} numberOfLines={1}>
+    <CartProvider
+      taxPercent={MOCK_OUTLET_CONFIG.taxPercent}
+      servicePercent={MOCK_OUTLET_CONFIG.servicePercent}
+      cashMethodId={MOCK_PAYMENT_METHODS.find((m) => m.type === 'cash')?.id ?? null}
+    >
+      <View className="flex-1 bg-bg">
+        {/* Header: identitas outlet dominan + status kompak + logout muted. */}
+        <View className="flex-row items-center justify-between px-4 py-2 border-b border-border bg-surface">
+          <View className="flex-1 flex-row items-center gap-2.5">
+            <View className="w-10 h-10 rounded-full bg-primary-soft items-center justify-center">
+              <Text className="text-[15px] font-extrabold text-primary">
+                {MOCK_OUTLET_CONFIG.name.slice(0, 1).toUpperCase()}
+              </Text>
+            </View>
+            <View className="flex-1">
+              <Text className="text-[18px] font-extrabold text-text tracking-[-0.02em]" numberOfLines={1}>
                 {MOCK_OUTLET_CONFIG.name}
               </Text>
-              <Text style={styles.cashierName}>Kasir</Text>
+              <Text className="text-[12px] text-text-muted">{session?.name ?? 'Kasir'}</Text>
             </View>
           </View>
-          <View style={styles.headerRight}>
-            <Pressable
-              onPress={handleLogout}
-              hitSlop={6}
-              style={({ pressed }) => [styles.logoutBtn, pressed && styles.logoutBtnPressed]}
-              accessibilityRole="button"
-              accessibilityLabel="Keluar dari akun kasir"
-            >
-              <Text style={styles.logoutText}>Keluar</Text>
-            </Pressable>
-          </View>
-        </View>
-
-        {/* Baris status ramping: sync + printer (bukan di header agar tidak berdesakan) */}
-        <View style={styles.statusRow}>
-          <SyncBadge />
-          <PrinterStatus />
+          <StatusPill />
+          <Pressable
+            onPress={handleLogout}
+            hitSlop={6}
+            accessibilityRole="button"
+            accessibilityLabel="Keluar dari akun kasir"
+            className="w-12 h-12 rounded-xl items-center justify-center active:bg-surfaceMuted"
+          >
+            <Icon name="logout" size={20} color={COLORS.textMuted} />
+          </Pressable>
         </View>
 
         <PosContent />
@@ -294,121 +464,3 @@ export default function PosScreen() {
     </CartProvider>
   )
 }
-
-const styles = StyleSheet.create({
-  screen: { flex: 1, backgroundColor: COLORS.bg },
-  container: { flex: 1 },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: COLORS.border,
-    backgroundColor: COLORS.surface,
-  },
-  headerLeft: { flexDirection: 'row', alignItems: 'center', gap: 10, flex: 1 },
-  outletDot: { width: 10, height: 10, borderRadius: 5, backgroundColor: COLORS.primary },
-  outletName: { fontSize: 15, fontWeight: '800', color: COLORS.text },
-  cashierName: { fontSize: 12, color: COLORS.textMuted },
-  headerRight: { flexDirection: 'row', alignItems: 'center', gap: 10 },
-  statusRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    backgroundColor: COLORS.bg,
-  },
-  logoutBtn: {
-    paddingHorizontal: 12,
-    paddingVertical: 7,
-    borderRadius: 10,
-    borderWidth: 1,
-    borderColor: COLORS.dangerBorder,
-    backgroundColor: COLORS.dangerSoft,
-  },
-  logoutBtnPressed: { backgroundColor: COLORS.dangerSoft },
-  logoutText: { color: COLORS.danger, fontWeight: '700', fontSize: 13 },
-  body: { flex: 1, padding: 12 },
-  rightPane: {
-    position: 'absolute',
-    right: 12,
-    top: 12,
-    bottom: 12,
-    width: 340,
-    borderRadius: 20,
-    overflow: 'hidden',
-    backgroundColor: COLORS.surface,
-    borderWidth: 1,
-    borderColor: COLORS.border,
-  },
-  /* Bar keranjang ringkas (phone) */
-  cartBar: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginHorizontal: 12,
-    marginBottom: 8,
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    borderRadius: 14,
-    backgroundColor: COLORS.surface,
-    borderWidth: 1,
-    borderColor: COLORS.border,
-  },
-  cartBarLeft: { flexDirection: 'row', alignItems: 'center', gap: 8 },
-  cartBarCount: { fontSize: 13, fontWeight: '700', color: COLORS.text },
-  cartBarTotal: { fontSize: 15, fontWeight: '800', color: COLORS.primary },
-  /* Bottom sheet keranjang */
-  sheetRoot: { flex: 1, justifyContent: 'flex-end' },
-  sheetScrim: { ...StyleSheet.absoluteFill, backgroundColor: 'rgba(15,23,42,0.45)' },
-  sheet: {
-    backgroundColor: COLORS.bg,
-    borderTopLeftRadius: 22,
-    borderTopRightRadius: 22,
-    paddingTop: 8,
-    paddingHorizontal: 4,
-    maxHeight: '88%',
-  },
-  sheetHandle: {
-    alignSelf: 'center',
-    width: 40,
-    height: 4,
-    borderRadius: 2,
-    backgroundColor: COLORS.border,
-    marginBottom: 6,
-  },
-  sheetHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-  },
-  sheetTitle: { fontSize: 17, fontWeight: '800', color: COLORS.text },
-  sheetBody: { flexGrow: 1, paddingHorizontal: 12 },
-  sheetFooter: { paddingHorizontal: 12, paddingBottom: 12, paddingTop: 4 },
-  successOverlay: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: COLORS.successOverlay,
-    alignItems: 'center',
-    justifyContent: 'center',
-    zIndex: 50,
-    gap: 12,
-  },
-  successCircle: {
-    width: 76,
-    height: 76,
-    borderRadius: 38,
-    backgroundColor: COLORS.surface,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  successTitle: { color: COLORS.onSuccess, fontSize: 18, fontWeight: '800' },
-})

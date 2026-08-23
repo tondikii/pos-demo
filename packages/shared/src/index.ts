@@ -1,4 +1,5 @@
 export * from './constants'
+export * from './demo'
 export * from './schemas/auth'
 export * from './schemas/outlet'
 export * from './schemas/product'
