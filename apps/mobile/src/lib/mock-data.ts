@@ -37,13 +37,15 @@ export type MockPaymentMethod = DemoPaymentMethod
 
 const OUTLET_ID = DEMO_OUTLETS[0].id // Kopi Senja — Tebet
 
-/** Menu demo (13 produk, kategori Kopi/Minuman/Makanan/Snack) — sync lintas app. */
+/** Menu demo (13 produk, kategori Kopi/Minuman/Makanan/Snack) — sync lintas app.
+ *  Produk tanpa foto → ikon kategori relevan di kartu (placeholder). */
 export const MOCK_PRODUCTS: MockProduct[] = DEMO_PRODUCTS.map((p) => ({
   id: p.id,
   outletId: OUTLET_ID,
   name: p.name,
   category: p.category,
   costPrice: p.costPrice,
+  imageUrl: p.imageUrl,
   variants: p.variants.map((v) => ({ ...v, productId: p.id })),
 }))
 

@@ -11,7 +11,7 @@ You are an Expo (Android) specialist for the LarisPOS cashier app (`apps/mobile`
 Expo SDK 57 + Expo Router (file-based `app/`, `"main": "expo-router/entry"`), NativeWind 4 (Tailwind for RN), `expo-sqlite` for queue + product cache, `react-native-ble-plx` for 58mm ESC/POS printing, `expo-secure-store` for tokens, MMKV for non-sensitive cache only, **react-native-reanimated 4.5.x + worklets untuk animasi** (lihat skill `pos-motion`). Referensi: skill `pos-frontend-stack`. Always latest stable; if latest unstable use previous stable.
 
 ## UX Rules (WAJIB — dari AGENTS.md)
-- **Mobile kasir = BOTTOM NAVIGATION** — Kasir / Riwayat / Shift / Sync selalu terlihat (satu tap). Jangan sembunyikan di header/drawer.
+- **Mobile kasir = BOTTOM NAVIGATION** — Kasir / Riwayat / Shift / Pengaturan selalu terlihat (satu tap). Jangan sembunyikan di header/drawer.
 - Login kasir PIN 6 digit — cepat, tanpa step tidak perlu. Owner login email/password.
 - Desain pakai design token `ui-ux-pro-max/design-system/larispos/MASTER.md` (konsisten dengan web).
 - Copywriting pakai skill `pos-copywriting`.

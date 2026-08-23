@@ -63,7 +63,7 @@
 ## Navigation (WAJIB)
 
 - **Web dashboard:** SIDEBAR kiri (desktop, 240px) / drawer (mobile <768px). Item: Dashboard, Kasir, Produk, Laporan, Pengaturan (Outlet, Staf, Metode Bayar, Langganan).
-- **Mobile kasir:** BOTTOM NAVIGATION 4 item: Kasir / Riwayat / Shift / Sync.
+- **Mobile kasir:** BOTTOM NAVIGATION 4 item: Kasir / Riwayat / Shift / Pengaturan.
 - **Landing:** top nav sederhana (Logo, Fitur, Harga, FAQ, Login).
 
 ## Komponen Kunci

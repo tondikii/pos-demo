@@ -24,6 +24,7 @@ export interface ProductFormValues {
   name: string
   category: string
   costPrice: string
+  imageUrl: string
   variants: VariantFormRow[]
 }
 
@@ -49,11 +50,13 @@ function toVariantInput(row: VariantFormRow) {
 }
 
 function toInput(values: ProductFormValues, outletId: string): CreateProductInput {
+  const imageUrl = values.imageUrl.trim()
   return {
     outletId,
     name: values.name.trim(),
     category: values.category || 'Umum',
     costPrice: values.costPrice === '' ? 0 : Number(values.costPrice),
+    imageUrl: imageUrl || undefined,
     variants: values.variants.map(toVariantInput),
   }
 }
@@ -63,6 +66,7 @@ export function formValuesFromProduct(p: MockProduct): ProductFormValues {
     name: p.name,
     category: p.category,
     costPrice: String(p.costPrice),
+    imageUrl: p.imageUrl ?? '',
     variants: p.variants.map((v) => ({
       name: v.name,
       sellPrice: String(v.sellPrice),
@@ -73,7 +77,7 @@ export function formValuesFromProduct(p: MockProduct): ProductFormValues {
 }
 
 export function emptyFormValues(): ProductFormValues {
-  return { name: '', category: 'Makanan', costPrice: '', variants: [cloneRow()] }
+  return { name: '', category: 'Makanan', costPrice: '', imageUrl: '', variants: [cloneRow()] }
 }
 
 /* ------------------------------------------------------------------ */
@@ -90,7 +94,7 @@ export interface ProductFormModalProps {
   onSubmit: (input: CreateProductInput) => void
 }
 
-const FIELD_ERROR_KEYS = ['name', 'costPrice'] as const
+const FIELD_ERROR_KEYS = ['name', 'costPrice', 'imageUrl'] as const
 
 export function ProductFormModal(props: ProductFormModalProps) {
   const [values, setValues] = createSignal<ProductFormValues>(emptyFormValues())
@@ -140,7 +144,7 @@ export function ProductFormModal(props: ProductFormModalProps) {
     return out
   })
 
-  function setProductField(key: 'name' | 'category' | 'costPrice', value: string) {
+  function setProductField(key: 'name' | 'category' | 'costPrice' | 'imageUrl', value: string) {
     setValues((v) => ({ ...v, [key]: value }))
     if (touched()[key]) {
       const res = parseWithZod(createProductSchema, toInput({ ...values(), [key]: value }, props.outletId))
@@ -261,6 +265,36 @@ export function ProductFormModal(props: ProductFormModalProps) {
                 onBlur={() => handleBlur('costPrice')}
               />
             </Field>
+          </div>
+
+          {/* Foto produk — URL opsional; kosong → placeholder makanan default */}
+          <div class="flex items-start gap-4">
+            <img
+              src={values().imageUrl || undefined}
+              alt="Pratinjau foto produk"
+              class="h-20 w-20 shrink-0 rounded-xl border border-border object-cover"
+              onError={(e) => (e.currentTarget.style.display = 'none')}
+              onLoad={(e) => (e.currentTarget.style.display = '')}
+            />
+            <div class="flex-1">
+              <Field
+                label="Foto produk (URL)"
+                for="pf-image"
+                errorMessage={fieldErrors().imageUrl}
+                hint="Kosongkan untuk memakai placeholder makanan otomatis."
+              >
+                <Input
+                  id="pf-image"
+                  name="imageUrl"
+                  inputmode="url"
+                  placeholder="https://… (opsional)"
+                  value={values().imageUrl}
+                  invalid={Boolean(fieldErrors().imageUrl)}
+                  onInput={(e) => setProductField('imageUrl', e.currentTarget.value)}
+                  onBlur={() => handleBlur('imageUrl')}
+                />
+              </Field>
+            </div>
           </div>
 
           <div>

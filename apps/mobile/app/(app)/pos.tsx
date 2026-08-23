@@ -4,6 +4,7 @@ import { Pressable, Text, TextInput, useWindowDimensions, View } from 'react-nat
 import Animated, { FadeIn, FadeOut, ZoomIn, useReducedMotion } from 'react-native-reanimated'
 
 import Icon from '../../src/components/Icon'
+import HeaderBar from '../../src/components/HeaderBar'
 import StatusPill from '../../src/components/ui/StatusPill'
 import Sheet from '../../src/components/ui/Sheet'
 import Button from '../../src/components/ui/Button'
@@ -27,7 +28,7 @@ import CartBar from '../../src/components/pos/CartBar'
 import CartSheet from '../../src/components/pos/CartSheet'
 import CartPanelContent from '../../src/components/pos/CartPanelContent'
 import ReceiptSheet from '../../src/components/pos/ReceiptSheet'
-import { formatIDR, formatNumber } from '../../src/lib/format'
+import { formatIDR, formatMoneyInput, formatNumber, parseMoneyInput } from '../../src/lib/format'
 
 /** Overlay sukses singkat — NETRAL (surface + aksen hijau tipis). */
 function SuccessOverlay({ visible }: { visible: boolean }) {
@@ -97,7 +98,7 @@ function ShiftOpenSheet({
     setError(null)
     setSaving(true)
     try {
-      const openingCash = Number(cash.replace(/\D/g, '') || 0)
+      const openingCash = parseMoneyInput(cash)
       const result = await openShift(session.outletId, session.id, openingCash)
       if (!result.ok) {
         setError(result.error)
@@ -128,7 +129,7 @@ function ShiftOpenSheet({
           </Text>
           <TextInput
             value={cash}
-            onChangeText={setCash}
+            onChangeText={(t) => setCash(formatMoneyInput(t))}
             keyboardType="number-pad"
             placeholder="0"
             placeholderTextColor="#94A3B8"
@@ -327,7 +328,7 @@ function PosContent() {
           <View className="w-[34%] max-w-[420px] border-l border-border bg-surface">
             <View className="flex-row items-center justify-between px-4 pt-3 pb-2 border-b border-border">
               <View>
-                <Text className="text-[17px] font-extrabold text-text tracking-[-0.02em]">Keranjang</Text>
+                <Text className="text-[15px] font-bold text-text tracking-[-0.01em]">Keranjang</Text>
                 <Text className="text-[12px] text-text-muted">
                   {items.length > 0
                     ? `${formatNumber(totals.itemCount)} item · ${formatIDR(totals.total)}`
@@ -342,7 +343,7 @@ function PosContent() {
                   accessibilityLabel="Kosongkan keranjang"
                   className="h-12 px-3 justify-center"
                 >
-                  <Text className="text-[13px] font-bold text-danger">Kosongkan</Text>
+                  <Text className="text-[12px] font-semibold text-danger">Kosongkan</Text>
                 </Pressable>
               ) : null}
             </View>
@@ -432,32 +433,27 @@ export default function PosScreen() {
       cashMethodId={MOCK_PAYMENT_METHODS.find((m) => m.type === 'cash')?.id ?? null}
     >
       <View className="flex-1 bg-bg">
-        {/* Header: identitas outlet dominan + status kompak + logout muted. */}
-        <View className="flex-row items-center justify-between px-4 py-2 border-b border-border bg-surface">
-          <View className="flex-1 flex-row items-center gap-2.5">
-            <View className="w-10 h-10 rounded-full bg-primary-soft items-center justify-center">
-              <Text className="text-[15px] font-extrabold text-primary">
-                {MOCK_OUTLET_CONFIG.name.slice(0, 1).toUpperCase()}
-              </Text>
+        {/* Header seragam: avatar outlet + identitas menu "Kasir" + outlet · profil kasir + status + logout. */}
+        <HeaderBar
+          title="Kasir"
+          outlet={session?.outletName ?? MOCK_OUTLET_CONFIG.name}
+          profile={session?.name ?? 'Kasir'}
+          avatarLabel={session?.outletName ?? MOCK_OUTLET_CONFIG.name}
+          right={
+            <View className="flex-row items-center gap-1">
+              <StatusPill />
+              <Pressable
+                onPress={handleLogout}
+                hitSlop={6}
+                accessibilityRole="button"
+                accessibilityLabel="Keluar dari akun kasir"
+                className="w-12 h-12 -mr-2 rounded-xl items-center justify-center active:bg-surfaceMuted"
+              >
+                <Icon name="logout" size={20} color={COLORS.textMuted} />
+              </Pressable>
             </View>
-            <View className="flex-1">
-              <Text className="text-[18px] font-extrabold text-text tracking-[-0.02em]" numberOfLines={1}>
-                {MOCK_OUTLET_CONFIG.name}
-              </Text>
-              <Text className="text-[12px] text-text-muted">{session?.name ?? 'Kasir'}</Text>
-            </View>
-          </View>
-          <StatusPill />
-          <Pressable
-            onPress={handleLogout}
-            hitSlop={6}
-            accessibilityRole="button"
-            accessibilityLabel="Keluar dari akun kasir"
-            className="w-12 h-12 rounded-xl items-center justify-center active:bg-surfaceMuted"
-          >
-            <Icon name="logout" size={20} color={COLORS.textMuted} />
-          </Pressable>
-        </View>
+          }
+        />
 
         <PosContent />
       </View>

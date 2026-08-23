@@ -1,7 +1,7 @@
 /**
  * SEO helpers untuk landing page — JSON-LD (schema.org) + data FAQ.
  *
- * ⚠️ SYNC: harga paket di sini mengikuti `./pricing.ts` (single source harga
+ * SYNC: harga paket di sini mengikuti `./pricing.ts` (single source harga
  * landing; nilai aslinya dari `packages/shared` — lihat catatan di pricing.ts).
  */
 

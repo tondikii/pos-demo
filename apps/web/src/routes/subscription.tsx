@@ -1,7 +1,7 @@
 import { createMemo, createSignal, For, Show } from 'solid-js'
 import { Navigate } from '@solidjs/router'
 import { Motion } from '@motionone/solid'
-import { GRACE_DAYS, PLANS, TRIAL_DAYS } from '@larispos/shared'
+import { GRACE_DAYS, PLAN_DETAILS, PLAN_ORDER, PLANS, TRIAL_DAYS } from '@larispos/shared'
 import type { PlanId } from '@larispos/shared'
 import { SidebarLayout } from '../components/app/SidebarLayout'
 import { Button } from '../components/ui/button'
@@ -202,37 +202,15 @@ function ActiveStatusCard(props: { sub: MockSubscription }) {
 /* Kartu paket                                                         */
 /* ------------------------------------------------------------------ */
 
-const PLAN_ORDER: PlanId[] = ['starter', 'tumbuh', 'jaringan']
+/** Urutan kartu, highlight & fitur paket — SINGLE SOURCE dari packages/shared
+ *  (sinkron dengan landing page). */
+const PLAN_HIGHLIGHT: Record<PlanId, boolean> = Object.fromEntries(
+  PLAN_ORDER.map((p) => [p, PLAN_DETAILS[p].highlighted]),
+) as Record<PlanId, boolean>
 
-const PLAN_HIGHLIGHT: Record<PlanId, boolean> = {
-  starter: false,
-  tumbuh: true,
-  jaringan: false,
-}
-
-const PLAN_FEATURES: Record<PlanId, readonly string[]> = {
-  starter: [
-    '1 outlet',
-    'Kasir cepat + offline',
-    'Laporan harian',
-    'Struk 58mm',
-    'Dukungan chat',
-  ],
-  tumbuh: [
-    '3 outlet',
-    'Semua fitur Starter',
-    'Riwayat shift & kas',
-    'Metode bayar fleksibel',
-    'Prioritas support',
-  ],
-  jaringan: [
-    '4+ outlet (custom)',
-    'Semua fitur Tumbuh',
-    '+ Rp 25 rb/outlet tambahan',
-    'Multi-cabang terpusat',
-    'Dedicated support',
-  ],
-}
+const PLAN_FEATURES: Record<PlanId, readonly string[]> = Object.fromEntries(
+  PLAN_ORDER.map((p) => [p, PLAN_DETAILS[p].features]),
+) as Record<PlanId, readonly string[]>
 
 function PlanCard(props: {
   plan: PlanId
@@ -302,7 +280,9 @@ function PlanCard(props: {
           <For each={PLAN_FEATURES[props.plan]}>
             {(feature) => (
               <li class="flex items-start gap-2 text-sm text-muted-foreground">
-                <span aria-hidden="true" class="mt-0.5 text-emerald-500">✓</span>
+                <span aria-hidden="true" class="mt-0.5">
+                <Icon name="check" class="size-4 text-emerald-500" />
+              </span>
                 {feature}
               </li>
             )}
@@ -371,8 +351,8 @@ function UpgradeModal(props: {
         </dl>
 
         <Show when={props.cycle === 'yearly'}>
-          <p class="text-xs text-emerald-700">
-            💡 Billing tahunan menghemat 17% dibanding bulanan.
+          <p class="flex items-center gap-1.5 text-xs text-emerald-700">
+            <Icon name="check" class="size-3.5 text-emerald-600" /> Billing tahunan menghemat 17% dibanding bulanan.
           </p>
         </Show>
 
@@ -664,7 +644,9 @@ export default function SubscriptionPage() {
                       class="mt-6 rounded-2xl border border-amber-500/30 bg-amber-50 p-5"
                     >
                       <div class="flex items-start gap-3">
-                        <span aria-hidden="true" class="text-lg leading-none">🛡️</span>
+                        <span aria-hidden="true" class="mt-0.5 shrink-0">
+                        <Icon name="shield" class="size-5 text-amber-600" />
+                      </span>
                         <div>
                           <p class="text-sm font-bold text-amber-700">Masa tenggang 7 hari</p>
                           <p class="mt-1 text-sm text-amber-800/90">

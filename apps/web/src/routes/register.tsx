@@ -8,7 +8,7 @@ import { Input } from '../components/ui/input'
 import { Field, FormAlert } from '../components/ui/field'
 import { Card, CardContent } from '../components/ui/card'
 import { parseWithZod, type FieldErrors } from '../lib/validation'
-import { useAuth } from '../lib/auth-mock'
+import { DEMO_ACCOUNT, useAuth } from '../lib/auth-mock'
 
 type RegisterKeys = 'email' | 'phone' | 'password' | 'businessName'
 
@@ -16,6 +16,7 @@ type RegisterKeys = 'email' | 'phone' | 'password' | 'businessName'
  * /register — daftar ringkas (PRD Flow 1): 1 form, nama bisnis + email +
  * password. WA opsional — collapsed di bawah tombol, bisa dilengkapi nanti.
  * Setelah daftar → langsung ke dashboard (outlet "Outlet Utama" otomatis).
+ * Field di-prefill dengan data demo Kopi Senja (showcase tanpa backend).
  */
 export default function RegisterPage() {
   const { register, isAuthenticated } = useAuth()
@@ -26,7 +27,12 @@ export default function RegisterPage() {
     phone: string
     password: string
     businessName: string
-  }>({ email: '', phone: '', password: '', businessName: '' })
+  }>({
+    email: DEMO_ACCOUNT.email,
+    phone: DEMO_ACCOUNT.phone,
+    password: DEMO_ACCOUNT.password,
+    businessName: DEMO_ACCOUNT.businessName,
+  })
   const [errors, setErrors] = createSignal<FieldErrors>({})
   const [formError, setFormError] = createSignal<string | null>(null)
   const [submitting, setSubmitting] = createSignal(false)
@@ -45,27 +51,41 @@ export default function RegisterPage() {
     return out
   })
 
-  function setField(key: RegisterKeys, value: string) {
-    setValues((v) => ({ ...v, [key]: value }))
-    if (touched()[key]) {
-      const res = parseWithZod(registerSchema, { ...values(), [key]: value })
-      if (res.ok) {
-        setErrors((e) => {
-          const next = { ...e }
-          delete next[key]
-          return next
-        })
-      } else {
-        setErrors((e) => ({ ...e, ...(res.errors ?? {}) }))
-      }
+/** Normalisasi email & WA — validasi inline sama persis dengan submit. */
+function normalizeField(key: RegisterKeys, value: string): string {
+  if (key === 'email') return value.trim()
+  // WA: buang spasi/dash agar cocok dengan regex format Indonesia
+  if (key === 'phone') return value.replace(/[\s-]/g, '')
+  return value
+}
+
+function setField(key: RegisterKeys, value: string) {
+  const next = normalizeField(key, value)
+  setValues((v) => ({ ...v, [key]: next }))
+  if (touched()[key]) {
+    const res = parseWithZod(registerSchema, { ...values(), [key]: next })
+    if (res.ok) {
+      setErrors((e) => {
+        const nextErrors = { ...e }
+        delete nextErrors[key]
+        return nextErrors
+      })
+    } else {
+      setErrors((e) => ({ ...e, ...(res.errors ?? {}) }))
     }
   }
+}
 
-  function handleBlur(key: RegisterKeys) {
-    setTouched((t) => ({ ...t, [key]: true }))
-    const res = parseWithZod(registerSchema, values())
-    if (!res.ok) setErrors((e) => ({ ...e, ...(res.errors ?? {}) }))
+function handleBlur(key: RegisterKeys) {
+  setTouched((t) => ({ ...t, [key]: true }))
+  const normalized = {
+    ...values(),
+    email: values().email.trim(),
+    phone: values().phone.replace(/[\s-]/g, ''),
   }
+  const res = parseWithZod(registerSchema, normalized)
+  if (!res.ok) setErrors((e) => ({ ...e, ...(res.errors ?? {}) }))
+}
 
   function handleSubmit(e: SubmitEvent) {
     e.preventDefault()
@@ -79,11 +99,12 @@ export default function RegisterPage() {
       phone: String(fd.get('phone') ?? ''),
     }
     setValues(raw)
-    // phone kosong → undefined; email dinormalisasi (trim + lowercase)
+    // phone kosong → undefined; email dinormalisasi (trim + lowercase),
+    // WA dinormalisasi (buang spasi/dash) — konsisten dengan validasi inline.
     const input = {
       ...raw,
       email: raw.email.trim().toLowerCase(),
-      phone: raw.phone?.trim() ? raw.phone : undefined,
+      phone: raw.phone.replace(/[\s-]/g, '').trim() || undefined,
     }
     const res = parseWithZod(registerSchema, input)
     if (!res.ok) {

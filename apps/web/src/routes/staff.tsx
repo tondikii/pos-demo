@@ -11,6 +11,7 @@ import { ToastProvider } from '../components/ui/toast'
 import type { ToastApi } from '../components/ui/toast'
 import { EmptyState, ErrorState, CardGridSkeleton } from '../components/ui/state'
 import { Breadcrumb } from '../components/ui/breadcrumb'
+import { Icon } from '../components/ui/icon'
 import { StaffFormModal, ResetStaffPinModal } from './StaffFormModal'
 import { useAuth } from '../lib/auth-mock'
 import { MOCK_OUTLETS } from '../lib/mocks'
@@ -299,9 +300,9 @@ export default function StaffPage() {
                             <div class="mt-4 flex items-center gap-2 rounded-lg bg-muted/40 px-2.5 py-2">
                               <span
                                 aria-hidden="true"
-                                class="flex size-6 shrink-0 items-center justify-center rounded-md bg-card text-[10px] font-bold text-muted-foreground"
+                                class="flex size-6 shrink-0 items-center justify-center rounded-md bg-card text-muted-foreground"
                               >
-                                🔒
+                                <Icon name="lock" class="size-3.5" />
                               </span>
                               <span class="text-xs text-muted-foreground">
                                 PIN tersimpan (hash) —{' '}

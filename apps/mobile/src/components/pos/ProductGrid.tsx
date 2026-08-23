@@ -48,12 +48,23 @@ function StockBadge({ stock, threshold }: { stock: number; threshold: number }) 
   )
 }
 
-/** Ikon placeholder per kategori — slot foto produk (Moka/Square-style). */
-const CATEGORY_ICON: Record<string, string> = {
-  Makanan: 'food',
-  Minuman: 'glass',
-  Kopi: 'mug',
-  Snack: 'cookie',
+/**
+ * Placeholder foto produk UNIVERSAL — satu desain untuk semua kategori:
+ * tile lembut + lingkaran putih berisi ikon piring (konsisten dgn EmptyState).
+ * Tampil saat produk belum punya foto / foto gagal dimuat.
+ */
+function ProductImagePlaceholder() {
+  return (
+    <View className="flex-1 items-center justify-center bg-surfaceMuted">
+      <View
+        className="w-14 h-14 rounded-full bg-white border border-border items-center justify-center"
+        accessibilityElementsHidden
+        importantForAccessibility="no-hide-descendants"
+      >
+        <Icon name="food" size={26} color="#94A3B8" />
+      </View>
+    </View>
+  )
 }
 
 /**
@@ -92,7 +103,8 @@ const ProductCard = memo(function ProductCard({
   const threshold = Math.min(...product.variants.map((v) => v.lowStockThreshold))
   const out = totalStock <= 0
   const single = product.variants.length === 1
-  const categoryIcon = CATEGORY_ICON[product.category] ?? 'cart'
+  const [imgFailed, setImgFailed] = useState(false)
+  const showPhoto = !!product.imageUrl && !imgFailed
 
   return (
     <AnimatedCard
@@ -115,19 +127,21 @@ const ProductCard = memo(function ProductCard({
         accessibilityRole="button"
         accessibilityLabel={`${product.name}, mulai dari ${formatIDR(cheapest)}${out ? ', stok habis' : ''}${qty > 0 ? `, ${qty} di keranjang` : ''}`}
         accessibilityState={{ disabled: out }}
-        className="h-[160px] p-4 rounded-2xl border border-border bg-surface justify-between"
+        className="h-[200px] p-3.5 rounded-2xl border border-border bg-surface justify-between"
       >
-        {/* Slot gambar produk — placeholder ikon kategori (primary-soft), siap untuk foto asli */}
+        {/* Slot gambar produk — foto asli bila ada; tanpa foto / gagal →
+            placeholder universal (ikon piring). */}
         <View className="relative">
-          <View className="h-16 rounded-lg bg-primary-soft items-center justify-center overflow-hidden">
-            {product.imageUrl ? (
+          <View className="h-[116px] rounded-xl overflow-hidden">
+            {showPhoto && product.imageUrl ? (
               <Image
                 source={{ uri: product.imageUrl }}
                 style={{ width: '100%', height: '100%' }}
                 resizeMode="cover"
+                onError={() => setImgFailed(true)}
               />
             ) : (
-              <Icon name={categoryIcon} size={28} color="#2563EB" />
+              <ProductImagePlaceholder />
             )}
           </View>
           {qty > 0 ? (
@@ -145,13 +159,13 @@ const ProductCard = memo(function ProductCard({
           <Text className={`text-[13px] font-bold text-text ${out ? 'line-through' : ''}`} numberOfLines={1}>
             {product.name}
           </Text>
-          <Text className="text-[15px] font-extrabold text-primary tabular-nums">{formatIDR(cheapest)}</Text>
           <View className="flex-row items-center justify-between">
-            <Text className="text-[10px] text-text-muted font-medium" numberOfLines={1}>
-              {product.category}
-            </Text>
+            <Text className="text-[14px] font-extrabold text-primary tabular-nums">{formatIDR(cheapest)}</Text>
             <StockBadge stock={totalStock} threshold={threshold} />
           </View>
+          <Text className="text-[10px] text-text-muted font-medium" numberOfLines={1}>
+            {product.category}
+          </Text>
         </View>
       </Pressable>
     </AnimatedCard>
@@ -185,7 +199,7 @@ function SkeletonGrid({ columns, cardWidth }: { columns: number; cardWidth: numb
         {cards.map((i) => (
           <View
             key={i}
-            className="h-[160px] rounded-2xl bg-surfaceMuted overflow-hidden"
+            className="h-[200px] rounded-2xl bg-surfaceMuted overflow-hidden"
             style={{ width: cardWidth }}
           >
             <Animated.View style={stripStyle} className="absolute inset-y-0 w-1/2 bg-white/70" />

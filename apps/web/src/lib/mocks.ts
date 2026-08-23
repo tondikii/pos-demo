@@ -138,11 +138,15 @@ function round2(n: number): number {
  * Generate ringkasan 7 hari deterministik untuk sebuah outlet.
  * Profil per outlet (baseOmzet, growth, weekendFactor, hppRate) diturunkan
  * dari hash id outlet → angka tidak acak-acakan antar outlet.
+ *
+ * Profil KEDAI KOPI (Kopi Senja): tiket rata-rata 28–45rb (harga kopi 15–36rb),
+ * margin kotor tinggi (HPP ~30–45% — kopi & pastry markup besar), omzet harian
+ * Rp 1,2–2,8jt/cabang, akhir pekan lebih ramai (1.12–1.30x).
  */
 export function buildMockDays(outletId: string, count = DASHBOARD_DAYS): MockOutletSummary[] {
   const rand = mulberry32(hashSeed(outletId))
-  const baseOmzet = 900_000 + rand() * 1_400_000
-  const hppRate = 0.55 + rand() * 0.12
+  const baseOmzet = 1_200_000 + rand() * 1_600_000
+  const hppRate = 0.3 + rand() * 0.15
   const growth = 0.01 + rand() * 0.03
   const weekendFactor = 1.12 + rand() * 0.18
 
@@ -154,7 +158,7 @@ export function buildMockDays(outletId: string, count = DASHBOARD_DAYS): MockOut
     const t = count - 1 - i // 0 = tertua … count-1 = hari ini
     const noise = 0.92 + rand() * 0.16
     const omzet = Math.round((baseOmzet * (1 + growth * t) * (isWeekend ? weekendFactor : 1) * noise) / 100) * 100
-    const txCount = Math.max(8, Math.round(omzet / (35_000 + rand() * 25_000)))
+    const txCount = Math.max(8, Math.round(omzet / (28_000 + rand() * 17_000)))
     const hpp = round2(omzet * (hppRate + rand() * 0.02))
     const laba = round2(omzet - hpp)
     days.push({
@@ -328,18 +332,19 @@ export const BUSY_HOURS_RANGE = { from: 6, to: 22 } as const
 
 /**
  * Jam ramai (count transaksi per jam 06–22) — deterministik.
- * Bentuk lonjakan mengikuti profil outlet: jam makan siang (12) + sore (18)
- * selalu ramai; besaran & urutan antar jam dari seed outlet.
+ * Profil KEDAI KOPI: puncak pagi (07–10, kopi sebelum kerja) + sore/malam
+ * (16–20, ngopi santai) — bukan jam makan siang.
  */
 export function buildMockBusyHours(outletId: string): MockBusyHour[] {
   const rand = mulberry32(hashSeed(`${outletId}:busyhours`))
   const peakFactor = 0.75 + rand() * 0.5 // 0.75–1.25 → skala per outlet
   const hours: MockBusyHour[] = []
   for (let h = BUSY_HOURS_RANGE.from; h <= BUSY_HOURS_RANGE.to; h++) {
-    const lunch = Math.max(0, 1 - Math.abs(h - 12) / 3) // puncak 12:00
-    const dinner = Math.max(0, 1 - Math.abs(h - 18) / 3) // puncak 18:00
-    const base = Math.max(lunch, dinner)
-    const count = Math.max(1, Math.round((base * 34 + rand() * 6) * peakFactor))
+    const morning = Math.max(0, 1 - Math.abs(h - 8.5) / 2.5) // puncak ~08:30
+    const evening = Math.max(0, 1 - Math.abs(h - 18) / 3.2) // puncak ~18:00
+    const midday = Math.max(0, 1 - Math.abs(h - 12.5) / 2.2) // makan siang (lebih rendah)
+    const base = Math.max(morning * 0.95, evening, midday * 0.55)
+    const count = Math.max(1, Math.round((base * 30 + rand() * 6) * peakFactor))
     hours.push({ hour: h, count })
   }
   return hours
@@ -350,14 +355,15 @@ const REPORT_PAYMENT_METHODS: ReadonlyArray<{ name: string; type: 'cash' | 'non_
   DEMO_PAYMENT_METHODS.map((m) => ({ name: m.name, type: m.type }))
 
 /**
- * Rekap per metode bayar — deterministik. Share metode dari seed outlet
- * (Cash 40–55%, QRIS 30–45%, sisanya Transfer), total menyesuaikan omzet
- * rata-rata harian outlet agar konsisten dengan summary dashboard.
+ * Rekap per metode bayar — deterministik. Share metode mengikuti profil
+ * KEDAI KOPI: QRIS dominan (pelanggan muda), Cash menengah, Transfer kecil.
+ * Total menyesuaikan omzet rata-rata harian outlet agar konsisten dengan
+ * summary dashboard.
  */
 export function buildMockPaymentBreakdown(outletId: string): MockPaymentBreakdownRow[] {
   const rand = mulberry32(hashSeed(`${outletId}:paybreakdown`))
-  const cashShare = 0.4 + rand() * 0.15
-  const qrisShare = 0.3 + rand() * 0.15
+  const qrisShare = 0.45 + rand() * 0.18
+  const cashShare = 0.3 + rand() * 0.15
   const transferShare = Math.max(0.05, 1 - cashShare - qrisShare)
 
   const avgDaily = buildMockDays(outletId, 1)[0].omzet
@@ -463,10 +469,10 @@ export function buildMockShifts(outletId: string, count = 14): MockShift[] {
     const isToday = i === days.length - 1
     const cashierName = SHIFT_CASHIERS[(firstCashier + i) % SHIFT_CASHIERS.length]
 
-    // Jam buka 08:00–10:30, tutup 20:30–22:30 (kelipatan 10 menit).
-    const openHour = 8 + Math.floor(rand() * 3)
+    // Jam buka kedai kopi: 07:00–09:00, tutup 21:00–23:00 (kelipatan 10 menit).
+    const openHour = 7 + Math.floor(rand() * 3)
     const openMinute = Math.floor((rand() * 60) / 10) * 10
-    const closeHour = 20 + Math.floor(rand() * 3)
+    const closeHour = 21 + Math.floor(rand() * 3)
     const closeMinute = Math.floor((rand() * 60) / 10) * 10
 
     const openedAtDate = new Date(date)
@@ -488,7 +494,8 @@ export function buildMockShifts(outletId: string, count = 14): MockShift[] {
     const txCount = Math.max(1, Math.round(day.txCount * progress))
     const avgTicket = day.avg || 1
 
-    const openingCash = Math.round((150_000 + rand() * 350_000) / 50_000) * 50_000
+    // Kas awal laci kedai kopi: Rp 200–400rb (pecahan 50rb) — cukup untuk pecahan.
+    const openingCash = Math.round((200_000 + rand() * 200_000) / 50_000) * 50_000
     const voidAmount = Math.round(day.omzet * progress * (0.004 + rand() * 0.022))
     const expectedCash = openingCash + cashTotal - voidAmount
 
@@ -572,6 +579,8 @@ export interface MockProduct {
   name: string
   category: string
   costPrice: number
+  /** URL foto produk — kosong → placeholder makanan (SVG data URI). */
+  imageUrl?: string
   variants: MockProductVariant[]
   createdAt: string
   updatedAt: string
@@ -586,7 +595,7 @@ export interface MockProductFilter {
 
 export type StockStatus = 'aman' | 'menipis' | 'habis'
 
-const PRODUCT_STORAGE_KEY = 'larispos_mock_products_v2'
+const PRODUCT_STORAGE_KEY = 'larispos_mock_products_v3'
 
 const nowIso = () => new Date().toISOString()
 
@@ -602,6 +611,12 @@ export function variantStockStatus(v: MockProductVariant): StockStatus {
   return 'aman'
 }
 
+/* ------------------------------------------------------------------ */
+/* Placeholder foto produk (SVG data URI per kategori)                 */
+/* ------------------------------------------------------------------ */
+
+/** Foto default = tidak ada (ikon kategori relevan ditampilkan di UI). */
+
 /**
  * Seed produk — sync single-source dari `DEMO_PRODUCTS` (Kopi Senja, 13 produk).
  * ID produk/varian SAMA dengan mock kasir (mobile) → data lintas platform
@@ -615,6 +630,9 @@ export function buildSeedProducts(outletId: string): MockProduct[] {
     name: p.name,
     category: p.category,
     costPrice: p.costPrice,
+    // Foto asli dari menu demo; produk tanpa foto → placeholder makanan
+    // per kategori (gaya GoFood) — bisa diganti via form produk (URL).
+    imageUrl: p.imageUrl,
     variants: p.variants.map((v) => ({
       id: v.id,
       name: v.name,
@@ -684,6 +702,7 @@ function normalizeProduct(p: MockProduct): MockProduct {
     ...p,
     category: p.category || 'Umum',
     costPrice: typeof p.costPrice === 'number' ? p.costPrice : 0,
+    imageUrl: typeof p.imageUrl === 'string' ? p.imageUrl : undefined,
     variants: Array.isArray(p.variants) ? p.variants : [],
   }
 }
@@ -697,6 +716,8 @@ export function createMockProduct(input: CreateProductInput): MockProduct {
     name: input.name,
     category: input.category ?? 'Umum',
     costPrice: input.costPrice,
+    // Tanpa foto → placeholder makanan per kategori.
+    imageUrl: input.imageUrl,
     variants: input.variants.map((v) => ({
       id: cryptoRandomUUID(),
       name: v.name,
@@ -722,6 +743,12 @@ export function updateMockProduct(id: string, input: UpdateProductInput): MockPr
     name: input.name ?? current.name,
     category: input.category ?? current.category,
     costPrice: input.costPrice ?? current.costPrice,
+    imageUrl:
+      input.imageUrl === undefined
+        ? current.imageUrl
+        : input.imageUrl === ''
+          ? undefined
+          : input.imageUrl,
     variants: input.variants
       ? input.variants.map((v) => {
           // Pertahankan id varian yang sudah ada (via id bila dikirim, atau

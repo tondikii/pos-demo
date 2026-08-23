@@ -37,9 +37,9 @@ export default function BottomNav() {
     {
       key: 'sync',
       route: '/sync',
-      label: 'Sync',
-      icon: 'sync',
-      a11y: 'Buka sinkronisasi',
+      label: 'Pengaturan',
+      icon: 'settings',
+      a11y: 'Buka pengaturan',
       badge: failedCount > 0 ? failedCount : pendingCount > 0 ? pendingCount : 0,
       badgeTone: failedCount > 0 ? 'danger' : 'warning',
     },

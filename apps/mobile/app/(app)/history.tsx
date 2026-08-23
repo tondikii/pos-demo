@@ -418,7 +418,7 @@ export default function HistoryScreen() {
 
   return (
     <View className="flex-1 bg-bg">
-      <HeaderBar title="Riwayat" subtitle={session?.outletName ?? 'Outlet'} right={<StatusPill />} />
+      <HeaderBar title="Riwayat" outlet={session?.outletName ?? 'Outlet'} profile={session?.name ?? 'Kasir'} avatarLabel={session?.outletName ?? 'Outlet'} right={<StatusPill />} />
       <FilterChips value={filter} counts={counts} onChange={setFilter} />
 
       <ScrollView contentContainerClassName="p-3 pb-8 gap-3" showsVerticalScrollIndicator={false}>

@@ -8,13 +8,17 @@ import { Input } from '../components/ui/input'
 import { Field, FormAlert } from '../components/ui/field'
 import { Card, CardContent } from '../components/ui/card'
 import { parseWithZod, type FieldErrors } from '../lib/validation'
-import { useAuth } from '../lib/auth-mock'
+import { DEMO_ACCOUNT, useAuth } from '../lib/auth-mock'
 
 export default function LoginPage() {
   const { login, isAuthenticated } = useAuth()
   const navigate = useNavigate()
 
-  const [values, setValues] = createSignal<{ email: string; password: string }>({ email: '', password: '' })
+  // Prefill akun demo (Kopi Senja) — showcase tanpa backend: tinggal klik Masuk.
+  const [values, setValues] = createSignal<{ email: string; password: string }>({
+    email: DEMO_ACCOUNT.email,
+    password: DEMO_ACCOUNT.password,
+  })
   const [errors, setErrors] = createSignal<FieldErrors>({})
   const [formError, setFormError] = createSignal<string | null>(null)
   const [submitting, setSubmitting] = createSignal(false)
@@ -33,14 +37,17 @@ export default function LoginPage() {
     return out
   })
 
-  function setField(key: 'email' | 'password', value: string) {
-    setValues((v) => ({ ...v, [key]: value }))
-    // re-validate inline setelah field pernah disentuh
-    if (touched()[key]) {
-      const res = parseWithZod(loginSchema, { ...values(), [key]: value })
-      setErrors((e) => (res.ok ? omitKey(e, key) : { ...e, ...(res.errors ?? {}) }))
-    }
+function setField(key: 'email' | 'password', value: string) {
+  // Email dinormalisasi (trim) — validasi inline & submit memakai nilai yang
+  // sama, jadi error "email tidak valid" tidak muncul padahal bisa disubmit.
+  const next = key === 'email' ? value.trim() : value
+  setValues((v) => ({ ...v, [key]: next }))
+  // re-validate inline setelah field pernah disentuh
+  if (touched()[key]) {
+    const res = parseWithZod(loginSchema, { ...values(), [key]: next })
+    setErrors((e) => (res.ok ? omitKey(e, key) : { ...e, ...(res.errors ?? {}) }))
   }
+}
 
   function omitKey(e: FieldErrors, key: string): FieldErrors {
     const out: FieldErrors = {}
@@ -48,11 +55,14 @@ export default function LoginPage() {
     return out
   }
 
-  function handleBlur(key: 'email' | 'password') {
-    setTouched((t) => ({ ...t, [key]: true }))
-    const res = parseWithZod(loginSchema, values())
-    if (!res.ok) setErrors((e) => ({ ...e, ...(res.errors ?? {}) }))
-  }
+function handleBlur(key: 'email' | 'password') {
+  setTouched((t) => ({ ...t, [key]: true }))
+  const res = parseWithZod(loginSchema, {
+    ...values(),
+    email: values().email.trim(),
+  })
+  if (!res.ok) setErrors((e) => ({ ...e, ...(res.errors ?? {}) }))
+}
 
   function handleSubmit(e: SubmitEvent) {
     e.preventDefault()
@@ -109,6 +119,14 @@ export default function LoginPage() {
                 <FormAlert title={formError()!} />
               </div>
             </Show>
+
+            {/* Info akun demo — showcase tanpa backend */}
+            <div class="mb-5 rounded-xl border border-primary/25 bg-primary/5 px-4 py-3 text-sm">
+              <p class="font-bold text-primary">Mode demo — akun sudah terisi</p>
+              <p class="mt-0.5 text-muted-foreground">
+                {DEMO_ACCOUNT.email} · {DEMO_ACCOUNT.password} — klik <span class="font-semibold text-foreground">Masuk</span> untuk preview.
+              </p>
+            </div>
 
             <form onSubmit={handleSubmit} noValidate class="space-y-4">
               <Field label="Email" for="login-email" required errorMessage={fieldErrors().email}>

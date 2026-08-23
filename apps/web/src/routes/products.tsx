@@ -6,6 +6,7 @@ import { SidebarLayout } from '../components/app/SidebarLayout'
 import { Button } from '../components/ui/button'
 import { Breadcrumb } from '../components/ui/breadcrumb'
 import { Card } from '../components/ui/card'
+import { Icon } from '../components/ui/icon'
 import { Modal } from '../components/ui/modal'
 import { ToastProvider } from '../components/ui/toast'
 import type { ToastApi } from '../components/ui/toast'
@@ -342,8 +343,26 @@ export default function ProductsPage() {
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.25, delay: (i() * 40) / 1000, easing: 'ease-out' }}
                       >
-                        <Card class="flex h-full flex-col">
+                        <Card class="flex h-full flex-col overflow-hidden">
                           <div class="flex flex-1 flex-col p-5">
+                            {/* Foto produk — foto asli bila ada; tanpa foto → placeholder UNIVERSAL
+                            (tile lembut + lingkaran putih berisi ikon piring). */}
+                            <div class="relative mb-4 aspect-[4/3] w-full overflow-hidden rounded-xl border border-border bg-gradient-to-br from-slate-100 to-slate-200">
+                              <div class="absolute inset-0 flex items-center justify-center">
+                                <div class="flex size-16 items-center justify-center rounded-full border border-border bg-white shadow-sm">
+                                  <Icon name="food" class="size-8 text-slate-400" aria-hidden="true" />
+                                </div>
+                              </div>
+                              <Show when={p.imageUrl}>
+                                <img
+                                  src={p.imageUrl}
+                                  alt={`Foto ${p.name}`}
+                                  class="absolute inset-0 h-full w-full object-cover"
+                                  loading="lazy"
+                                  onError={(e) => (e.currentTarget.style.display = 'none')}
+                                />
+                              </Show>
+                            </div>
                             <div class="flex items-start justify-between gap-2">
                               <h2 class="min-w-0 truncate text-base font-bold text-foreground">
                                 {p.name}

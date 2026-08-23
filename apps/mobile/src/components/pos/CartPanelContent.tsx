@@ -105,7 +105,7 @@ function QtyStepper({
         >
           <Icon name="minus" size={20} color="#0F172A" />
         </Pressable>
-        <Text className="text-[15px] font-bold text-text min-w-6 text-center tabular-nums">{qty}</Text>
+        <Text className="text-[13px] font-semibold text-text min-w-6 text-center tabular-nums">{qty}</Text>
         <Pressable
           onPress={onInc}
           disabled={atMax}
@@ -148,17 +148,17 @@ const CartItemRow = memo(function CartItemRow({
 }) {
   const [noteOpen, setNoteOpen] = useState(false)
   return (
-    <View className="py-3 border-b border-border px-1">
+    <View className="py-3 border-b border-border/60">
       <View className="flex-row items-start justify-between gap-2">
         <View className="flex-1 pr-2">
-          <Text className="text-[14px] font-bold text-text" numberOfLines={1}>
+          <Text className="text-[13px] font-semibold text-text" numberOfLines={1}>
             {item.productName}
           </Text>
-          <Text className="text-[12px] text-text-muted mt-0.5">
+          <Text className="text-[11px] text-text-muted mt-0.5">
             {item.variantName} · @{formatIDR(item.sellPrice)}
           </Text>
         </View>
-        <Text className="text-[14px] font-extrabold text-text tabular-nums">
+        <Text className="text-[13px] font-medium text-text tabular-nums">
           {formatIDR(item.sellPrice * item.qty)}
         </Text>
       </View>
@@ -172,7 +172,7 @@ const CartItemRow = memo(function CartItemRow({
       />
 
       {item.note ? (
-        <Text className="text-[11px] italic text-text-muted mt-1.5" numberOfLines={1}>
+        <Text className="text-[11px] text-text-muted mt-1.5" numberOfLines={1}>
           Catatan: {item.note}
         </Text>
       ) : null}
@@ -186,7 +186,7 @@ const CartItemRow = memo(function CartItemRow({
         className="mt-1.5 flex-row items-center gap-1.5 h-10 px-2 rounded-lg self-start active:bg-surfaceMuted"
       >
         <Icon name="edit" size={14} color="#2563EB" />
-        <Text className="text-[12px] font-bold text-primary">
+        <Text className="text-[12px] font-medium text-primary">
           {item.note ? 'Ubah catatan' : 'Tambah catatan'}
         </Text>
       </Pressable>
@@ -292,31 +292,31 @@ export default function CartPanelContent({
             />
           ))}
 
-          <View className="pt-3 border-t border-border gap-1">
-            <View className="flex-row justify-between">
-              <Text className="text-[13px] text-text-muted">Subtotal</Text>
-              <Text className="text-[13px] font-bold text-text tabular-nums">{formatIDR(totals.subtotal)}</Text>
+          <View className="pt-4 border-t border-border gap-1.5">
+            <View className="flex-row justify-between items-baseline">
+              <Text className="text-[12px] font-medium text-text-muted">Subtotal</Text>
+              <Text className="text-[13px] font-medium text-text tabular-nums">{formatIDR(totals.subtotal)}</Text>
             </View>
             {totals.taxAmount > 0 ? (
-              <View className="flex-row justify-between">
-                <Text className="text-[13px] text-text-muted">PPN {totals.taxPercent}%</Text>
-                <Text className="text-[13px] font-bold text-text tabular-nums">{formatIDR(totals.taxAmount)}</Text>
+              <View className="flex-row justify-between items-baseline">
+                <Text className="text-[12px] font-medium text-text-muted">PPN {totals.taxPercent}%</Text>
+                <Text className="text-[13px] font-medium text-text tabular-nums">{formatIDR(totals.taxAmount)}</Text>
               </View>
             ) : null}
             {totals.serviceAmount > 0 ? (
-              <View className="flex-row justify-between">
-                <Text className="text-[13px] text-text-muted">Layanan {totals.servicePercent}%</Text>
-                <Text className="text-[13px] font-bold text-text tabular-nums">{formatIDR(totals.serviceAmount)}</Text>
+              <View className="flex-row justify-between items-baseline">
+                <Text className="text-[12px] font-medium text-text-muted">Layanan {totals.servicePercent}%</Text>
+                <Text className="text-[13px] font-medium text-text tabular-nums">{formatIDR(totals.serviceAmount)}</Text>
               </View>
             ) : null}
-            <View className="flex-row justify-between items-baseline pt-1">
-              <Text className="text-[16px] font-extrabold text-text">Total</Text>
-              <Text className="text-[18px] font-extrabold text-text tabular-nums">{formatIDR(totals.total)}</Text>
+            <View className="flex-row justify-between items-baseline pt-2">
+              <Text className="text-[13px] font-semibold text-text">Total</Text>
+              <Text className="text-[16px] font-bold text-text tabular-nums">{formatIDR(totals.total)}</Text>
             </View>
           </View>
 
-          <View className="pt-3 gap-2 pb-3">
-            <Text className="text-[12px] font-bold text-text-muted uppercase tracking-wide">
+          <View className="pt-4 gap-2 pb-4">
+            <Text className="text-[12px] font-semibold text-text-muted uppercase tracking-wide">
               Metode Bayar
             </Text>
             <View className="flex-row flex-wrap gap-2">
@@ -328,11 +328,11 @@ export default function CartPanelContent({
                     onPress={() => setPaymentMethodId(m.id)}
                     accessibilityRole="button"
                     accessibilityState={{ selected: active }}
-                    className={`min-h-12 justify-center px-4 rounded-full border ${
+                    className={`min-h-11 justify-center px-4 rounded-full border ${
                       active ? 'bg-primary border-primary' : 'bg-surface border-border active:bg-surfaceMuted'
                     }`}
                   >
-                    <Text className={`text-[13px] font-semibold ${active ? 'text-on-primary' : 'text-text'}`}>
+                    <Text className={`text-[13px] font-medium ${active ? 'text-on-primary' : 'text-text'}`}>
                       {m.name}
                     </Text>
                   </Pressable>
@@ -343,9 +343,9 @@ export default function CartPanelContent({
             {isCash ? (
               <Animated.View entering={FadeIn.duration(200)} className="gap-2">
                 <View className="flex-row items-center justify-between pt-1">
-                  <Text className="text-[13px] font-semibold text-text">Uang diterima</Text>
+                  <Text className="text-[13px] font-medium text-text-muted">Uang diterima</Text>
                   <Text
-                    className={`text-[18px] font-extrabold tabular-nums ${
+                    className={`text-[16px] font-bold tabular-nums ${
                       cashReceivedText === '' ? 'text-text-muted' : 'text-text'
                     }`}
                     accessibilityLabel={`Uang diterima ${cashReceivedText === '' ? 'belum diisi' : `${formatIDR(cashReceived)} rupiah`}`}
@@ -354,25 +354,18 @@ export default function CartPanelContent({
                   </Text>
                 </View>
                 <CashNumpad onKey={handleNumpadKey} onQuick={handleQuick} />
-                <View className="rounded-2xl bg-success-soft border border-success-border px-4 py-3 flex-row items-center justify-between">
-                  <View className="gap-0.5">
-                    <Text className="text-[12px] font-bold text-success-pressed uppercase tracking-wide">
-                      Kembalian
-                    </Text>
-                    <Text className="text-[11px] text-text-muted">
-                      Uang diterima {cashReceivedText === '' ? '—' : formatIDR(cashReceived)}
-                    </Text>
-                  </View>
+                <View className="flex-row items-center justify-between pt-1">
+                  <Text className="text-[13px] font-medium text-text-muted">Kembalian</Text>
                   <Text
-                    className={`text-[30px] font-extrabold tabular-nums ${
-                      change === null ? 'text-text-muted' : 'text-success-pressed'
+                    className={`text-[16px] font-bold tabular-nums ${
+                      change === null ? 'text-text-muted' : 'text-text'
                     }`}
                   >
                     {change === null ? '—' : formatIDR(change)}
                   </Text>
                 </View>
                 {change === null && cashReceived > 0 ? (
-                  <Text className="text-[12px] font-semibold text-danger">
+                  <Text className="text-[12px] font-medium text-danger">
                     Kurang {formatIDR(totals.total - cashReceived)}
                   </Text>
                 ) : null}

@@ -22,6 +22,22 @@ export function formatIDRCompact(amount: number): string {
   return `Rp${NUM.format(Math.round(amount))}`
 }
 
+/**
+ * Format input uang saat mengetik — "15000" → "15.000" (separator ribuan).
+ * Dipakai input kas awal/aktual shift & uang diterima (konsisten di semua
+ * input uang mobile).
+ */
+export function formatMoneyInput(raw: string): string {
+  const digits = raw.replace(/\D/g, '')
+  return digits ? NUM.format(Number(digits)) : ''
+}
+
+/** Parse hasil formatMoneyInput → number (0 bila kosong/tidak valid). */
+export function parseMoneyInput(formatted: string): number {
+  const n = Number(formatted.replace(/\D/g, '') || 0)
+  return Number.isFinite(n) ? n : 0
+}
+
 /** 1699 → "16:59" (jam lokal) */
 export function formatTime(ts: number | Date): string {
   return new Date(ts).toLocaleTimeString('id-ID', {

@@ -12,7 +12,7 @@ import Badge from '../../src/components/ui/Badge'
 import { useSession } from '../../src/auth/session'
 import { closeShift, openShift, shiftStatusLabel, type ShiftRow } from '../../src/db/shift'
 import { useActiveShift, useShiftHistory, type ShiftHistoryItem } from '../../src/db/use-shift'
-import { formatDateTime, formatIDR, formatNumber } from '../../src/lib/format'
+import { formatDateTime, formatIDR, formatMoneyInput, formatNumber, parseMoneyInput } from '../../src/lib/format'
 
 /** Baris label + value untuk rekap shift. */
 function StatRow({
@@ -256,7 +256,7 @@ function OpenShiftCTA({ onOpened }: { onOpened: () => void }) {
     if (!session || saving) return
     setError(null)
     setSaving(true)
-    const openingCash = Number(cash.replace(/\D/g, '') || 0)
+    const openingCash = parseMoneyInput(cash)
     const result = await openShift(session.outletId, session.id, openingCash)
     setSaving(false)
     if (!result.ok) {
@@ -275,7 +275,7 @@ function OpenShiftCTA({ onOpened }: { onOpened: () => void }) {
         </Text>
         <TextInput
           value={cash}
-          onChangeText={setCash}
+          onChangeText={(t) => setCash(formatMoneyInput(t))}
           keyboardType="number-pad"
           placeholder="Kas awal (0 jika kosong)"
           placeholderTextColor="#94A3B8"
@@ -308,14 +308,14 @@ function CloseShiftCTA({
   const [error, setError] = useState<string | null>(null)
   const [saving, setSaving] = useState(false)
 
-  const actualPreview = Number(cash.replace(/\D/g, '') || 0)
+  const actualPreview = parseMoneyInput(cash)
   const differencePreview = actualPreview - shift.expectedCash
 
   const handleClose = useCallback(async () => {
     if (!session || saving) return
     setError(null)
     setSaving(true)
-    const actual = Number(cash.replace(/\D/g, '') || 0)
+    const actual = parseMoneyInput(cash)
     const result = await closeShift(shift.id, session.outletId, session.id, actual)
     setSaving(false)
     if (!result.ok) {
@@ -334,7 +334,7 @@ function CloseShiftCTA({
           </Text>
           <TextInput
             value={cash}
-            onChangeText={setCash}
+            onChangeText={(t) => setCash(formatMoneyInput(t))}
             keyboardType="number-pad"
             placeholder="Kas aktual di laci"
             placeholderTextColor="#94A3B8"
@@ -381,7 +381,7 @@ export default function ShiftScreen() {
 
   return (
     <View className="flex-1 bg-bg">
-      <HeaderBar title="Shift" subtitle={session?.outletName ?? 'Outlet'} right={<StatusPill />} />
+      <HeaderBar title="Shift" outlet={session?.outletName ?? 'Outlet'} profile={session?.name ?? 'Kasir'} avatarLabel={session?.outletName ?? 'Outlet'} right={<StatusPill />} />
 
       <ScrollView
         contentContainerClassName="p-3 pb-6 gap-3"

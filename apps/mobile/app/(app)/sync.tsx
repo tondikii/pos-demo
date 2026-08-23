@@ -4,6 +4,7 @@ import Animated, { FadeIn, FadeInDown, FadeOut, useReducedMotion } from 'react-n
 
 import Icon from '../../src/components/Icon'
 import HeaderBar from '../../src/components/HeaderBar'
+import { useSession } from '../../src/auth/session'
 import StatusPill from '../../src/components/ui/StatusPill'
 import EmptyState from '../../src/components/EmptyState'
 import Button from '../../src/components/ui/Button'
@@ -122,6 +123,14 @@ function SyncProgressBar({ progress, active }: { progress: number; active: boole
   )
 }
 
+function SectionHeader({ title }: { title: string }) {
+  return (
+    <Text className="text-[12px] font-semibold text-text-muted uppercase tracking-wide px-1 mt-2">
+      {title}
+    </Text>
+  )
+}
+
 /** Kartu printer 58mm — detail pairing ada di sini (bukan chip di header POS). */
 function PrinterCard() {
   const { connected, printerName, printing, connect } = usePrinter()
@@ -167,6 +176,7 @@ function PrinterCard() {
 }
 
 export default function SyncScreen() {
+  const { session } = useSession()
   const reducedMotion = useReducedMotion()
   const {
     isOnline,
@@ -255,9 +265,10 @@ export default function SyncScreen() {
 
   return (
     <View className="flex-1 bg-bg">
-      <HeaderBar title="Sync" subtitle="Antrean transaksi offline" right={<StatusPill />} />
+      <HeaderBar title="Pengaturan" outlet={session?.outletName ?? 'Outlet'} profile={session?.name ?? 'Kasir'} avatarLabel={session?.outletName ?? 'Outlet'} right={<StatusPill />} />
 
       <ScrollView contentContainerClassName="p-3 pb-8 gap-3" showsVerticalScrollIndicator={false}>
+        <SectionHeader title="Status Koneksi" />
         {/* Status online/offline + toggle simulasi */}
         <Animated.View
           entering={reducedMotion ? FadeIn.duration(150) : FadeIn.duration(250)}
@@ -314,6 +325,7 @@ export default function SyncScreen() {
 
         <PrinterCard />
 
+        <SectionHeader title="Sinkronisasi" />
         {/* Aksi sync + progres */}
         <View className="rounded-2xl border border-border bg-surface p-4 gap-3">
           <View className="flex-row items-center gap-3">

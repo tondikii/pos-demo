@@ -251,6 +251,16 @@ export default function LoginScreen() {
         </Animated.View>
       </Animated.View>
 
+      {/* Info PIN demo — showcase tanpa backend: siapa pun bisa masuk dengan PIN ini. */}
+      <View className="mx-auto max-w-[348px] mb-1 rounded-xl bg-primary-soft border border-primary/20 px-3.5 py-2.5 flex-row items-center gap-2.5">
+        <View className="w-7 h-7 rounded-full bg-primary items-center justify-center" accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
+          <Icon name="lock" size={15} color="#FFFFFF" />
+        </View>
+        <Text className="flex-1 text-[12px] font-medium text-text leading-4">
+          Mode demo — PIN kasir: <Text className="font-extrabold text-primary">123456</Text>. Ketik PIN di tombol angka untuk preview.
+        </Text>
+      </View>
+
       {/* Numpad — thumb zone (1/3 bawah layar) */}
       {isLocked ? (
         <Animated.View

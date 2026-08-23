@@ -13,6 +13,7 @@ import {
   registerSchema,
 } from '@larispos/shared'
 import type { LoginInput, RegisterInput } from '@larispos/shared'
+import { DEMO_BRAND, DEMO_OUTLET_CONFIG, DEMO_OUTLETS } from '@larispos/shared'
 
 const STORAGE_KEY = 'larispos_mock_auth'
 /** Daftar akun terdaftar (mock) — logout TIDAK menghapus akun, hanya sesi. */
@@ -23,6 +24,18 @@ export interface MockAccount {
   user: MockUser
   outlet: MockOutlet
 }
+
+/**
+ * Akun demo KOPI SENJA — di-seed otomatis saat provider init supaya halaman
+ * login bisa langsung dipakai preview (showcase tanpa backend). Prefill di
+ * form auth memakai kredensial ini.
+ */
+export const DEMO_ACCOUNT = {
+  email: 'owner@kopisenja.test',
+  password: 'kopisenja123',
+  phone: '081234567890',
+  businessName: DEMO_BRAND.businessName,
+} as const
 
 /** Bentuk outlet hasil parse Zod — field default/opsional tetap opsional. */
 export type MockOutlet = z.output<typeof createOutletSchema> & {
@@ -127,12 +140,65 @@ function saveAccounts(accounts: MockAccount[]): void {
 }
 
 /**
+ * Seed akun demo sekali (saat provider init) — showcase tanpa backend:
+ * login langsung bisa dipakai dengan kredensial demo yang di-prefill.
+ * Outlet sesi = outlet demo utama (Kopi Senja — Tebet) supaya dashboard,
+ * produk, laporan, dan shift langsung berisi data — tanpa setup manual.
+ */
+function seedDemoAccount(): void {
+  const accounts = loadAccounts()
+  const demoIndex = accounts.findIndex(
+    (a) => a.user.email.toLowerCase() === DEMO_ACCOUNT.email,
+  )
+
+  // Akun demo lama dengan outlet "Outlet Utama" (kosong) → heals ke outlet demo.
+  if (demoIndex >= 0) {
+    const existing = accounts[demoIndex]
+    if (existing.outlet?.name?.includes('Outlet Utama')) {
+      accounts[demoIndex] = {
+        user: existing.user,
+        outlet: demoOutletFor(existing.user),
+      }
+      saveAccounts(accounts)
+    }
+    return
+  }
+
+  const userRow: MockUser = {
+    ...DEMO_ACCOUNT,
+    id: 'usr-demo-kopisenja',
+    role: 'owner',
+    createdAt: new Date().toISOString(),
+  }
+  saveAccounts([...accounts, { user: userRow, outlet: demoOutletFor(userRow) }])
+}
+
+/** Outlet sesi demo = Kopi Senja — Tebet (data lengkap dari mock). */
+function demoOutletFor(user: MockUser): MockOutlet {
+  const o = DEMO_OUTLETS[0]
+  return {
+    id: o.id,
+    name: o.name,
+    address: o.address,
+    phone: user.phone,
+    taxPercent: DEMO_OUTLET_CONFIG.taxPercent,
+    servicePercent: DEMO_OUTLET_CONFIG.servicePercent,
+    receiptHeader: DEMO_OUTLET_CONFIG.receiptHeader,
+    receiptFooter: DEMO_OUTLET_CONFIG.receiptFooter,
+    isActive: true,
+    createdAt: new Date().toISOString(),
+  }
+}
+
+/**
  * AuthMockProvider — state autentikasi Fase 2 (tanpa API).
  * Sesi dipersist di localStorage (`larispos_mock_auth`).
  * Validasi memakai Zod dari `@larispos/shared`; output mock mengikuti
  * bentuk tabel `users`/`outlets` di packages/db.
  */
 export function AuthMockProvider(props: ParentProps): JSX.Element {
+  seedDemoAccount()
+
   const [session, setSession] = createSignal<MockSession | null>(
     safeParseSession(localStorage.getItem(STORAGE_KEY)),
   )

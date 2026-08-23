@@ -1,5 +1,6 @@
 import { Motion, Presence } from '@motionone/solid'
 import { createSignal, For, Show } from 'solid-js'
+import { Icon } from './icon'
 
 export type ToastTone = 'success' | 'error' | 'info'
 
@@ -10,9 +11,9 @@ export interface ToastItem {
 }
 
 const TONE_ICON: Record<ToastTone, string> = {
-  success: '✓',
-  error: '✕',
-  info: 'ℹ',
+  success: 'check',
+  error: 'close',
+  info: 'alert',
 }
 
 const TONE_CLASS: Record<ToastTone, string> = {
@@ -69,8 +70,8 @@ export function ToastProvider() {
                 ].join(' ')}
                 role={item.tone === 'error' ? 'alert' : 'status'}
               >
-                <span aria-hidden="true" class="shrink-0 text-base leading-none">
-                  {TONE_ICON[item.tone]}
+                <span aria-hidden="true" class="shrink-0">
+                  <Icon name={TONE_ICON[item.tone]} class="size-4" />
                 </span>
                 <span class="min-w-0 flex-1">{item.message}</span>
                 <button
@@ -79,7 +80,7 @@ export function ToastProvider() {
                   onClick={() => dismiss(item.id)}
                   class="shrink-0 rounded-md p-1 opacity-60 transition-opacity duration-150 hover:opacity-100"
                 >
-                  ✕
+                  <Icon name="close" class="size-3.5" />
                 </button>
               </Motion>
             )}

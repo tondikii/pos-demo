@@ -7,6 +7,7 @@ import { Button } from '../components/ui/button'
 import { Card } from '../components/ui/card'
 import { Badge } from '../components/ui/badge'
 import { EmptyState, ErrorState, StatSkeletonCard, ListRowSkeleton } from '../components/ui/state'
+import { Icon } from '../components/ui/icon'
 import { DashboardFilters } from '../components/dashboard/DashboardFilters'
 import type { DashboardFiltersValue } from '../components/dashboard/DashboardFilters'
 import { LowStockCard } from '../components/dashboard/LowStockCard'
@@ -288,9 +289,11 @@ function BestSellersTable(props: { data: BestSellersData }) {
 }
 
 const METHOD_ICON: Record<string, string> = {
-  Cash: '💵',
-  QRIS: '📱',
-  'Transfer Bank': '🏦',
+  Cash: 'wallet',
+  'QRIS Statis': 'qrcode',
+  QRIS: 'qrcode',
+  'Transfer Bank': 'bank',
+  'Transfer': 'bank',
 }
 
 /** Rekap metode bayar — list dengan % bar proporsional terhadap total. */
@@ -321,8 +324,8 @@ function PaymentBreakdownList(props: { rows: MockPaymentBreakdownRow[] }) {
               >
                 <div class="flex items-center justify-between gap-3">
                   <div class="flex min-w-0 items-center gap-2">
-                    <span aria-hidden="true" class="text-base leading-none">
-                      {METHOD_ICON[row.methodName] ?? '💳'}
+                    <span aria-hidden="true" class="shrink-0">
+                      <Icon name={METHOD_ICON[row.methodName] ?? 'wallet'} class="size-4 text-muted-foreground" />
                     </span>
                     <p class="truncate text-sm font-semibold text-foreground">
                       {row.methodName}

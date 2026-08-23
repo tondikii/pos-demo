@@ -1,6 +1,6 @@
 ---
 import Layout from '../layouts/Layout.astro'
-import { PLANS } from '../lib/pricing'
+import { PLANS, PLAN_DETAILS, PLAN_ORDER } from '@larispos/shared'
 import { FAQS, productJsonLd } from '../lib/seo'
 
 /** Format angka ke rupiah penuh: 39000 → "Rp 39.000" */
@@ -43,46 +43,13 @@ const features = [
   },
 ]
 
-const plans = [
-  {
-    ...PLANS.starter,
-    tagline: 'Untuk warung & usaha 1 outlet',
-    features: [
-      '1 outlet',
-      '2 kasir aktif',
-      'Kasir cepat <15 detik',
-      'Jualan tetap jalan saat offline',
-      'Laporan laba otomatis',
-      'Stok per varian',
-      'Cetak struk Bluetooth',
-    ],
-    featured: false,
-  },
-  {
-    ...PLANS.tumbuh,
-    tagline: 'Untuk usaha yang mulai buka cabang',
-    features: [
-      '3 outlet',
-      '5 kasir per outlet',
-      'Laporan gabungan semua cabang',
-      'Semua fitur Starter',
-      'Prioritas dukungan',
-    ],
-    featured: true,
-  },
-  {
-    ...PLANS.jaringan,
-    tagline: 'Untuk jaringan & franchise',
-    features: [
-      'Hingga 99 outlet',
-      'Outlet tambahan Rp 25rb/outlet',
-      'Laporan konsolidasi',
-      'Pendampingan dan pelatihan khusus',
-      'Penyesuaian harga khusus',
-    ],
-    featured: false,
-  },
-]
+const plans = PLAN_ORDER.map((id) => ({
+  id,
+  ...PLANS[id],
+  tagline: PLAN_DETAILS[id].tagline,
+  features: PLAN_DETAILS[id].features,
+  featured: PLAN_DETAILS[id].highlighted,
+}))
 
 const faqs = FAQS
 

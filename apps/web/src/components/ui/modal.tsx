@@ -2,6 +2,7 @@ import { Motion } from '@motionone/solid'
 import { createEffect, onCleanup, Show } from 'solid-js'
 import type { JSX } from 'solid-js'
 import type { ParentProps } from 'solid-js'
+import { Icon } from './icon'
 
 /**
  * Modal aksesibel + animasi (FadeIn + ScaleIn, transform/opacity only).
@@ -99,7 +100,7 @@ export function Modal(props: ModalProps) {
                 onClick={() => props.onClose()}
                 class="flex size-8 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors duration-150 hover:bg-muted hover:text-foreground"
               >
-                ✕
+                <Icon name="close" class="size-4" />
               </button>
             </Show>
           </div>

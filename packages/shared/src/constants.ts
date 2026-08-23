@@ -8,6 +8,53 @@ export const PLANS = {
 
 export type PlanId = keyof typeof PLANS
 
+/**
+ * Detail paket — SINGLE SOURCE untuk landing page & dashboard (Task sync).
+ * Fitur & tagline IDENTIK di kedua platform; urutan kartu = PLAN_ORDER.
+ */
+export const PLAN_ORDER: PlanId[] = ['starter', 'tumbuh', 'jaringan']
+
+export const PLAN_DETAILS: Record<
+  PlanId,
+  { tagline: string; features: readonly string[]; highlighted: boolean }
+> = {
+  starter: {
+    tagline: 'Untuk warung & usaha 1 outlet',
+    features: [
+      '1 outlet',
+      '2 kasir aktif',
+      'Kasir cepat <15 detik',
+      'Jualan tetap jalan saat offline',
+      'Laporan laba otomatis',
+      'Stok per varian',
+      'Cetak struk Bluetooth',
+    ],
+    highlighted: false,
+  },
+  tumbuh: {
+    tagline: 'Untuk usaha yang mulai buka cabang',
+    features: [
+      '3 outlet',
+      '5 kasir per outlet',
+      'Laporan gabungan semua cabang',
+      'Metode bayar fleksibel',
+      'Prioritas dukungan',
+    ],
+    highlighted: true,
+  },
+  jaringan: {
+    tagline: 'Untuk jaringan & franchise',
+    features: [
+      'Hingga 99 outlet',
+      'Outlet tambahan Rp 25rb/outlet',
+      'Laporan konsolidasi',
+      'Pendampingan dan pelatihan khusus',
+      'Penyesuaian harga khusus',
+    ],
+    highlighted: false,
+  },
+}
+
 export const SUBSCRIPTION_STATUSES = [
   'trialing',
   'active',

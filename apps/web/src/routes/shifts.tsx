@@ -10,6 +10,7 @@ import { ToastProvider } from '../components/ui/toast'
 import type { ToastApi } from '../components/ui/toast'
 import { EmptyState, ErrorState, StatSkeletonCard, ListRowSkeleton } from '../components/ui/state'
 import { Breadcrumb } from '../components/ui/breadcrumb'
+import { Icon } from '../components/ui/icon'
 import { useAuth } from '../lib/auth-mock'
 import { DEFAULT_OUTLET_ID, MOCK_OUTLETS, toDateKey } from '../lib/mocks'
 import type { MockOutlet, MockShift, MockShiftPaymentRow } from '../lib/mocks'
@@ -65,9 +66,11 @@ function ShiftsEmptyState() {
 /* ------------------------------------------------------------------ */
 
 const METHOD_ICON: Record<string, string> = {
-  Cash: '💵',
-  QRIS: '📱',
-  'Transfer Bank': '🏦',
+  Cash: 'wallet',
+  'QRIS Statis': 'qrcode',
+  QRIS: 'qrcode',
+  'Transfer Bank': 'bank',
+  Transfer: 'bank',
 }
 
 /** Badge selisih: hijau (lebih), merah (kurang), abu (pas). */
@@ -202,8 +205,8 @@ function ShiftDetailModal(props: { shift: MockShift | null; onClose: () => void 
                   {(row: MockShiftPaymentRow) => (
                     <li class="flex items-center justify-between gap-3 rounded-xl border border-border bg-muted/30 px-3.5 py-2.5">
                       <span class="flex min-w-0 items-center gap-2 text-sm font-medium text-foreground">
-                        <span aria-hidden="true" class="text-base leading-none">
-                          {METHOD_ICON[row.methodName] ?? '💳'}
+                        <span aria-hidden="true" class="shrink-0">
+                          <Icon name={METHOD_ICON[row.methodName] ?? 'wallet'} class="size-4 text-muted-foreground" />
                         </span>
                         <span class="truncate">{row.methodName}</span>
                         <span class="text-xs text-muted-foreground">{row.count} transaksi</span>

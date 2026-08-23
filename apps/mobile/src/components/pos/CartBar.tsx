@@ -45,10 +45,10 @@ export default function CartBar({
           <Icon name="cart" size={22} color={empty ? '#94A3B8' : '#2563EB'} />
         </View>
         <View className="flex-1">
-          <Text className={`text-[12px] font-semibold ${empty ? 'text-text-muted' : 'text-text-muted'}`}>
+          <Text className={`text-[12px] font-medium ${empty ? 'text-text-muted' : 'text-text-muted'}`}>
             {empty ? 'Keranjang kosong' : `${formatNumber(itemCount)} item`}
           </Text>
-          <Text className={`text-[17px] font-extrabold leading-5 ${empty ? 'text-text-muted' : 'text-text'}`}>
+          <Text className={`text-[15px] font-bold leading-5 ${empty ? 'text-text-muted' : 'text-text'}`}>
             {formatIDRCompact(total)}
           </Text>
         </View>
@@ -59,7 +59,7 @@ export default function CartBar({
           accessibilityElementsHidden
           importantForAccessibility="no-hide-descendants"
         >
-          <Text className={`text-[15px] font-extrabold ${empty ? 'text-text-muted' : 'text-on-primary'}`}>
+          <Text className={`text-[14px] font-extrabold ${empty ? 'text-text-muted' : 'text-on-primary'}`}>
             BAYAR
           </Text>
         </View>
