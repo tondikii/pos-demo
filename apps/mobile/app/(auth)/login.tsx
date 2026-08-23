@@ -103,7 +103,7 @@ export default function LoginScreen() {
         return prev + key
       })
     },
-    [isLocked],
+    [isLocked]
   )
 
   const runErrorShake = useCallback(() => {
@@ -117,7 +117,7 @@ export default function LoginScreen() {
       withTiming(-6, { duration: 50 }),
       withTiming(0, { duration: 50 }, () => {
         errorShake.current = false
-      }),
+      })
     )
   }, [reducedMotion, shakeX])
 
@@ -161,7 +161,7 @@ export default function LoginScreen() {
         outletName: outlet.name,
       }).then(() => {
         router.replace('/(app)/pos')
-      }),
+      })
     )
   }, [pin, outlet, attempts, isLocked, signIn, runErrorShake, router])
 
@@ -180,9 +180,13 @@ export default function LoginScreen() {
     >
       {/* Header */}
       <Animated.View entering={FadeIn.duration(250)} className="items-center mt-5 mb-4">
-        <Text className="text-[13px] font-bold tracking-[2px] text-primary uppercase mb-3">LarisPOS</Text>
+        <Text className="text-[13px] font-bold tracking-[2px] text-primary uppercase mb-3">
+          LarisPOS
+        </Text>
         <Text className="text-2xl font-extrabold text-text tracking-[-0.02em]">Masuk Kasir</Text>
-        <Text className="text-[14px] text-text-muted mt-1">Masukkan PIN 6 digit untuk mulai melayani</Text>
+        <Text className="text-[14px] text-text-muted mt-1">
+          Masukkan PIN 6 digit untuk mulai melayani
+        </Text>
       </Animated.View>
 
       {/* Pilih outlet (compact) */}
@@ -212,10 +216,14 @@ export default function LoginScreen() {
                 accessibilityRole="button"
                 accessibilityState={{ selected: active }}
                 className={`min-h-12 justify-center px-3.5 rounded-full border ${
-                  active ? 'bg-primary border-primary' : 'bg-surfaceMuted border-border active:bg-surfaceMuted'
+                  active
+                    ? 'bg-primary border-primary'
+                    : 'bg-surfaceMuted border-border active:bg-surfaceMuted'
                 }`}
               >
-                <Text className={`text-[13px] font-semibold ${active ? 'text-on-primary' : 'text-text'}`}>
+                <Text
+                  className={`text-[13px] font-semibold ${active ? 'text-on-primary' : 'text-text'}`}
+                >
                   {o.name}
                 </Text>
               </Pressable>
@@ -230,7 +238,12 @@ export default function LoginScreen() {
         <View
           className="flex-row gap-3.5 h-[18px] items-center"
           accessibilityLabel={`PIN ${pin.length} dari ${PIN_LENGTH} digit dimasukkan`}
-          accessibilityValue={{ min: 0, max: PIN_LENGTH, now: pin.length, text: `${pin.length} digit` }}
+          accessibilityValue={{
+            min: 0,
+            max: PIN_LENGTH,
+            now: pin.length,
+            text: `${pin.length} digit`,
+          }}
         >
           {dots.map((filled, i) => (
             <View
@@ -247,19 +260,11 @@ export default function LoginScreen() {
           exiting={FadeOut.duration(100)}
           className="min-h-[34px] justify-center mt-2"
         >
-          {error ? <Text className="text-[13px] font-semibold text-danger text-center">{error}</Text> : null}
+          {error ? (
+            <Text className="text-[13px] font-semibold text-danger text-center">{error}</Text>
+          ) : null}
         </Animated.View>
       </Animated.View>
-
-      {/* Info PIN demo — showcase tanpa backend: siapa pun bisa masuk dengan PIN ini. */}
-      <View className="mx-auto max-w-[348px] mb-1 rounded-xl bg-primary-soft border border-primary/20 px-3.5 py-2.5 flex-row items-center gap-2.5">
-        <View className="w-7 h-7 rounded-full bg-primary items-center justify-center" accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
-          <Icon name="lock" size={15} color="#FFFFFF" />
-        </View>
-        <Text className="flex-1 text-[12px] font-medium text-text leading-4">
-          Mode demo — PIN kasir: <Text className="font-extrabold text-primary">123456</Text>. Ketik PIN di tombol angka untuk preview.
-        </Text>
-      </View>
 
       {/* Numpad — thumb zone (1/3 bawah layar) */}
       {isLocked ? (
@@ -278,7 +283,10 @@ export default function LoginScreen() {
           </Text>
         </Animated.View>
       ) : (
-        <Animated.View entering={FadeIn.duration(250)} className="flex-row flex-wrap max-w-[348px] self-center mt-2 justify-center">
+        <Animated.View
+          entering={FadeIn.duration(250)}
+          className="flex-row flex-wrap max-w-[348px] self-center mt-2 justify-center"
+        >
           {NUM_KEYS.map((key, i) => {
             if (key === null) {
               return <View key={`blank-${i}`} className="w-[104px] h-[64px] m-[6px]" />
@@ -288,7 +296,10 @@ export default function LoginScreen() {
               <Pressable
                 key={key}
                 onPress={() => onPressKey(key)}
-                style={({ pressed }) => [{ opacity: pressed ? 0.85 : 1 }, { transform: [{ scale: pressed ? 0.97 : 1 }] }]}
+                style={({ pressed }) => [
+                  { opacity: pressed ? 0.85 : 1 },
+                  { transform: [{ scale: pressed ? 0.97 : 1 }] },
+                ]}
                 accessibilityRole="button"
                 accessibilityLabel={isDel ? 'Hapus digit' : `Digit ${key}`}
                 className="w-[104px] h-16 m-[6px] rounded-xl border border-border bg-surface items-center justify-center active:bg-primary-soft"

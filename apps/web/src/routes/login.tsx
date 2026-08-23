@@ -37,17 +37,17 @@ export default function LoginPage() {
     return out
   })
 
-function setField(key: 'email' | 'password', value: string) {
-  // Email dinormalisasi (trim) — validasi inline & submit memakai nilai yang
-  // sama, jadi error "email tidak valid" tidak muncul padahal bisa disubmit.
-  const next = key === 'email' ? value.trim() : value
-  setValues((v) => ({ ...v, [key]: next }))
-  // re-validate inline setelah field pernah disentuh
-  if (touched()[key]) {
-    const res = parseWithZod(loginSchema, { ...values(), [key]: next })
-    setErrors((e) => (res.ok ? omitKey(e, key) : { ...e, ...(res.errors ?? {}) }))
+  function setField(key: 'email' | 'password', value: string) {
+    // Email dinormalisasi (trim) — validasi inline & submit memakai nilai yang
+    // sama, jadi error "email tidak valid" tidak muncul padahal bisa disubmit.
+    const next = key === 'email' ? value.trim() : value
+    setValues((v) => ({ ...v, [key]: next }))
+    // re-validate inline setelah field pernah disentuh
+    if (touched()[key]) {
+      const res = parseWithZod(loginSchema, { ...values(), [key]: next })
+      setErrors((e) => (res.ok ? omitKey(e, key) : { ...e, ...(res.errors ?? {}) }))
+    }
   }
-}
 
   function omitKey(e: FieldErrors, key: string): FieldErrors {
     const out: FieldErrors = {}
@@ -55,14 +55,14 @@ function setField(key: 'email' | 'password', value: string) {
     return out
   }
 
-function handleBlur(key: 'email' | 'password') {
-  setTouched((t) => ({ ...t, [key]: true }))
-  const res = parseWithZod(loginSchema, {
-    ...values(),
-    email: values().email.trim(),
-  })
-  if (!res.ok) setErrors((e) => ({ ...e, ...(res.errors ?? {}) }))
-}
+  function handleBlur(key: 'email' | 'password') {
+    setTouched((t) => ({ ...t, [key]: true }))
+    const res = parseWithZod(loginSchema, {
+      ...values(),
+      email: values().email.trim(),
+    })
+    if (!res.ok) setErrors((e) => ({ ...e, ...(res.errors ?? {}) }))
+  }
 
   function handleSubmit(e: SubmitEvent) {
     e.preventDefault()
@@ -97,7 +97,8 @@ function handleBlur(key: 'email' | 'password') {
 
   return (
     <AuthLayout>
-      <Motion tag="div"
+      <Motion
+        tag="div"
         initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.25, easing: 'ease-out' }}
@@ -105,10 +106,15 @@ function handleBlur(key: 'email' | 'password') {
         <Card>
           <CardContent class="p-6 sm:p-8">
             <div class="mb-6 space-y-1.5">
-              <h1 class="text-2xl font-extrabold tracking-tight text-foreground">Masuk ke dashboard</h1>
+              <h1 class="text-2xl font-extrabold tracking-tight text-foreground">
+                Masuk ke dashboard
+              </h1>
               <p class="text-sm text-muted-foreground">
                 Belum punya akun?{' '}
-                <A href="/register" class="font-semibold text-primary hover:text-blue-700 hover:underline">
+                <A
+                  href="/register"
+                  class="font-semibold text-primary hover:text-blue-700 hover:underline"
+                >
                   Daftar gratis 14 hari
                 </A>
               </p>
@@ -119,14 +125,6 @@ function handleBlur(key: 'email' | 'password') {
                 <FormAlert title={formError()!} />
               </div>
             </Show>
-
-            {/* Info akun demo — showcase tanpa backend */}
-            <div class="mb-5 rounded-xl border border-primary/25 bg-primary/5 px-4 py-3 text-sm">
-              <p class="font-bold text-primary">Mode demo — akun sudah terisi</p>
-              <p class="mt-0.5 text-muted-foreground">
-                {DEMO_ACCOUNT.email} · {DEMO_ACCOUNT.password} — klik <span class="font-semibold text-foreground">Masuk</span> untuk preview.
-              </p>
-            </div>
 
             <form onSubmit={handleSubmit} noValidate class="space-y-4">
               <Field label="Email" for="login-email" required errorMessage={fieldErrors().email}>
@@ -144,7 +142,12 @@ function handleBlur(key: 'email' | 'password') {
                 />
               </Field>
 
-              <Field label="Password" for="login-password" required errorMessage={fieldErrors().password}>
+              <Field
+                label="Password"
+                for="login-password"
+                required
+                errorMessage={fieldErrors().password}
+              >
                 <Input
                   id="login-password"
                   type="password"
@@ -164,9 +167,6 @@ function handleBlur(key: 'email' | 'password') {
             </form>
           </CardContent>
         </Card>
-        <p class="mt-4 text-center text-xs text-muted-foreground">
-          Fase 2 — mode demo. Data tersimpan lokal di browser Anda.
-        </p>
       </Motion>
     </AuthLayout>
   )
