@@ -1,6 +1,6 @@
 import { useRouter } from 'expo-router'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
-import { Pressable, Text, TextInput, useWindowDimensions, View } from 'react-native'
+import { Platform, Pressable, Text, TextInput, useWindowDimensions, View } from 'react-native'
 import Animated, { FadeIn, FadeOut, ZoomIn, useReducedMotion } from 'react-native-reanimated'
 
 import Icon from '../../src/components/Icon'
@@ -122,7 +122,7 @@ function ShiftOpenSheet({
       subtitle="Kas awal di laci — bisa diisi 0."
       maxHeight="55%"
     >
-      <View className="px-4 pb-4 gap-2.5">
+      <View className="px-4 pb-4 gap-2.5" style={Platform.OS === 'web' ? ({ gap: 10 } as const) : undefined}>
         <View className="flex-row items-center h-14 rounded-xl bg-bg border border-border px-3 gap-1.5">
           <Text className="text-[16px] font-bold text-text-muted" accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
             Rp

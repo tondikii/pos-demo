@@ -1,7 +1,7 @@
 import { cashierLoginSchema } from '@larispos/shared'
 import { useRouter } from 'expo-router'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
-import { Pressable, Text, View } from 'react-native'
+import { Platform, Pressable, Text, View } from 'react-native'
 import Animated, {
   FadeIn,
   FadeOut,
@@ -176,15 +176,34 @@ export default function LoginScreen() {
   return (
     <View
       className="flex-1 bg-bg px-6"
-      style={{ paddingTop: insets.top + 8, paddingBottom: insets.bottom }}
+      style={{
+        paddingTop: (Platform.OS === 'web' ? Math.max(insets.top, 24) : insets.top) + 8,
+        paddingBottom: Platform.OS === 'web' ? Math.max(insets.bottom, 16) : insets.bottom,
+        ...(Platform.OS === 'web' ? ({ minHeight: '100vh', backgroundColor: '#F8FAFC' } as const) : null),
+      }}
     >
       {/* Header */}
-      <Animated.View entering={FadeIn.duration(250)} className="items-center mt-5 mb-4">
-        <Text className="text-[13px] font-bold tracking-[2px] text-primary uppercase mb-3">
+      <Animated.View
+        entering={FadeIn.duration(250)}
+        className="items-center mt-5 mb-4"
+        style={Platform.OS === 'web' ? ({ alignItems: 'center', marginTop: 20, marginBottom: 16 } as const) : undefined}
+      >
+        <Text
+          className="text-[13px] font-bold tracking-[2px] text-primary uppercase mb-3"
+          style={Platform.OS === 'web' ? ({ fontFamily: 'PlusJakartaSans_700Bold' } as const) : undefined}
+        >
           LarisPOS
         </Text>
-        <Text className="text-2xl font-extrabold text-text tracking-[-0.02em]">Masuk Kasir</Text>
-        <Text className="text-[14px] text-text-muted mt-1">
+        <Text
+          className="text-2xl font-extrabold text-text tracking-[-0.02em]"
+          style={Platform.OS === 'web' ? ({ fontFamily: 'PlusJakartaSans_800ExtraBold' } as const) : undefined}
+        >
+          Masuk Kasir
+        </Text>
+        <Text
+          className="text-[14px] text-text-muted mt-1"
+          style={Platform.OS === 'web' ? ({ fontFamily: 'PlusJakartaSans_400Regular' } as const) : undefined}
+        >
           Masukkan PIN 6 digit untuk mulai melayani
         </Text>
       </Animated.View>
@@ -195,8 +214,22 @@ export default function LoginScreen() {
         entering={FadeIn.duration(250)}
         exiting={FadeOut.duration(150)}
         className="rounded-2xl border border-border bg-surface p-4"
+        style={
+          Platform.OS === 'web'
+            ? ({
+                backgroundColor: '#FFFFFF',
+                borderColor: '#E2E8F0',
+                borderWidth: 1,
+                borderRadius: 16,
+                padding: 16,
+              } as const)
+            : undefined
+        }
       >
-        <Text className="text-[12px] font-bold text-text-muted uppercase tracking-wide mb-2">
+        <Text
+          className="text-[12px] font-bold text-text-muted uppercase tracking-wide mb-2"
+          style={Platform.OS === 'web' ? ({ fontFamily: 'PlusJakartaSans_700Bold' } as const) : undefined}
+        >
           Outlet aktif
         </Text>
         <View className="flex-row gap-2 flex-wrap">
@@ -223,6 +256,7 @@ export default function LoginScreen() {
               >
                 <Text
                   className={`text-[13px] font-semibold ${active ? 'text-on-primary' : 'text-text'}`}
+                  style={Platform.OS === 'web' ? ({ fontFamily: 'PlusJakartaSans_600SemiBold' } as const) : undefined}
                 >
                   {o.name}
                 </Text>
@@ -230,13 +264,24 @@ export default function LoginScreen() {
             )
           })}
         </View>
-        <Text className="text-[12px] text-text-muted mt-2">{outlet.address}</Text>
+        <Text className="text-[12px] text-text-muted mt-2" style={Platform.OS === 'web' ? ({ fontFamily: 'PlusJakartaSans_400Regular' } as const) : undefined}>{outlet.address}</Text>
       </Animated.View>
 
       {/* PIN dots + error */}
-      <Animated.View style={[shakeStyle]} className="items-center mt-6 mb-2">
+      <Animated.View
+        style={[
+          shakeStyle,
+          Platform.OS === 'web' ? ({ alignItems: 'center', marginTop: 24, marginBottom: 8 } as const) : null,
+        ]}
+        className="items-center mt-6 mb-2"
+      >
         <View
           className="flex-row gap-3.5 h-[18px] items-center"
+          style={
+            Platform.OS === 'web'
+              ? ({ flexDirection: 'row', gap: 14, height: 18, alignItems: 'center' } as const)
+              : undefined
+          }
           accessibilityLabel={`PIN ${pin.length} dari ${PIN_LENGTH} digit dimasukkan`}
           accessibilityValue={{
             min: 0,
@@ -261,7 +306,12 @@ export default function LoginScreen() {
           className="min-h-[34px] justify-center mt-2"
         >
           {error ? (
-            <Text className="text-[13px] font-semibold text-danger text-center">{error}</Text>
+            <Text
+              className="text-[13px] font-semibold text-danger text-center"
+              style={Platform.OS === 'web' ? ({ fontFamily: 'PlusJakartaSans_600SemiBold' } as const) : undefined}
+            >
+              {error}
+            </Text>
           ) : null}
         </Animated.View>
       </Animated.View>
@@ -274,11 +324,19 @@ export default function LoginScreen() {
           accessibilityRole="alert"
           accessibilityLabel={`Terlalu banyak percobaan. Kasir dikunci ${formatLockTime(remainingMs)}`}
         >
-          <Text className="text-[16px] font-bold text-text">Terlalu banyak percobaan</Text>
-          <Text className="text-[40px] font-extrabold text-danger tabular-nums mt-1.5">
+          <Text className="text-[16px] font-bold text-text" style={Platform.OS === 'web' ? ({ fontFamily: 'PlusJakartaSans_700Bold' } as const) : undefined}>
+            Terlalu banyak percobaan
+          </Text>
+          <Text
+            className="text-[40px] font-extrabold text-danger tabular-nums mt-1.5"
+            style={Platform.OS === 'web' ? ({ fontFamily: 'PlusJakartaSans_800ExtraBold' } as const) : undefined}
+          >
             {formatLockTime(remainingMs)}
           </Text>
-          <Text className="text-[13px] text-text-muted mt-1 text-center">
+          <Text
+            className="text-[13px] text-text-muted mt-1 text-center"
+            style={Platform.OS === 'web' ? ({ fontFamily: 'PlusJakartaSans_400Regular' } as const) : undefined}
+          >
             Coba lagi setelah waktu ini habis.
           </Text>
         </Animated.View>
@@ -286,10 +344,28 @@ export default function LoginScreen() {
         <Animated.View
           entering={FadeIn.duration(250)}
           className="flex-row flex-wrap max-w-[348px] self-center mt-2 justify-center"
+          style={
+            Platform.OS === 'web'
+              ? ({
+                  flexDirection: 'row',
+                  flexWrap: 'wrap',
+                  maxWidth: 348,
+                  alignSelf: 'center',
+                  marginTop: 8,
+                  justifyContent: 'center',
+                } as const)
+              : undefined
+          }
         >
           {NUM_KEYS.map((key, i) => {
             if (key === null) {
-              return <View key={`blank-${i}`} className="w-[104px] h-[64px] m-[6px]" />
+              return (
+                <View
+                  key={`blank-${i}`}
+                  className="w-[104px] h-[64px] m-[6px]"
+                  style={Platform.OS === 'web' ? ({ width: 104, height: 64, margin: 6 } as const) : undefined}
+                />
+              )
             }
             const isDel = key === 'del'
             return (
@@ -299,6 +375,19 @@ export default function LoginScreen() {
                 style={({ pressed }) => [
                   { opacity: pressed ? 0.85 : 1 },
                   { transform: [{ scale: pressed ? 0.97 : 1 }] },
+                  Platform.OS === 'web'
+                    ? ({
+                        width: 104,
+                        height: 64,
+                        margin: 6,
+                        borderWidth: 1,
+                        borderColor: '#E2E8F0',
+                        backgroundColor: '#FFFFFF',
+                        borderRadius: 12,
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                      } as const)
+                    : null,
                 ]}
                 accessibilityRole="button"
                 accessibilityLabel={isDel ? 'Hapus digit' : `Digit ${key}`}
@@ -307,7 +396,12 @@ export default function LoginScreen() {
                 {isDel ? (
                   <Icon name="backspace" size={26} color="#64748B" />
                 ) : (
-                  <Text className="text-2xl font-bold text-text">{key}</Text>
+                  <Text
+                    className="text-2xl font-bold text-text"
+                    style={Platform.OS === 'web' ? ({ fontFamily: 'PlusJakartaSans_700Bold' } as const) : undefined}
+                  >
+                    {key}
+                  </Text>
                 )}
               </Pressable>
             )

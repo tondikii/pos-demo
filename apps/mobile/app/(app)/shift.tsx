@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from 'react'
-import { Pressable, ScrollView, Text, TextInput, View } from 'react-native'
+import { Platform, Pressable, ScrollView, Text, TextInput, View } from 'react-native'
 import Animated, { FadeIn, FadeInDown, useReducedMotion } from 'react-native-reanimated'
 
 import Icon from '../../src/components/Icon'
@@ -60,7 +60,11 @@ type ShiftSummary = {
 /** Rekap shift berjalan — ringkasan saja; form tutup ada di footer (thumb zone). */
 function RunningShiftCard({ shift, summary }: { shift: ShiftRow; summary: ShiftSummary }) {
   return (
-    <Animated.View entering={FadeIn.duration(250)} className="gap-3">
+    <Animated.View
+      entering={FadeIn.duration(250)}
+      className="gap-4"
+      style={Platform.OS === 'web' ? ({ gap: 16 } as const) : undefined}
+    >
       <View className="flex-row items-center gap-2 px-1">
         <View className="w-2.5 h-2.5 rounded-full bg-success" />
         <Text className="text-[15px] font-extrabold text-text">Shift Berjalan</Text>
@@ -268,7 +272,7 @@ function OpenShiftCTA({ onOpened }: { onOpened: () => void }) {
   }, [cash, session, saving, onOpened])
 
   return (
-    <View className="gap-1.5">
+    <View className="gap-1.5" style={Platform.OS === 'web' ? ({ gap: 6 } as const) : undefined}>
       <View className="flex-row items-center h-12 rounded-xl bg-bg border border-border px-3 gap-1.5">
         <Text className="text-[14px] font-bold text-text-muted" accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
           Rp
@@ -326,7 +330,7 @@ function CloseShiftCTA({
   }, [cash, session, saving, shift.id, onClosed])
 
   return (
-    <View className="gap-1.5">
+    <View className="gap-1.5" style={Platform.OS === 'web' ? ({ gap: 6 } as const) : undefined}>
       <View className="flex-row items-center gap-2">
         <View className="flex-1 flex-row items-center h-12 rounded-xl bg-bg border border-border px-3 gap-1.5">
           <Text className="text-[14px] font-bold text-text-muted" accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
@@ -384,7 +388,8 @@ export default function ShiftScreen() {
       <HeaderBar title="Shift" outlet={session?.outletName ?? 'Outlet'} profile={session?.name ?? 'Kasir'} avatarLabel={session?.outletName ?? 'Outlet'} right={<StatusPill />} />
 
       <ScrollView
-        contentContainerClassName="p-3 pb-6 gap-3"
+        contentContainerClassName="p-3 pb-6 gap-4"
+        contentContainerStyle={Platform.OS === 'web' ? ({ gap: 16 } as const) : undefined}
         showsVerticalScrollIndicator={false}
         className="flex-1"
       >

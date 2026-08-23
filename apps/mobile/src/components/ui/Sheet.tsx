@@ -82,11 +82,12 @@ export default function Sheet({
 
   return (
     <Modal visible transparent animationType="none" onRequestClose={handleClose} statusBarTranslucent>
-      <View className="flex-1 justify-end">
+      <View className="flex-1 justify-end" style={Platform.OS === 'web' ? ({ height: '100vh' } as const) : undefined}>
         <Animated.View
           entering={FadeIn.duration(200)}
           exiting={FadeOut.duration(150)}
           className="absolute inset-0 bg-overlay"
+          style={Platform.OS === 'web' ? ({ backgroundColor: 'rgba(15, 23, 42, 0.5)', position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 } as const) : undefined}
         >
           <Pressable
             onPress={handleClose}
@@ -104,7 +105,9 @@ export default function Sheet({
             style={{
               height: (height ?? undefined) as DimensionValue | undefined,
               maxHeight: maxHeight as DimensionValue,
-              paddingBottom: Math.max(insets.bottom, 12),
+              paddingBottom: Platform.OS === 'web' ? Math.max(insets.bottom, 12) : Math.max(insets.bottom, 12),
+              backgroundColor: Platform.OS === 'web' ? '#FFFFFF' : undefined,
+              ...(Platform.OS === 'web' ? ({ borderTopLeftRadius: 24, borderTopRightRadius: 24 } as const) : null),
             }}
           >
             <View className="items-center pt-3 pb-1">

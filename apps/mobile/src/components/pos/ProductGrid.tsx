@@ -1,6 +1,7 @@
 import React, { memo, useEffect, useMemo, useState } from 'react'
 import {
   Image,
+  Platform,
   Pressable,
   ScrollView,
   Text,
@@ -136,7 +137,11 @@ const ProductCard = memo(function ProductCard({
             {showPhoto && product.imageUrl ? (
               <Image
                 source={{ uri: product.imageUrl }}
-                style={{ width: '100%', height: '100%' }}
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  ...(Platform.OS === 'web' ? ({ objectFit: 'cover' } as const) : null),
+                }}
                 resizeMode="cover"
                 onError={() => setImgFailed(true)}
               />
@@ -265,11 +270,17 @@ export default function ProductGrid({
   const { width: windowWidth } = useWindowDimensions()
   const [containerWidth, setContainerWidth] = useState(0)
 
-  // Fallback ke lebar window sebelum onLayout pertama (layout awal sudah benar).
-  const measured = containerWidth > 0 ? containerWidth : windowWidth
-  // Tablet landscape: 6 kolom (≥1400) / 5 (≥1100) / 4 (≥768); phone 2.
-  const numColumns = measured >= 1400 ? 6 : measured >= 1100 ? 5 : measured >= 768 ? 4 : 2
-  const cardWidth = Math.floor((measured - GRID_PAD * 2 - GRID_GAP * (numColumns - 1)) / numColumns)
+  // Web: windowWidth termasuk scrollbar (~15px) → container lebih sempit. Pakai
+  // containerWidth setelah layout; fallback kurangi scrollbar agar kartu tidak
+  // wrap di tablet horizontal 1024.
+  const fallbackWidth = Platform.OS === 'web' ? Math.max(0, windowWidth - 15) : windowWidth
+  const measured = containerWidth > 0 ? containerWidth : fallbackWidth
+  // Tablet landscape: 6 kolom (≥1400) / 5 (≥1100) / 4 (≥640); phone 2.
+  // Threshold 640 (bukan 768) agar split-view tablet kiri ~670px (1024×0.66) tetap 4 kolom seperti Android Medium Tablet.
+  const numColumns = measured >= 1400 ? 6 : measured >= 1100 ? 5 : measured >= 640 ? 4 : 2
+  let cardWidth = Math.floor((measured - GRID_PAD * 2 - GRID_GAP * (numColumns - 1)) / numColumns)
+  // Web: floor bisa 1px over karena sub-pixel (675.844 → 154 vs 153), paksa 1px lebih kecil agar 4 kolom muat tanpa wrap ke 3.
+  if (Platform.OS === 'web' && numColumns === 4) cardWidth = Math.min(cardWidth, 153)
   const [category, setCategory] = useState('Semua')
   const [query, setQuery] = useState('')
 
@@ -283,8 +294,12 @@ export default function ProductGrid({
   }, [products, category, query])
 
   return (
-    <View className="flex-1" onLayout={(e) => setContainerWidth(e.nativeEvent.layout.width)}>
-      <View className="px-3 pt-2.5">
+    <View
+      className="flex-1"
+      onLayout={(e) => setContainerWidth(e.nativeEvent.layout.width)}
+      style={Platform.OS === 'web' ? ({ flex: 1, display: 'flex', flexDirection: 'column', width: '100%' } as const) : undefined}
+    >
+      <View className="px-3 pt-2.5" style={Platform.OS === 'web' ? ({ width: '100%' } as const) : undefined}>
         <View className="flex-row items-center h-12 rounded-xl bg-surface border border-border px-3 gap-2">
           <Icon name="search" size={18} color="#64748B" />
           <TextInput
@@ -349,6 +364,9 @@ export default function ProductGrid({
         <ScrollView
           className="flex-1"
           contentContainerClassName="pt-1 pb-28"
+          contentContainerStyle={
+            Platform.OS === 'web' ? ({ width: '100%', paddingTop: 4, paddingBottom: 112 } as const) : undefined
+          }
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
         >
@@ -361,7 +379,14 @@ export default function ProductGrid({
               />
             </View>
           ) : (
-            <View className="px-3 flex-row flex-wrap">
+            <View
+              className="px-3 flex-row flex-wrap"
+              style={
+                Platform.OS === 'web'
+                  ? ({ display: 'flex', flexDirection: 'row', flexWrap: 'wrap', width: '100%', paddingLeft: 12, paddingRight: 12 } as const)
+                  : undefined
+              }
+            >
               {filtered.map((product, index) => (
                 <ProductCard
                   key={product.id}
